@@ -1,7 +1,7 @@
 obj = main.o datacheck.o
 
-gereVendas: $(obj) 
-	$(CC) main.o $(obj) 
+gereVendas: $(obj)
+	$(CC) $(obj) -o gereVendas
 
 main.o: datacheck.h
 datacheck.o: datacheck.h
