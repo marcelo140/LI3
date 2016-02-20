@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <math.h>
 
 #include "datacheck.h"
 
@@ -82,7 +83,7 @@ static int checkClient (char *line) {
 
 static int checkSale (char *line) {
 	int i, lnOk, quant, month, filial;
-	float price;
+	double price;
 	char *token;
 
 	lnOk = 1;
@@ -92,7 +93,7 @@ static int checkSale (char *line) {
 		switch(i) {
 			case 0: lnOk = checkProduct(token);
 							break;
-			case 1: lnOk = ((price = strtof(token, NULL)) >= 0 && price <= 999.99);
+			case 1: lnOk = ((price = strtod(token,NULL)) >= 0 && price <= 999.99);
 							break;
 			case 2: lnOk = ((quant = atoi(token)) >= 1 && quant <= 200);
 							break;

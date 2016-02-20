@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "datacheck.h"
 
-#define SALES_PATH "Vendas_5M.txt"
+#define SALES_PATH "Vendas_1M.txt"
 #define CLIENTS_PATH "Clientes.txt"
 #define PRODUCTS_PATH "Produtos.txt"
 
