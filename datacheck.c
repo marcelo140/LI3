@@ -37,48 +37,48 @@ int checkFile(FILE *file, int mode, int *sucLn, int *failLn) {
 }
 
 static int checkProduct (char *line){
-	int i, lnFailed;
+	int i, lnOk;
 
-	lnFailed = 0;
+	lnOk = 1;
 
-	for (i = 0; !lnFailed && i < 6; i++){
+	for (i = 0; lnOk && i < 6; i++){
 		switch (i){
 			case 0:
-			case 1: lnFailed = (line[i] < 'A' || line[i] > 'Z');
+			case 1: lnOk = (line[i] >= 'A' && line[i] <= 'Z');
 					break;
-			case 2: lnFailed = (line[i] != '1');
+			case 2: lnOk = (line[i] == '1');
 					break;
 			case 3:
 			case 4:
-			case 5: lnFailed = (line[i] < '0' || line[i] > '9');
+			case 5: lnOk = (line[i] >= '0' && line[i] <= '9');
 					break;
-			case 6: lnFailed = (line[i] != '\n');
+			case 6: lnOk = (line[i] == '\n');
 		}
 	}
 
-	return !lnFailed;
+	return lnOk;
 }
 
 static int checkClient (char *line) {
-	int i, lnFailed;
+	int i, lnOk;
 
-	lnFailed = 0;
+	lnOk = 1;
 
-	for (i = 0; !lnFailed && i < 6; i++){
+	for (i = 0; lnOk && i < 6; i++){
 		switch (i){
-			case 0: lnFailed = (line[i] < 'A' || line[i] > 'Z');
+			case 0: lnOk = (line[i] >= 'A' && line[i] <= 'Z');
 					break;
-			case 1: lnFailed = (line[i] < '1' || line[i] > '5');
+			case 1: lnOk = (line[i] >= '1' && line[i] <= '5');
 					break;
 			case 2:
 			case 3:
-			case 4: lnFailed = (line[1] == '5' && line[i] != '0') ||
-							   (line[i] < '0' || line[i] > '9');
+			case 4: lnOk = (line[1] == '5' && line[i] == '0') ||
+							   (line[1] != '5' && line[i] >= '0' && line[i] <= '9');
 					break;
 		}
 	}
 
-	return !lnFailed;
+	return lnOk;
 }
 
 static int checkSale (char *line) {
