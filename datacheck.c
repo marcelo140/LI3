@@ -7,14 +7,14 @@
 
 #define BUFF_SIZE 35
 
-static int checkClient(char *line);
-static int checkProduct(char *line);
-static int checkSale(char *line);
+static int checkClient(char *line, CATALOG cat, CATALOG nil);
+static int checkProduct(char *line, CATALOG cat, CATALOG nil);
+static int checkSale(char *line, CATALOG productCat, CATALOG clientCat);
 
-int checkFile(FILE *file, int mode, int *sucLn, int *failLn) {
+int checkFile (FILE *file, CATALOG cat1, CATALOG cat2, int mode, int *sucLn, int *failLn) {
 	int checked_line, suc, fail;
-	char buf[BUFF_SIZE];
-	int (*checker)(char *);
+	char buf[BUFF_SIZE], *line;
+	int (*checker)(char *, CATALOG, CATALOG);
 
 	suc = fail = 0;
 
@@ -22,12 +22,16 @@ int checkFile(FILE *file, int mode, int *sucLn, int *failLn) {
 		case M_CLIENTS: checker = checkClient; break;
 		case M_PRODUCTS: checker = checkProduct; break;
 		case M_SALES: checker = checkSale; break;
-		default: return -1;
 	}
 
 	while(fgets(buf, BUFF_SIZE, file)) {
-		checked_line = checker(buf);
-		(checked_line) ? suc++ : fail++;
+		line = strtok (buf, "\n\r");
+		checked_line = checker(line, cat1, cat2);
+
+		if (checked_line) {
+			suc++;
+			if (mode != M_SALES) insert(cat1, line);
+		} else fail++;
 	}
 
 	*sucLn = suc;
@@ -36,7 +40,7 @@ int checkFile(FILE *file, int mode, int *sucLn, int *failLn) {
 	return 0;
 }
 
-static int checkProduct (char *line){
+static int checkProduct (char *line, CATALOG nil1, CATALOG nil2){
 	int i, lnOk;
 
 	lnOk = 1;
@@ -59,7 +63,7 @@ static int checkProduct (char *line){
 	return lnOk;
 }
 
-static int checkClient (char *line) {
+static int checkClient (char *line, CATALOG nil1, CATALOG nil2) {
 	int i, lnOk;
 
 	lnOk = 1;
@@ -81,33 +85,33 @@ static int checkClient (char *line) {
 	return lnOk;
 }
 
-static int checkSale (char *line) {
+static int checkSale (char *line, CATALOG productCat, CATALOG clientCat) {
 	int i, lnOk, quant, month, filial;
 	double price;
 	char *token;
 
 	lnOk = 1;
-	token = strtok(line, " \n\r");
+	token = strtok(line, " ");
 
 	for (i = 0; lnOk && token != NULL; i++){
 		switch(i) {
-			case 0: lnOk = checkProduct(token);
-							break;
-			case 1: lnOk = ((price = strtod(token,NULL)) >= 0 && price <= 999.99);
-							break;
+			case 0: lnOk = checkProduct(token, NULL, NULL) && (lookUp(productCat, token) != -1);
+						break;
+			case 1: lnOk = ((price = atof(token)) >= 0 && price <= 999.99);
+						break;
 			case 2: lnOk = ((quant = atoi(token)) >= 1 && quant <= 200);
-							break;
+						break;
 			case 3: lnOk = !strcmp(token, "P") || !strcmp(token, "N");
-							break;
-			case 4: lnOk = checkClient(token);
-							break;
+						break;
+			case 4: lnOk = checkClient(token, NULL, NULL) && (lookUp(clientCat, token) != -1);
+						break;
 			case 5: lnOk = (month = atoi(token) >= 1 && month < 12);
-							break;
+						break;
 			case 6: lnOk = ((filial = atoi(token)) >= 1 && filial <= 3);
-							break;
+						break;
 			default: lnOk = 0;
 		}
-		token = strtok(NULL, " \n\r");
+		token = strtok(NULL, " ");
 	}
 
 	return lnOk;

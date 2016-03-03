@@ -5,11 +5,11 @@ typedef struct mockArray {
 	char **arr;
 	int size;
 	int max;
-} catalog;
+} *CATALOG;
 
-catalog initArray(int tam);
-int insert(catalog c, char *buffer);
-int lookUp(catalog c, char *buffer);
-void freeCatalog(catalog c);
+CATALOG initCatalog(int tam);
+int insert(CATALOG c, char *buffer);
+int lookUp(CATALOG c, char *buffer);
+void freeCatalog(CATALOG c);
 
 #endif
