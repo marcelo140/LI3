@@ -1,37 +1,53 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <math.h>
 
 #include "datacheck.h"
 
 #define BUFF_SIZE 35
 
-static int checkClient(char *line, CATALOG cat, CATALOG nil);
-static int checkProduct(char *line, CATALOG cat, CATALOG nil);
-static int checkSale(char *line, CATALOG productCat, CATALOG clientCat);
+static int checkClient(char *line);
+static int checkProduct(char *line);
+static int checkSaleLn(char *line, CATALOG product, CATALOG client);
 
-int checkFile (FILE *file, CATALOG cat1, CATALOG cat2, int mode, int *sucLn, int *failLn) {
+void writeCatalog (FILE *file, CATALOG cat, int mode, int *sucLn, int *failLn) {
 	int checked_line, suc, fail;
 	char buf[BUFF_SIZE], *line;
-	int (*checker)(char *, CATALOG, CATALOG);
+	int (*checker)(char *);
 
 	suc = fail = 0;
 
 	switch(mode) {
 		case M_CLIENTS: checker = checkClient; break;
 		case M_PRODUCTS: checker = checkProduct; break;
-		case M_SALES: checker = checkSale; break;
 	}
 
 	while(fgets(buf, BUFF_SIZE, file)) {
 		line = strtok (buf, "\n\r");
-		checked_line = checker(line, cat1, cat2);
+		checked_line = checker(line);
 
 		if (checked_line) {
+			insert(cat, line);
 			suc++;
-			if (mode != M_SALES) insert(cat1, line);
-		} else fail++;
+		} else 
+			fail++;
+	}
+
+	*sucLn = suc;
+	*failLn = fail;
+}
+
+int checkSales (FILE *file, CATALOG products, CATALOG clients, int *sucLn, int *failLn) {
+	int checked_line, suc, fail;
+	char buf[BUFF_SIZE], *line;
+
+	suc = fail = 0;
+
+	while(fgets(buf, BUFF_SIZE, file)) {
+		line = strtok (buf, "\n\r");
+		checked_line = checkSaleLn(line, products, clients); 
+
+		(checked_line) ? suc++ : fail++;
 	}
 
 	*sucLn = suc;
@@ -40,7 +56,7 @@ int checkFile (FILE *file, CATALOG cat1, CATALOG cat2, int mode, int *sucLn, int
 	return 0;
 }
 
-static int checkProduct (char *line, CATALOG nil1, CATALOG nil2){
+static int checkProduct (char *line){
 	int i, lnOk;
 
 	lnOk = 1;
@@ -63,7 +79,7 @@ static int checkProduct (char *line, CATALOG nil1, CATALOG nil2){
 	return lnOk;
 }
 
-static int checkClient (char *line, CATALOG nil1, CATALOG nil2) {
+static int checkClient (char *line) {
 	int i, lnOk;
 
 	lnOk = 1;
@@ -85,7 +101,7 @@ static int checkClient (char *line, CATALOG nil1, CATALOG nil2) {
 	return lnOk;
 }
 
-static int checkSale (char *line, CATALOG productCat, CATALOG clientCat) {
+static int checkSaleLn (char *line, CATALOG productCat, CATALOG clientCat) {
 	int i, lnOk, quant, month, filial;
 	double price;
 	char *token;
@@ -95,7 +111,7 @@ static int checkSale (char *line, CATALOG productCat, CATALOG clientCat) {
 
 	for (i = 0; lnOk && token != NULL; i++){
 		switch(i) {
-			case 0: lnOk = checkProduct(token, NULL, NULL) && (lookUp(productCat, token) != -1);
+			case 0: lnOk = checkProduct(token) && (lookUp(productCat, token) != -1);
 						break;
 			case 1: lnOk = ((price = atof(token)) >= 0 && price <= 999.99);
 						break;
@@ -103,7 +119,7 @@ static int checkSale (char *line, CATALOG productCat, CATALOG clientCat) {
 						break;
 			case 3: lnOk = !strcmp(token, "P") || !strcmp(token, "N");
 						break;
-			case 4: lnOk = checkClient(token, NULL, NULL) && (lookUp(clientCat, token) != -1);
+			case 4: lnOk = checkClient(token) && (lookUp(clientCat, token) != -1);
 						break;
 			case 5: lnOk = (month = atoi(token) >= 1 && month < 12);
 						break;

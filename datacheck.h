@@ -5,8 +5,9 @@
 
 #define M_PRODUCTS 0
 #define M_CLIENTS 1
-#define M_SALES 2
 
-int checkFile (FILE *file, CATALOG cat1, CATALOG cat2, int mode, int *sucLn, int *failLn);
+void writeCatalog (FILE *file, CATALOG cat, int mode, int *sucLn, int *failLn);
+int checkSales (FILE *file, CATALOG clients, CATALOG products, int *sucLn, int *failLn);
+
 
 #endif

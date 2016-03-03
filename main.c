@@ -23,21 +23,21 @@ int main() {
 	clientCat = initCatalog(CLIENT_NUM);
 	productCat = initCatalog(PRODUCT_NUM);
 
-	checkFile(clients, clientCat, NULL, M_CLIENTS, &suc, &fail);
+	writeCatalog(clients, clientCat, M_CLIENTS, &suc, &fail);
 	printf("Clientes analisados: %d\n", suc+fail);
 	printf("Clientes corretos: %d\n", suc);
 	printf("Clientes incorretos: %d\n", fail);
 
 	putchar('\n');
 
-	checkFile(products, productCat, NULL, M_PRODUCTS, &suc, &fail);
+	writeCatalog(products, productCat, M_PRODUCTS, &suc, &fail);
 	printf("Produtos analisados: %d\n", suc+fail);
 	printf("Produtos corretos: %d\n", suc);
 	printf("Produtos incorretos: %d\n", fail);
 
 	putchar('\n');
 
-	checkFile(sales, productCat, clientCat, M_SALES, &suc, &fail);
+	checkSales(sales, productCat, clientCat, &suc, &fail);
 	printf("Vendas analisadas: %d\n", suc+fail);
 	printf("Vendas corretas: %d\n", suc);
 	printf("Vendas incorretas: %d\n", fail);
