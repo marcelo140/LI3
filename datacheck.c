@@ -29,7 +29,7 @@ void writeCatalog (FILE *file, CATALOG cat, int mode, int *sucLn, int *failLn) {
 		if (checked_line) {
 			insert(cat, line);
 			suc++;
-		} else 
+		} else
 			fail++;
 	}
 
@@ -45,7 +45,7 @@ int checkSales (FILE *file, CATALOG products, CATALOG clients, int *sucLn, int *
 
 	while(fgets(buf, BUFF_SIZE, file)) {
 		line = strtok (buf, "\n\r");
-		checked_line = checkSaleLn(line, products, clients); 
+		checked_line = checkSaleLn(line, products, clients);
 
 		(checked_line) ? suc++ : fail++;
 	}

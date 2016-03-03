@@ -8,7 +8,7 @@ typedef struct node {
 } *NODE;
 
 typedef struct mockArray {
-	NODE root;
+	NODE root[26];
 } *CATALOG;
 
 CATALOG initCatalog();

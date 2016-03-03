@@ -9,8 +9,9 @@
 
 CATALOG initCatalog () {
 	CATALOG c = malloc(sizeof (*c));
+	int i;
 
-	c->root = NULL;
+	for (i=0; i<26; i++) c->root[i] = NULL;
 
 	return c;
 }
@@ -27,9 +28,11 @@ static NODE newABin(char *buffer, NODE left, NODE right){
 }
 
 int insert(CATALOG c, char *buffer) {
-	NODE p = c->root;
+
+	int r, pos = buffer[0] - 'A';
+	NODE p = c->root[pos];
 	NODE new = newABin(buffer, NULL, NULL);
-	int r;
+
 
 	while(p != NULL){
 		r = strcmp(buffer, p->str);
@@ -46,14 +49,14 @@ int insert(CATALOG c, char *buffer) {
 	}
 
 	if (!p)
-		c->root = new;
+		c->root[pos] = new;
 
 	return 0;
 }
 
 int lookUp(CATALOG c, char *buffer) {
-	NODE p = c->root;
-	int r;
+	int r, pos = buffer[0] - 'A';
+	NODE p = c->root[pos];
 
 	while(p != NULL){
 		r = strcmp(buffer, p->str);
@@ -62,7 +65,7 @@ int lookUp(CATALOG c, char *buffer) {
 			p = p->right;
 		else if (r < 0)
 			p = p->left;
-		else 
+		else
 			return 0;
 	}
 
@@ -79,8 +82,11 @@ void freeABin(NODE p){
 }
 
 void freeCatalog(CATALOG c){
+
+	int i;
+
 	if (!c){
-		freeABin(c->root);
+		for (i=0; i<26; i++) freeABin(c->root[i]);
 		free(c);
 	}
 }
