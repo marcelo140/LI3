@@ -1,7 +1,10 @@
 #ifndef __MOCK_ARRAY_H__
 #define __MOCK_ARRAY_H__
 
+typedef enum balance { LH, EH, RH } Balance;
+
 typedef struct node {
+	Balance bal;
 	char *str;
 	struct node *left;
 	struct node *right;
