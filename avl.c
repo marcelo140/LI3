@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-#include "mockArray.h"
+#include "avl.h"
 
 #define BUFFER_SIZE 10
 static NODE insertNode(NODE p, NODE new, int *update);
@@ -29,23 +29,6 @@ static NODE newABin(char *buffer, NODE left, NODE right){
 	return new;
 }
 
-int altura (NODE p) {
-
-	int h=0, he, hd;
-
-	if (p) {
-		he = altura(p->left);
-		hd = altura(p->right);
-		h = (he > hd) ? he+1 : hd+1;
-
-		if (abs(he-hd) > 1) {printf("INVÁLDIO!! BAL:%d he:%d hd:%d (-):%d\n", p->bal, he, hd, abs(he-hd)); getchar();}
-	}
-
-
-	return h;
-}
-
-
 int insert(CATALOG c, char *buffer) {
 
 	int pos = buffer[0] - 'A', update=0;
@@ -70,10 +53,10 @@ int lookUp(CATALOG c, char *buffer) {
 		else if (r < 0)
 			p = p->left;
 		else
-			return 0;
+			return 1;
 	}
 
-	return -1;
+	return 0;
 }
 
 /* Rotação à direita da árvore */

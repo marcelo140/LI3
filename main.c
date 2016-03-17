@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include "datacheck.h"
-#include "mockArray.h"
+#include "avl.h"
 
 #define SALES_PATH "Vendas_1M.txt"
 #define CLIENTS_PATH "Clientes.txt"

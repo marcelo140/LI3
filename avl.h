@@ -10,7 +10,7 @@ typedef struct node {
 	struct node *right;
 } *NODE;
 
-typedef struct mockArray {
+typedef struct avl {
 	NODE root[26];
 } *CATALOG;
 

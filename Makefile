@@ -1,6 +1,6 @@
 CFLAGS += -O2 -ansi -Wall
 
-obj = main.o datacheck.o mockArray.o
+obj = main.o datacheck.o avl.o
 
 gereVendas: $(obj)
 	$(CC) $(obj) -o gereVendas -lm
@@ -8,9 +8,9 @@ gereVendas: $(obj)
 debug: CFLAGS := -g -ansi
 debug: gereVendas
 
-main.o: datacheck.h mockArray.h
+main.o: datacheck.h avl.h
 datacheck.o: datacheck.h
-mockArray.o: mockArray.h
+avl.o: avl.h
 
 .PHONY: clean
 clean:

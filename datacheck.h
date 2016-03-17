@@ -1,7 +1,7 @@
 #ifndef __DATACHECK_H__
 #define __DATACHECK_H__
 
-#include "mockArray.h"
+#include "avl.h"
 
 #define M_PRODUCTS 0
 #define M_CLIENTS 1

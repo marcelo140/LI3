@@ -13,7 +13,7 @@ static int checkSaleLn(char *line, CATALOG product, CATALOG client);
 void writeCatalog (FILE *file, CATALOG cat, int mode, int *sucLn, int *failLn) {
 	int checked_line, suc, fail;
 	char buf[BUFF_SIZE], *line;
-	int (*checker)(char *);
+	int (*checker)(char *) = NULL;
 
 	suc = fail = 0;
 
@@ -111,7 +111,7 @@ static int checkSaleLn (char *line, CATALOG productCat, CATALOG clientCat) {
 
 	for (i = 0; lnOk && token != NULL; i++){
 		switch(i) {
-			case 0: lnOk = checkProduct(token) && (lookUp(productCat, token) != -1);
+			case 0: lnOk = checkProduct(token) && (lookUp(productCat, token));
 						break;
 			case 1: lnOk = ((price = atof(token)) >= 0 && price <= 999.99);
 						break;
@@ -119,7 +119,7 @@ static int checkSaleLn (char *line, CATALOG productCat, CATALOG clientCat) {
 						break;
 			case 3: lnOk = !strcmp(token, "P") || !strcmp(token, "N");
 						break;
-			case 4: lnOk = checkClient(token) && (lookUp(clientCat, token) != -1);
+			case 4: lnOk = checkClient(token) && (lookUp(clientCat, token));
 						break;
 			case 5: lnOk = (month = atoi(token) >= 1 && month < 12);
 						break;
