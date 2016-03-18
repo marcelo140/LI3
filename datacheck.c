@@ -41,7 +41,7 @@ int checkSales (FILE *file, CATALOG products, CATALOG clients, int *sucLn, int *
 	int checked_line, suc, fail;
 	char buf[BUFF_SIZE], *line, print[BUFF_SIZE];
 	FILE * validSales = fopen ("Vendas_1MValidas.txt", "w");
-	FILE * unvalidSales = fopen ("Vendas_1MInvalidas.txt", "w");
+	FILE * invalidSales = fopen ("Vendas_1mInvalidas.txt", "w");
 
 	suc = fail = 0;
 
@@ -55,17 +55,16 @@ int checkSales (FILE *file, CATALOG products, CATALOG clients, int *sucLn, int *
 			fprintf(validSales, "%s\n", print);
 			suc++;
 		} else {
-			fprintf(unvalidSales, "%s\n", print);
+			fprintf(invalidSales, "%s\n", print);
 			fail++;
-		 }
+		}
 	}
 
 	*sucLn = suc;
 	*failLn = fail;
 
 	fclose(validSales);
-	fclose(unvalidSales);
-
+	fclose(invalidSales);
 	return 0;
 }
 
@@ -124,7 +123,7 @@ static int checkSaleLn (char *line, CATALOG productCat, CATALOG clientCat) {
 
 	for (i = 0; lnOk && token != NULL; i++){
 		switch(i) {
-			case 0: lnOk = checkProduct(token) && (lookUp(productCat, token));
+			case 0: lnOk = lookUp(productCat, token);
 						break;
 			case 1: lnOk = ((price = atof(token)) >= 0 && price <= 999.99);
 						break;
@@ -132,7 +131,7 @@ static int checkSaleLn (char *line, CATALOG productCat, CATALOG clientCat) {
 						break;
 			case 3: lnOk = !strcmp(token, "P") || !strcmp(token, "N");
 						break;
-			case 4: lnOk = checkClient(token) && (lookUp(clientCat, token));
+			case 4: lnOk = lookUp(clientCat, token);
 						break;
 			case 5: lnOk = (month = atoi(token) >= 1 && month < 12);
 						break;
