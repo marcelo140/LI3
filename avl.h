@@ -18,5 +18,6 @@ CATALOG initCatalog();
 int insert(CATALOG c, char *buffer);
 int lookUp(CATALOG c, char *buffer);
 void freeCatalog(CATALOG c);
+void printInOrder(CATALOG c);
 
 #endif

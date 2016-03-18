@@ -7,6 +7,7 @@
 
 #define BUFFER_SIZE 10
 static NODE insertNode(NODE p, NODE new, int *update);
+static void printNodeInOrder(NODE p);
 
 CATALOG initCatalog () {
 	CATALOG c = malloc(sizeof (*c));
@@ -57,6 +58,28 @@ int lookUp(CATALOG c, char *buffer) {
 	}
 
 	return 0;
+}
+
+static void printNodeInOrder(NODE p) {
+
+	if (!p) putchar ('\n');
+	else {
+		printNodeInOrder(p->left);
+		printf("|%s|\n", p->str);
+		printNodeInOrder(p->right);
+	}
+}
+
+void printInOrder (CATALOG c) {
+
+	int i;
+
+	if (!c) putchar('*');
+	else {
+		for (i=0; i<26; i++)
+			printf("==== %c:\n", 'A' +i);
+			printNodeInOrder(c->root[i]);
+	}
 }
 
 /* Rotação à direita da árvore */

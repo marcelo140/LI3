@@ -15,3 +15,5 @@ avl.o: avl.h
 .PHONY: clean
 clean:
 	-rm gereVendas *.o
+	-rm Vendas_1MValidas.txt
+	-rm Vendas_1MInvalidas.txt

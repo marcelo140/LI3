@@ -39,19 +39,32 @@ void writeCatalog (FILE *file, CATALOG cat, int mode, int *sucLn, int *failLn) {
 
 int checkSales (FILE *file, CATALOG products, CATALOG clients, int *sucLn, int *failLn) {
 	int checked_line, suc, fail;
-	char buf[BUFF_SIZE], *line;
+	char buf[BUFF_SIZE], *line, print[BUFF_SIZE];
+	FILE * validSales = fopen ("Vendas_1MValidas.txt", "w");
+	FILE * unvalidSales = fopen ("Vendas_1MInvalidas.txt", "w");
 
 	suc = fail = 0;
 
 	while(fgets(buf, BUFF_SIZE, file)) {
 		line = strtok (buf, "\n\r");
+		strcpy(print, line);
 		checked_line = checkSaleLn(line, products, clients);
 
-		(checked_line) ? suc++ : fail++;
+		/*(checked_line) ? suc++ : fail++; */
+		if (checked_line) {
+			fprintf(validSales, "%s\n", print);
+			suc++;
+		} else {
+			fprintf(unvalidSales, "%s\n", print);
+			fail++;
+		 }
 	}
 
 	*sucLn = suc;
 	*failLn = fail;
+
+	fclose(validSales);
+	fclose(unvalidSales);
 
 	return 0;
 }
