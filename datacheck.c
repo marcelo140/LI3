@@ -5,6 +5,7 @@
 #include "datacheck.h"
 
 #define BUFF_SIZE 35
+#define MAX_CATALOG 10000
 
 static int checkClient(char *line);
 static int checkProduct(char *line);
@@ -41,7 +42,6 @@ int checkSales (FILE *file, CATALOG products, CATALOG clients, int *sucLn, int *
 	int checked_line, suc, fail;
 	char buf[BUFF_SIZE], *line, print[BUFF_SIZE];
 	FILE * validSales = fopen ("Vendas_1MValidas.txt", "w");
-	FILE * invalidSales = fopen ("Vendas_1mInvalidas.txt", "w");
 
 	suc = fail = 0;
 
@@ -54,17 +54,14 @@ int checkSales (FILE *file, CATALOG products, CATALOG clients, int *sucLn, int *
 		if (checked_line) {
 			fprintf(validSales, "%s\n", print);
 			suc++;
-		} else {
-			fprintf(invalidSales, "%s\n", print);
+		} else 
 			fail++;
-		}
 	}
 
 	*sucLn = suc;
 	*failLn = fail;
 
 	fclose(validSales);
-	fclose(invalidSales);
 	return 0;
 }
 
@@ -143,4 +140,58 @@ static int checkSaleLn (char *line, CATALOG productCat, CATALOG clientCat) {
 	}
 
 	return lnOk;
+}
+
+
+void testsValidSales() {
+
+    int i, priceIsZero=0, totalQuant=0, quantity=0, totalClients=0, totalProducts=0;
+    float price, billed=0;
+    char line[BUFF_SIZE], *token;
+    FILE * file = fopen("Vendas_1MValidas.txt", "r");
+
+    CATALOG clients, products;
+
+    clients = initCatalog();
+    products = initCatalog();
+
+    while (fgets(line, BUFF_SIZE, file)) {
+
+        token = strtok(line, " \n\r");
+
+        for (i = 0; token != NULL; i++){
+    		switch(i) {
+    			case 0: if (!lookUp(products, token)) {
+                            totalProducts++;
+                            insert(products, token);
+                        }
+                        break;
+    			case 1: price = atof(token);
+                        if (!price) priceIsZero++;
+                        billed+=price;
+    					break;
+    			case 2: quantity = atoi(token);
+                        totalQuant += quantity;
+    					break;
+    			case 3: /* N/P */
+    					break;
+    			case 4: if (!lookUp(clients, token)) {
+                            totalClients++;
+                            insert(clients, token);
+                        }
+    					break;
+    			case 5: /* Month */
+    					break;
+    			case 6: /* Filial */
+    					break;
+    		}
+    		token = strtok(NULL, " ");
+    	}
+    }
+
+    printf("Preço Zero: %d\n", priceIsZero);
+    printf("Total Faturado: %f\n", billed);
+    printf("Unidades Vendidas: %d\n", totalQuant);
+    printf("Total Clientes: %d\n", totalClients);
+    printf("Total Produtos: %d\n", totalProducts);
 }

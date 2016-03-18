@@ -9,5 +9,6 @@
 void writeCatalog (FILE *file, CATALOG cat, int mode, int *sucLn, int *failLn);
 int checkSales (FILE *file, CATALOG clients, CATALOG products, int *sucLn, int *failLn);
 
+void testsValidSales();
 
 #endif

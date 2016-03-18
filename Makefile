@@ -1,6 +1,6 @@
 CFLAGS += -O2 -ansi -Wall
 
-obj = main.o datacheck.o avl.o
+obj = main.o datacheck.o avl.o 
 
 gereVendas: $(obj)
 	$(CC) $(obj) -o gereVendas -lm
@@ -16,4 +16,3 @@ avl.o: avl.h
 clean:
 	-rm gereVendas *.o
 	-rm Vendas_1MValidas.txt
-	-rm Vendas_1MInvalidas.txt

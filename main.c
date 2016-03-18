@@ -20,8 +20,8 @@ int main() {
 	products = fopen(PRODUCTS_PATH, "r");
 	sales = fopen(SALES_PATH, "r");
 
-	clientCat = initCatalog(CLIENT_NUM);
-	productCat = initCatalog(PRODUCT_NUM);
+	clientCat = initCatalog();
+	productCat = initCatalog();
 
 	writeCatalog(clients, clientCat, M_CLIENTS, &suc, &fail);
 	printf("Clientes analisados: %d\n", suc+fail);
@@ -41,6 +41,10 @@ int main() {
 	printf("Vendas analisadas: %d\n", suc+fail);
 	printf("Vendas corretas: %d\n", suc);
 	printf("Vendas incorretas: %d\n", fail);
+
+	putchar('\n');
+
+	testsValidSales();
 
 	freeCatalog(clientCat);
 	freeCatalog(productCat);
