@@ -45,6 +45,7 @@ int checkSales (FILE *file, CATALOG products, CATALOG clients, int *sucLn, int *
 
 	suc = fail = 0;
 
+//temos que verificar se file existe
 	while(fgets(buf, BUFF_SIZE, file)) {
 		line = strtok (buf, "\n\r");
 		strcpy(print, line);
@@ -54,7 +55,7 @@ int checkSales (FILE *file, CATALOG products, CATALOG clients, int *sucLn, int *
 		if (checked_line) {
 			fprintf(validSales, "%s\n", print);
 			suc++;
-		} else 
+		} else
 			fail++;
 	}
 
@@ -130,7 +131,7 @@ static int checkSaleLn (char *line, CATALOG productCat, CATALOG clientCat) {
 						break;
 			case 4: lnOk = lookUp(clientCat, token);
 						break;
-			case 5: lnOk = (month = atoi(token) >= 1 && month < 12);
+			case 5: lnOk = (month = atoi(token) >= 1 && month <= 12);
 						break;
 			case 6: lnOk = ((filial = atoi(token)) >= 1 && filial <= 3);
 						break;
@@ -155,7 +156,7 @@ void testsValidSales() {
     clients = initCatalog();
     products = initCatalog();
 
-    while (fgets(line, BUFF_SIZE, file)) {
+    while (fle  & fgets(line, BUFF_SIZE, file)) {
 
         token = strtok(line, " \n\r");
 
@@ -191,7 +192,7 @@ void testsValidSales() {
 
     printf("Preço Zero: %d\n", priceIsZero);
     printf("Total Faturado: %f\n", billed);
-    printf("Unidades Vendidas: %d\n", totalQuant);
+    printf("Unidades Vendidas: %d\n", totalQuant);NF1153
     printf("Total Clientes: %d\n", totalClients);
     printf("Total Produtos: %d\n", totalProducts);
 }
