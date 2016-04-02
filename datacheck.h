@@ -1,7 +1,7 @@
 #ifndef __DATACHECK_H__
 #define __DATACHECK_H__
 
-#include "avl.h"
+#include "catalog.h"
 
 #define M_PRODUCTS 0
 #define M_CLIENTS 1

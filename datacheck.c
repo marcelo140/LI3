@@ -28,7 +28,7 @@ void writeCatalog (FILE *file, CATALOG cat, int mode, int *sucLn, int *failLn) {
 		checked_line = checker(line);
 
 		if (checked_line) {
-			insert(cat, line);
+			insertCatalog(cat, line);
 			suc++;
 		} else
 			fail++;
@@ -121,7 +121,7 @@ static int checkSaleLn (char *line, CATALOG productCat, CATALOG clientCat) {
 
 	for (i = 0; lnOk && token != NULL; i++){
 		switch(i) {
-			case 0: lnOk = lookUp(productCat, token);
+			case 0: lnOk = lookUpCatalog(productCat, token);
 						break;
 			case 1: lnOk = ((price = atof(token)) >= 0 && price <= 999.99);
 						break;
@@ -129,7 +129,7 @@ static int checkSaleLn (char *line, CATALOG productCat, CATALOG clientCat) {
 						break;
 			case 3: lnOk = !strcmp(token, "P") || !strcmp(token, "N");
 						break;
-			case 4: lnOk = lookUp(clientCat, token);
+			case 4: lnOk = lookUpCatalog(clientCat, token);
 						break;
 			case 5: lnOk = (month = atoi(token) >= 1 && month <= 12);
 						break;
@@ -162,9 +162,9 @@ void testsValidSales() {
 
         for (i = 0; token != NULL; i++){
     		switch(i) {
-    			case 0: if (!lookUp(products, token)) {
+    			case 0: if (!lookUpCatalog(products, token)) {
                             totalProducts++;
-                            insert(products, token);
+                            insertCatalog(products, token);
                         }
                         break;
     			case 1: price = atof(token);
@@ -176,9 +176,9 @@ void testsValidSales() {
     					break;
     			case 3: /* N/P */
     					break;
-    			case 4: if (!lookUp(clients, token)) {
+    			case 4: if (!lookUpCatalog(clients, token)) {
                             totalClients++;
-                            insert(clients, token);
+                            insertCatalog(clients, token);
                         }
     					break;
     			case 5: /* Month */
