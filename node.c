@@ -3,19 +3,67 @@
 
 #include <stdio.h>
 
-#include "avl.h"
+#include "node.h"
 
 #define BUFFER_SIZE 10
-static NODE insertNode(NODE p, NODE new, int *update);
-static void printNodeInOrder(NODE p);
 
-CATALOG initCatalog () {
-	CATALOG c = malloc(sizeof (*c));
-	int i;
+static NODE insertNodeAux(NODE p, NODE new, int *update);
+static NODE newABin(char *buffer, NODE left, NODE right);
 
-	for (i=0; i<26; i++) c->root[i] = NULL;
+NODE initNode() {
+	return NULL;
+}
 
-	return c;
+NODE insertNode(NODE p, char *s) {
+
+	int update=0;
+	NODE new = newABin(s, NULL, NULL);
+
+	return insertNodeAux(p, new, &update);
+}
+
+int isEmptyNode(NODE n) {
+	return (n == NULL);
+}
+
+/*Dado um catálogo e uma String localiza essa string no catálogo.*/
+int lookUpNode(NODE n, char *buffer) {
+
+	int r;
+
+	while(n){
+		r = strcmp(buffer, n->str);
+
+		if (r > 0)
+			n = n->right;
+		else if (r < 0)
+			n = n->left;
+		else
+			return 1;
+	}
+
+	return 0;
+}
+
+/* Liberta o espaço ocupado por uma árvore */
+void freeNode(NODE p){
+
+	if (!p){
+	free(p->str);
+	freeNode(p->left);
+	freeNode(p->right);
+	free(p);
+	}
+}
+
+void printInOrderNode(NODE p) {
+
+	if (!p) putchar ('\n');
+	else {
+		printInOrderNode(p->left);
+		printf("|%s|\n", p->str);
+		printInOrderNode(p->right);
+	}
 }
 
 static NODE newABin(char *buffer, NODE left, NODE right){
@@ -28,58 +76,6 @@ static NODE newABin(char *buffer, NODE left, NODE right){
 	strncpy(new->str, buffer, BUFFER_SIZE);
 
 	return new;
-}
-
-int insert(CATALOG c, char *buffer) {
-
-	int pos = buffer[0] - 'A', update=0;
-	NODE p = c->root[pos];
-	NODE new = newABin(buffer, NULL, NULL);
-
-	c->root[pos] = insertNode(p, new, &update);
-
-	return 0;
-}
-
-/*Dado um catálogo e uma String localiza essa string no catálogo.*/
-int lookUp(CATALOG c, char *buffer) {
-	int r, pos = buffer[0] - 'A';
-	NODE p = c->root[pos];
-
-	while(p != NULL){
-		r = strcmp(buffer, p->str);
-
-		if (r > 0)
-			p = p->right;
-		else if (r < 0)
-			p = p->left;
-		else
-			return 1;
-	}
-
-	return 0;
-}
-
-static void printNodeInOrder(NODE p) {
-
-	if (!p) putchar ('\n');
-	else {
-		printNodeInOrder(p->left);
-		printf("|%s|\n", p->str);
-		printNodeInOrder(p->right);
-	}
-}
-
-void printInOrder (CATALOG c) {
-
-	int i;
-
-	if (!c) putchar('*');
-	else {
-		for (i=0; i<26; i++)
-			printf("==== %c:\n", 'A' +i);
-			printNodeInOrder(c->root[i]);
-	}
 }
 
 /* Rotação à direita da árvore */
@@ -180,7 +176,7 @@ static NODE balanceLeft(NODE p) {
 
 /* Insere um novo Nodo à direita.*/
 static NODE insertRight(NODE p, NODE new, int *update) {
-	p->right = insertNode(p->right, new, update);
+	p->right = insertNodeAux(p->right, new, update);
 
 	if (*update) {
 		switch (p->bal) {
@@ -204,7 +200,7 @@ static NODE insertRight(NODE p, NODE new, int *update) {
 
 /* Insere um novo Nodo à esquerda. */
 static NODE insertLeft(NODE p, NODE new, int *update) {
-	p->left = insertNode(p->left, new, update);
+	p->left = insertNodeAux(p->left, new, update);
 
 	if (*update) {
 		switch (p->bal) {
@@ -226,8 +222,9 @@ static NODE insertLeft(NODE p, NODE new, int *update) {
 	return p;
 }
 
+
 /* Insere o novo Nodo na árvore.*/
-static NODE insertNode(NODE p, NODE new, int *update) {
+static NODE insertNodeAux(NODE p, NODE new, int *update) {
 
 	int r;
 
@@ -243,26 +240,4 @@ static NODE insertNode(NODE p, NODE new, int *update) {
 		p = insertLeft(p, new, update);
 
 	return p;
-}
-
-
-/* Liberta o espaço ocupado por uma árvore */
-void freeABin(NODE p){
-	if (!p){
-	free(p->str);
-	freeABin(p->left);
-	freeABin(p->right);
-	free(p);
-	}
-}
-
-/* Liberta todo o espaço ocupado pelo catálogo */
-void freeCatalog(CATALOG c){
-
-	int i;
-
-	if (!c){
-		for (i=0; i<26; i++) freeABin(c->root[i]);
-		free(c);
-	}
 }
