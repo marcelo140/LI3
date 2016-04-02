@@ -21,6 +21,11 @@ int main() {
 	products = fopen(PRODUCTS_PATH, "r");
 	sales = fopen(SALES_PATH, "r");
 
+	if (!(clients && products && sales)){
+		fprintf(stderr,"Ficheiros de entrada não encontrados");
+		return -1;
+	}
+
 	clientCat = initCatalog();
 	productCat = initCatalog();
 
@@ -45,7 +50,7 @@ int main() {
 
 	putchar('\n');
 
-	testsValidSales();
+	/*testsValidSales(); */
 
 	freeCatalog(clientCat);
 	freeCatalog(productCat);
