@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <string.h>
-
 #include <stdio.h>
 
 #include "node.h"
@@ -15,7 +14,6 @@ NODE initNode() {
 }
 
 NODE insertNode(NODE p, char *s) {
-
 	int update=0;
 	NODE new = newABin(s, NULL, NULL);
 
@@ -28,7 +26,6 @@ int isEmptyNode(NODE n) {
 
 /*Dado um catálogo e uma String localiza essa string no catálogo.*/
 int lookUpNode(NODE n, char *buffer) {
-
 	int r;
 
 	while(n){
@@ -46,19 +43,18 @@ int lookUpNode(NODE n, char *buffer) {
 }
 
 /* Liberta o espaço ocupado por uma árvore */
-void freeNode(NODE p){
-
+void freeNode(NODE p) {
 	if (!p){
-	free(p->str);
-	freeNode(p->left);
-	freeNode(p->right);
-	free(p);
+		free(p->str);
+		freeNode(p->left);
+		freeNode(p->right);
+		free(p);
 	}
 }
 
 void printInOrderNode(NODE p) {
-
-	if (!p) putchar ('\n');
+	if (!p)
+		putchar ('\n');
 	else {
 		printInOrderNode(p->left);
 		printf("|%s|\n", p->str);
@@ -66,7 +62,7 @@ void printInOrderNode(NODE p) {
 	}
 }
 
-static NODE newABin(char *buffer, NODE left, NODE right){
+static NODE newABin(char *buffer, NODE left, NODE right) {
 	NODE new = malloc(sizeof(struct node));
 
 	new->bal = EH;
@@ -82,14 +78,13 @@ static NODE newABin(char *buffer, NODE left, NODE right){
 static NODE rotateRight(NODE p) {
 	NODE aux = NULL;
 
-	if ( !p || !(p->left))
-		fprintf(stderr, "ERRO - Tentativa de rotação à direita em árvore nula.\n");
-	else {
-		aux = p->left;
-		p->left = aux->right;
-		aux->right = p;
-		p = aux;
-	}
+	if (!p || !(p->left))
+		return 0;
+
+	aux = p->left;
+	p->left = aux->right;
+	aux->right = p;
+	p = aux;
 
 	return aux;
 }
@@ -98,14 +93,13 @@ static NODE rotateRight(NODE p) {
 static NODE rotateLeft(NODE p) {
 	NODE aux = NULL;
 
-	if ( !p || !(p->right))
-		fprintf(stderr, "ERRO - Tentativa de rotação à esquerda em árvore nula.\n");
-	else {
-		aux = p->right;
-		p->right = aux->left;
-		aux->left = p;
-		p = aux;
-	}
+	if (!p || !(p->right))
+		return 0;
+
+	aux = p->right;
+	p->right = aux->left;
+	aux->left = p;
+	p = aux;
 
 	return aux;
 }
@@ -225,7 +219,6 @@ static NODE insertLeft(NODE p, NODE new, int *update) {
 
 /* Insere o novo Nodo na árvore.*/
 static NODE insertNodeAux(NODE p, NODE new, int *update) {
-
 	int r;
 
 	if (!p) {

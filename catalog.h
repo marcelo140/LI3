@@ -3,10 +3,7 @@
 
 #include "node.h"
 
-typedef struct avl {
-	NODE root[26];
-} *CATALOG;
-
+typedef struct avl *CATALOG;
 
 #define BUFFER_SIZE 10
 
