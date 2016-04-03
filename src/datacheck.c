@@ -167,7 +167,7 @@ void testsValidSales() {
 
     printf("Preço Zero: %d\n", priceIsZero);
     printf("Total Faturado: %f\n", billed);
-    printf("Unidades Vendidas: %d\n", totalQuant);NF1153
+    printf("Unidades Vendidas: %d\n", totalQuant);
     printf("Total Clientes: %d\n", totalClients);
     printf("Total Produtos: %d\n", totalProducts);
 }

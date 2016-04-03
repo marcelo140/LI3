@@ -9,18 +9,18 @@ static AVL insertAVLaux(AVL p, AVL new, int *update);
 static AVL newABin(char *buffer, AVL left, AVL right);
 
 /**
- * Inicia um novo nodo.
- * @return Novo nodo
+ * Inicia uma nova AVL.
+ * @return Nova AVL
  */
 AVL initAVL() {
 	return NULL;
 }
 
 /**
- * Insere uma string na árvore
- * @param p Árvore onde inserir
+ * Insere uma string na AVL
+ * @param p AVL a onde inserir
  * @param s String a inserir
- * @return Árvore com o novo nodo.
+ * @return AVL com o novo nodo.
  */
 AVL insertAVL(AVL p, char *s) {
 	int update=0;
@@ -30,16 +30,16 @@ AVL insertAVL(AVL p, char *s) {
 }
 
 /**
- * Verifica se uma dada Árvore é vazia ou não.
- * @return true caso seja vasia, false caso contrário.
+ * Verifica se uma dada AVL é vazia ou não.
+ * @return true caso seja vazia, false caso contrário.
  */
 bool isEmptyAVL(AVL n) {
 	return (n == NULL);
 }
 
 /**
- * Dado um catálogo e uma string verifica se existe essa string na árvore.
- * @param n Árvore
+ * Dado um catálogo e uma string verifica se existe essa string na AVL.
+ * @param n AVL
  * @param s String a procurar
  * @return true caso encontre, false caso contrário
  */
@@ -60,10 +60,9 @@ bool lookUpAVL(AVL n, char *s) {
 	return false;
 }
 
-/** 
- * Liberta o espaço ocupado por uma árvore 
- * @param p Árvore a libertar
- * @return void
+/**
+ * Liberta o espaço ocupado por uma AVL
+ * @param p AVL a libertar
  */
 void freeAVL(AVL p) {
 	if (!p){
@@ -239,7 +238,7 @@ static AVL insertLeft(AVL p, AVL new, int *update) {
 }
 
 
-/* Insere o novo Nodo na árvore.*/
+/* Insere o novo Nodo na AVL.*/
 static AVL insertAVLaux(AVL p, AVL new, int *update) {
 	int r;
 
