@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-
 #include "node.h"
 
 #define BUFFER_SIZE 10
@@ -9,10 +8,20 @@
 static NODE insertNodeAux(NODE p, NODE new, int *update);
 static NODE newABin(char *buffer, NODE left, NODE right);
 
+/**
+ * Inicia um novo nodo.
+ * @return Novo nodo
+ */
 NODE initNode() {
 	return NULL;
 }
 
+/**
+ * Insere uma string na árvore
+ * @param p Árvore onde inserir
+ * @param s String a inserir
+ * @return Árvore com o novo nodo.
+ */
 NODE insertNode(NODE p, char *s) {
 	int update=0;
 	NODE new = newABin(s, NULL, NULL);
@@ -20,29 +29,42 @@ NODE insertNode(NODE p, char *s) {
 	return insertNodeAux(p, new, &update);
 }
 
-int isEmptyNode(NODE n) {
+/**
+ * Verifica se uma dada Árvore é vazia ou não.
+ * @return true caso seja vasia, false caso contrário.
+ */
+bool isEmptyNode(NODE n) {
 	return (n == NULL);
 }
 
-/*Dado um catálogo e uma String localiza essa string no catálogo.*/
-int lookUpNode(NODE n, char *buffer) {
+/**
+ * Dado um catálogo e uma string verifica se existe essa string na árvore.
+ * @param n Árvore
+ * @param s String a procurar
+ * @return true caso encontre, false caso contrário
+ */
+bool lookUpNode(NODE n, char *s) {
 	int r;
 
 	while(n){
-		r = strcmp(buffer, n->str);
+		r = strcmp(s, n->str);
 
 		if (r > 0)
 			n = n->right;
 		else if (r < 0)
 			n = n->left;
 		else
-			return 1;
+			return true;
 	}
 
-	return 0;
+	return false;
 }
 
-/* Liberta o espaço ocupado por uma árvore */
+/** 
+ * Liberta o espaço ocupado por uma árvore 
+ * @param p Árvore a libertar
+ * @return void
+ */
 void freeNode(NODE p) {
 	if (!p){
 		free(p->str);

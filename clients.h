@@ -1,12 +1,13 @@
 #ifndef __CLIENTS_H__
 #define __CLIENTS_H__
 
-#include "catalog.h"
-
 typedef char bool;
 
 typedef CATALOG CLIENTCAT;
 typedef struct client *CLIENT;
+
+#define true 1
+#define false 0
 
 CLIENTCAT initClientCat();
 CLIENTCAT insertClient(CLIENTCAT catalog, CLIENT client);

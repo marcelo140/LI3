@@ -1,7 +1,8 @@
 #ifndef __PRODUCTS_H__
 #define __PRODUCTS_H__
 
-#include "catalog.h"
+#define true 1
+#define false 0
 
 typedef struct product *PRODUCT; 
 typedef CATALOG PRODUCTCAT;
