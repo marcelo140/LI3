@@ -1,18 +1,18 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include "node.h"
+#include "avl.h"
 
 #define BUFFER_SIZE 10
 
-static NODE insertNodeAux(NODE p, NODE new, int *update);
-static NODE newABin(char *buffer, NODE left, NODE right);
+static AVL insertAVLaux(AVL p, AVL new, int *update);
+static AVL newABin(char *buffer, AVL left, AVL right);
 
 /**
  * Inicia um novo nodo.
  * @return Novo nodo
  */
-NODE initNode() {
+AVL initAVL() {
 	return NULL;
 }
 
@@ -22,18 +22,18 @@ NODE initNode() {
  * @param s String a inserir
  * @return Árvore com o novo nodo.
  */
-NODE insertNode(NODE p, char *s) {
+AVL insertAVL(AVL p, char *s) {
 	int update=0;
-	NODE new = newABin(s, NULL, NULL);
+	AVL new = newABin(s, NULL, NULL);
 
-	return insertNodeAux(p, new, &update);
+	return insertAVLaux(p, new, &update);
 }
 
 /**
  * Verifica se uma dada Árvore é vazia ou não.
  * @return true caso seja vasia, false caso contrário.
  */
-bool isEmptyNode(NODE n) {
+bool isEmptyAVL(AVL n) {
 	return (n == NULL);
 }
 
@@ -43,7 +43,7 @@ bool isEmptyNode(NODE n) {
  * @param s String a procurar
  * @return true caso encontre, false caso contrário
  */
-bool lookUpNode(NODE n, char *s) {
+bool lookUpAVL(AVL n, char *s) {
 	int r;
 
 	while(n){
@@ -65,27 +65,27 @@ bool lookUpNode(NODE n, char *s) {
  * @param p Árvore a libertar
  * @return void
  */
-void freeNode(NODE p) {
+void freeAVL(AVL p) {
 	if (!p){
 		free(p->str);
-		freeNode(p->left);
-		freeNode(p->right);
+		freeAVL(p->left);
+		freeAVL(p->right);
 		free(p);
 	}
 }
 
-void printInOrderNode(NODE p) {
+void printInOrderAVL(AVL p) {
 	if (!p)
 		putchar ('\n');
 	else {
-		printInOrderNode(p->left);
+		printInOrderAVL(p->left);
 		printf("|%s|\n", p->str);
-		printInOrderNode(p->right);
+		printInOrderAVL(p->right);
 	}
 }
 
-static NODE newABin(char *buffer, NODE left, NODE right) {
-	NODE new = malloc(sizeof(struct node));
+static AVL newABin(char *buffer, AVL left, AVL right) {
+	AVL new = malloc(sizeof(struct avl));
 
 	new->bal = EH;
 	new->str = malloc(sizeof(BUFFER_SIZE));
@@ -97,8 +97,8 @@ static NODE newABin(char *buffer, NODE left, NODE right) {
 }
 
 /* Rotação à direita da árvore */
-static NODE rotateRight(NODE p) {
-	NODE aux = NULL;
+static AVL rotateRight(AVL p) {
+	AVL aux = NULL;
 
 	if (!p || !(p->left))
 		return 0;
@@ -112,8 +112,8 @@ static NODE rotateRight(NODE p) {
 }
 
 /* Rotação à esquerda da árvore */
-static NODE rotateLeft(NODE p) {
-	NODE aux = NULL;
+static AVL rotateLeft(AVL p) {
+	AVL aux = NULL;
 
 	if (!p || !(p->right))
 		return 0;
@@ -127,7 +127,7 @@ static NODE rotateLeft(NODE p) {
 }
 
 /* Balança a árvore caso esteja inclinada para a direita*/
-static NODE balanceRight(NODE p) {
+static AVL balanceRight(AVL p) {
 
 	if (p->right->bal == RH) {
 		/* Se o nodo da direita está inclinado para a direita*/
@@ -159,7 +159,7 @@ static NODE balanceRight(NODE p) {
 }
 
 /* Balança a árvore caso esteja inclinada para a esquerda */
-static NODE balanceLeft(NODE p) {
+static AVL balanceLeft(AVL p) {
 
 	if (p->left->bal == LH) {
 		/* Se o nodo da esquerda está inclinado para a esquerda*/
@@ -191,8 +191,8 @@ static NODE balanceLeft(NODE p) {
 }
 
 /* Insere um novo Nodo à direita.*/
-static NODE insertRight(NODE p, NODE new, int *update) {
-	p->right = insertNodeAux(p->right, new, update);
+static AVL insertRight(AVL p, AVL new, int *update) {
+	p->right = insertAVLaux(p->right, new, update);
 
 	if (*update) {
 		switch (p->bal) {
@@ -215,8 +215,8 @@ static NODE insertRight(NODE p, NODE new, int *update) {
 }
 
 /* Insere um novo Nodo à esquerda. */
-static NODE insertLeft(NODE p, NODE new, int *update) {
-	p->left = insertNodeAux(p->left, new, update);
+static AVL insertLeft(AVL p, AVL new, int *update) {
+	p->left = insertAVLaux(p->left, new, update);
 
 	if (*update) {
 		switch (p->bal) {
@@ -240,7 +240,7 @@ static NODE insertLeft(NODE p, NODE new, int *update) {
 
 
 /* Insere o novo Nodo na árvore.*/
-static NODE insertNodeAux(NODE p, NODE new, int *update) {
+static AVL insertAVLaux(AVL p, AVL new, int *update) {
 	int r;
 
 	if (!p) {

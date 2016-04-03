@@ -1,12 +1,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include "catalog.h"
-#include "node.h"
+#include "avl.h"
 
 #define ARRAY_SIZE 26
 
 struct catalog{
-	NODE root[ARRAY_SIZE];
+	AVL root[ARRAY_SIZE];
 };
 
 /**
@@ -18,7 +18,7 @@ CATALOG initCatalog() {
 	int i;
 
 	for (i=0; i<ARRAY_SIZE; i++)
-		c->root[i] = initNode();
+		c->root[i] = initAVL();
 
 	return c;
 }
@@ -31,9 +31,9 @@ CATALOG initCatalog() {
  */
 CATALOG insertCatalog(CATALOG c, char *s) {
 	int pos = s[0] - 'A';
-	NODE p = c->root[pos];
+	AVL p = c->root[pos];
 
-	c->root[pos] = insertNode(p, s);
+	c->root[pos] = insertAVL(p, s);
 
 	return c;
 }
@@ -46,9 +46,9 @@ CATALOG insertCatalog(CATALOG c, char *s) {
  */
 bool lookUpCatalog(CATALOG c, char *s) {
 	int pos = s[0] - 'A';
-	NODE p = c->root[pos];
+	AVL p = c->root[pos];
 
-	return lookUpNode(p, s);
+	return lookUpAVL(p, s);
 }
 
 /**
@@ -60,7 +60,7 @@ void freeCatalog(CATALOG c){
 	int i;
 
 	if (c){
-		for (i=0; i<ARRAY_SIZE; i++) freeNode(c->root[i]);
+		for (i=0; i<ARRAY_SIZE; i++) freeAVL(c->root[i]);
 		free(c);
 	}
 }

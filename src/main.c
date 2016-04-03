@@ -52,7 +52,7 @@ int main() {
 
 	putchar('\n');
 
-	/*testsValidSales(); */
+	/*testsValidSales();*/
 
 	freeClientCat(clientCat);
 	freeProductCat(productCat);
