@@ -41,7 +41,6 @@ bool lookUpClient(CLIENTCAT catalog, CLIENT client) {
 /** 
  * Liberta o espaço ocupado pelo Catálogo de Clientes
  * @param catalog Catálogo de Clientes
- * @return void
  */
 void freeClientCat(CLIENTCAT catalog) {
 	freeCatalog(catalog);
@@ -49,8 +48,8 @@ void freeClientCat(CLIENTCAT catalog) {
 
 /** 
  * Converte String para CLIENT
- * @param char* String a converter
- * @return CLIENT
+ * @param str String a converter
+ * @return CLIENT novo
  */
 CLIENT toClient(char *str) {
 	CLIENT r = malloc(sizeof (*r));

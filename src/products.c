@@ -40,7 +40,6 @@ bool lookUpProduct(PRODUCTCAT catalog, PRODUCT product) {
 /** 
  * Liberta o espaço ocupado pelo Catálogo de Produtos
  * @param catalog Catálogo de Produtos
- * @return void
  */
 void freeProductCat(PRODUCTCAT catalog) {
 	freeCatalog(catalog);
