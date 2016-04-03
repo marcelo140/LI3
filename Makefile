@@ -1,5 +1,5 @@
 CFLAGS += -O2 -ansi -Wall
-
+VPATH = src
 obj = main.o datacheck.o node.o catalog.o clients.o products.o
 
 gereVendas: $(obj)
@@ -19,3 +19,6 @@ products.o: products.h
 clean:
 	-rm gereVendas *.o
 	-rm Vendas_1MValidas.txt
+
+doc:
+	doxygen doxygen.conf
