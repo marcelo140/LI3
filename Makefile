@@ -1,12 +1,12 @@
 C_FILES := $(wildcard src/*.c)
 OBJ_FILES := $(addprefix obj/,$(notdir $(C_FILES:.c=.o)))
-
 CFLAGS += -O2 -ansi -Wall
 
 gereVendas: $(OBJ_FILES)
 	$(CC) -o $@ $^
 
-obj/%.o: src/%.c 
+obj/%.o: src/%.c
+	@mkdir -p obj
 	$(CC) $(CFLAGS) -o $@ -c $<
 
 debug: CFLAGS := -g -ansi
@@ -24,7 +24,7 @@ clean:
 	-@rm -f gereVendas *.o
 	-@rm -f Vendas_1MValidas.txt
 	-@rm -rf doc
-	-@rm -rf obj/*
+	-@rm -rf obj
 
 .PHONY: doc
 doc:
