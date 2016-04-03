@@ -3,7 +3,7 @@ CFLAGS += -O2 -ansi -Wall
 obj = main.o datacheck.o node.o catalog.o clients.o products.o
 
 gereVendas: $(obj)
-	$(CC) $(obj) -o gereVendas -lm
+	$(CC) $(obj) -o gereVendas 
 
 debug: CFLAGS := -g -ansi
 debug: gereVendas

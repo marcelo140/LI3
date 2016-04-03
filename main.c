@@ -1,7 +1,8 @@
 #include <stdio.h>
-#include "datacheck.h"
 
 #include "datacheck.h"
+#include "clients.h"
+#include "products.h"
 
 #define SALES_PATH "Vendas_1M.txt"
 #define CLIENTS_PATH "Clientes.txt"
@@ -14,7 +15,8 @@ typedef char bool;
 
 int main() {
 	FILE *clients, *products, *sales;
-	CATALOG clientCat, productCat;
+	CLIENTCAT clientCat;
+	PRODUCTCAT productCat;
 	int suc, fail;
 
 	clients = fopen(CLIENTS_PATH, "r");
@@ -26,17 +28,17 @@ int main() {
 		return -1;
 	}
 
-	clientCat = initCatalog();
-	productCat = initCatalog();
+	clientCat = initClientCat();
+	productCat = initProductCat();
 
-	writeCatalog(clients, clientCat, M_CLIENTS, &suc, &fail);
+	clientCat = writeCCat(clients, clientCat, &suc, &fail);
 	printf("Clientes analisados: %d\n", suc+fail);
 	printf("Clientes corretos: %d\n", suc);
 	printf("Clientes incorretos: %d\n", fail);
 
 	putchar('\n');
 
-	writeCatalog(products, productCat, M_PRODUCTS, &suc, &fail);
+	productCat = writePCat(products, productCat, &suc, &fail);
 	printf("Produtos analisados: %d\n", suc+fail);
 	printf("Produtos corretos: %d\n", suc);
 	printf("Produtos incorretos: %d\n", fail);
@@ -52,8 +54,8 @@ int main() {
 
 	/*testsValidSales(); */
 
-	freeCatalog(clientCat);
-	freeCatalog(productCat);
+	freeClientCat(clientCat);
+	freeProductCat(productCat);
 
 	fclose(clients);
 	fclose(products);

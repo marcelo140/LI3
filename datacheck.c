@@ -7,28 +7,21 @@
 #define BUFF_SIZE 35
 #define MAX_CATALOG 10000
 
-static int checkClient(char *line);
-static int checkProduct(char *line);
 static int checkSaleLn(char *line, CATALOG product, CATALOG client);
 
-void writeCatalog (FILE *file, CATALOG cat, int mode, int *sucLn, int *failLn) {
-	int checked_line, suc, fail;
+CLIENTCAT writeCCat(FILE *file, CLIENTCAT cat, int *sucLn, int *failLn) {
+	int suc, fail;
 	char buf[BUFF_SIZE], *line;
-	int (*checker)(char *) = NULL;
+	CLIENT client;
 
 	suc = fail = 0;
 
-	switch(mode) {
-		case M_CLIENTS: checker = checkClient; break;
-		case M_PRODUCTS: checker = checkProduct; break;
-	}
-
 	while(fgets(buf, BUFF_SIZE, file)) {
 		line = strtok (buf, "\n\r");
-		checked_line = checker(line);
+		client = toClient(line);
 
-		if (checked_line) {
-			insertCatalog(cat, line);
+		if (client){
+			cat = insertClient(cat, client);
 			suc++;
 		} else
 			fail++;
@@ -36,6 +29,32 @@ void writeCatalog (FILE *file, CATALOG cat, int mode, int *sucLn, int *failLn) {
 
 	*sucLn = suc;
 	*failLn = fail;
+
+	return cat;
+}
+
+PRODUCTCAT writePCat(FILE *file, PRODUCTCAT cat, int *sucLn, int *failLn) {
+	int suc, fail;
+	char buf[BUFF_SIZE], *line;
+	PRODUCT product;
+
+	suc = fail = 0;
+
+	while(fgets(buf, BUFF_SIZE, file)) {
+		line = strtok (buf, "\n\r");
+		product = toProduct(line);
+
+		if (product) {
+			cat = insertProduct(cat, product);
+			suc++;
+		} else
+			fail++;
+	}
+
+	*sucLn = suc;
+	*failLn = fail;
+
+	return cat;
 }
 
 int checkSales (FILE *file, CATALOG products, CATALOG clients, int *sucLn, int *failLn) {
@@ -45,13 +64,11 @@ int checkSales (FILE *file, CATALOG products, CATALOG clients, int *sucLn, int *
 
 	suc = fail = 0;
 
-/* temos que verificar se file existe */
 	while(fgets(buf, BUFF_SIZE, file)) {
 		line = strtok (buf, "\n\r");
 		strcpy(print, line);
 		checked_line = checkSaleLn(line, products, clients);
 
-		/*(checked_line) ? suc++ : fail++; */
 		if (checked_line) {
 			fprintf(validSales, "%s\n", print);
 			suc++;
@@ -64,51 +81,6 @@ int checkSales (FILE *file, CATALOG products, CATALOG clients, int *sucLn, int *
 
 	fclose(validSales);
 	return 0;
-}
-
-static int checkProduct (char *line){
-	int i, lnOk;
-
-	lnOk = 1;
-
-	for (i = 0; lnOk && i < 6; i++){
-		switch (i){
-			case 0:
-			case 1: lnOk = (line[i] >= 'A' && line[i] <= 'Z');
-					break;
-			case 2: lnOk = (line[i] == '1');
-					break;
-			case 3:
-			case 4:
-			case 5: lnOk = (line[i] >= '0' && line[i] <= '9');
-					break;
-			case 6: lnOk = (line[i] == '\n');
-		}
-	}
-
-	return lnOk;
-}
-
-static int checkClient (char *line) {
-	int i, lnOk;
-
-	lnOk = 1;
-
-	for (i = 0; lnOk && i < 6; i++){
-		switch (i){
-			case 0: lnOk = (line[i] >= 'A' && line[i] <= 'Z');
-					break;
-			case 1: lnOk = (line[i] >= '1' && line[i] <= '5');
-					break;
-			case 2:
-			case 3:
-			case 4: lnOk = (line[1] == '5' && line[i] == '0') ||
-							   (line[1] != '5' && line[i] >= '0' && line[i] <= '9');
-					break;
-		}
-	}
-
-	return lnOk;
 }
 
 static int checkSaleLn (char *line, CATALOG productCat, CATALOG clientCat) {
