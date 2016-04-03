@@ -66,7 +66,7 @@ CLIENT toClient(char *str) {
 
 bool isClient(char *str) {
 	int i;
-	bool client = 1;
+	bool client = true;
 
 	for (i = 0; client && i < CLIENT_LENGTH; i++){
 		switch (i){

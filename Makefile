@@ -1,24 +1,31 @@
-CFLAGS += -O2 -ansi -Wall
-VPATH = src
-obj = main.o datacheck.o node.o catalog.o clients.o products.o
+C_FILES := $(wildcard src/*.c)
+OBJ_FILES := $(addprefix obj/,$(notdir $(C_FILES:.c=.o)))
 
-gereVendas: $(obj)
-	$(CC) $(obj) -o gereVendas 
+CFLAGS += -O2 -ansi -Wall
+
+gereVendas: $(OBJ_FILES)
+	$(CC) -o $@ $^
+
+obj/%.o: src/%.c 
+	$(CC) $(CFLAGS) -o $@ -c $<
 
 debug: CFLAGS := -g -ansi
 debug: gereVendas
 
-main.o: datacheck.h
-datacheck.o: datacheck.h
-catalog.o: catalog.h
-node.o: node.h
-clients.o: clients.h
-products.o: products.h
+obj/main.o: src/datacheck.h
+obj/datacheck.o: src/datacheck.h src/clients.h src/products.h
+obj/catalog.o: src/catalog.h src/node.h
+obj/node.o: src/node.h
+obj/clients.o: src/clients.h src/catalog.h
+obj/products.o: src/products.h src/catalog.h
 
 .PHONY: clean
 clean:
-	-rm gereVendas *.o
-	-rm Vendas_1MValidas.txt
+	-@rm -f gereVendas *.o
+	-@rm -f Vendas_1MValidas.txt
+	-@rm -rf doc
+	-@rm -rf obj/*
 
+.PHONY: doc
 doc:
 	doxygen doxygen.conf

@@ -1,6 +1,6 @@
 #ifndef __AVL_H__
 #define __AVL_H__
-
+typedef int Escolhido;
 typedef char bool;
 typedef enum balance { LH, EH, RH } Balance;
 

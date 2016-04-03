@@ -67,7 +67,7 @@ bool isProduct (char *str){
 	int i; 
 	bool product;
 
-	product = 1;
+	product = true;
 
 	for (i = 0; product && i < 6; i++){
 		switch (i){
