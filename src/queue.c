@@ -18,7 +18,7 @@ QUEUE initQueue() {
 	return q;
 }
 
-QUEUE push(QUEUE q, void *element) {
+QUEUE enqueue(QUEUE q, void *element) {
 	int pos;
 
 	if (q->start + q->size == q->capacity){
@@ -36,7 +36,7 @@ QUEUE push(QUEUE q, void *element) {
 	return q;
 }
 
-void *depush(QUEUE q) {
+void *dequeue(QUEUE q) {
 	void *element;
 
 	element = q->queue[q->start];

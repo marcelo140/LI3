@@ -5,7 +5,7 @@
 typedef struct queue *QUEUE;
 
 QUEUE initQueue(void);
-QUEUE push(QUEUE q, void *element);
-void *depush(QUEUE q);
+QUEUE enqueue(QUEUE q, void *element);
+void *dequeue(QUEUE q);
 
 #endif
