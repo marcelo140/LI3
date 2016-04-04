@@ -7,7 +7,7 @@
 #define BUFF_SIZE 35
 #define MAX_CATALOG 10000
 
-static int checkSaleLn(char *line, CATALOG product, CATALOG client);
+static int checkSaleLn(char *line, PRODUCTCAT product, CLIENTCAT client);
 
 CLIENTCAT writeCCat(FILE *file, CLIENTCAT cat, int *sucLn, int *failLn) {
 	int suc, fail;
@@ -57,7 +57,7 @@ PRODUCTCAT writePCat(FILE *file, PRODUCTCAT cat, int *sucLn, int *failLn) {
 	return cat;
 }
 
-int checkSales (FILE *file, CATALOG products, CATALOG clients, int *sucLn, int *failLn) {
+int checkSales (FILE *file, PRODUCTCAT products, CLIENTCAT clients, int *sucLn, int *failLn) {
 	int checked_line, suc, fail;
 	char buf[BUFF_SIZE], *line, print[BUFF_SIZE];
 	FILE * validSales = fopen ("Vendas_1MValidas.txt", "w");
@@ -83,7 +83,7 @@ int checkSales (FILE *file, CATALOG products, CATALOG clients, int *sucLn, int *
 	return 0;
 }
 
-static int checkSaleLn (char *line, CATALOG productCat, CATALOG clientCat) {
+static int checkSaleLn (char *line, PRODUCTCAT productCat, CLIENTCAT clientCat) {
 	int i, lnOk, quant, month, filial;
 	double price;
 	char *token;
@@ -93,7 +93,7 @@ static int checkSaleLn (char *line, CATALOG productCat, CATALOG clientCat) {
 
 	for (i = 0; lnOk && token != NULL; i++){
 		switch(i) {
-			case 0: lnOk = lookUpCatalog(productCat, token);
+			case 0: lnOk = lookUpProduct(productCat, toProduct(token));
 						break;
 			case 1: lnOk = ((price = atof(token)) >= 0 && price <= 999.99);
 						break;
@@ -101,7 +101,7 @@ static int checkSaleLn (char *line, CATALOG productCat, CATALOG clientCat) {
 						break;
 			case 3: lnOk = !strcmp(token, "P") || !strcmp(token, "N");
 						break;
-			case 4: lnOk = lookUpCatalog(clientCat, token);
+			case 4: lnOk = lookUpClient(clientCat, toClient(token));
 						break;
 			case 5: lnOk = (month = atoi(token) >= 1 && month <= 12);
 						break;
@@ -122,21 +122,23 @@ void testsValidSales() {
     float price, billed=0;
     char line[BUFF_SIZE], *token;
     FILE * file = fopen("Vendas_1MValidas.txt", "r");
+    CLIENTCAT clients;
+	PRODUCTCAT products;
+	CLIENT c;
+	PRODUCT p;
 
-    CATALOG clients, products;
+    clients = initClientCat();
+    products = initProductCat();
 
-    clients = initCatalog();
-    products = initCatalog();
-
-    while (fle  & fgets(line, BUFF_SIZE, file)) {
-
+    while (fgets(line, BUFF_SIZE, file)) {
         token = strtok(line, " \n\r");
 
         for (i = 0; token != NULL; i++){
     		switch(i) {
-    			case 0: if (!lookUpCatalog(products, token)) {
+    			case 0: p = toProduct(token);
+                        if (!lookUpProduct(products, p)) {
                             totalProducts++;
-                            insertCatalog(products, token);
+                            insertProduct(products, p);
                         }
                         break;
     			case 1: price = atof(token);
@@ -148,9 +150,10 @@ void testsValidSales() {
     					break;
     			case 3: /* N/P */
     					break;
-    			case 4: if (!lookUpCatalog(clients, token)) {
+    			case 4: c = toClient(token);
+						if (!lookUpClient(clients, c)) {
                             totalClients++;
-                            insertCatalog(clients, token);
+                            insertClient(clients, c);
                         }
     					break;
     			case 5: /* Month */

@@ -1,7 +1,8 @@
 #ifndef __AVL_H__
 #define __AVL_H__
-typedef int Escolhido;
-typedef char bool;
+
+#include "generic.h"
+
 typedef enum balance { LH, EH, RH } Balance;
 
 typedef struct avl {
@@ -11,10 +12,7 @@ typedef struct avl {
 	struct avl *right;
 } *AVL;
 
-#define true 1
-#define false 0
-
-AVL initAVL();
+AVL initAVL(void);
 AVL insertAVL(AVL n, char *buffer);
 bool isEmptyAVL(AVL n);
 bool lookUpAVL(AVL n, char *buffer);

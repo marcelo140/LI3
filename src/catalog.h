@@ -1,13 +1,11 @@
 #ifndef __CATALOG_H__
 #define __CATALOG_H__
 
-typedef char bool;
+#include "generic.h"
+
 typedef struct catalog *CATALOG;
 
-#define true 1
-#define false 0
-
-CATALOG initCatalog();
+CATALOG initCatalog(void);
 CATALOG insertCatalog(CATALOG c, char *buffer);
 bool lookUpCatalog(CATALOG c, char *buffer);
 void freeCatalog(CATALOG c);

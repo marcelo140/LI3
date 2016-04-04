@@ -13,7 +13,7 @@ struct product{
  * Inicia o Catálogo de Produtos
  * @return Catálogo de Produtos novo
  */
-PRODUCTCAT initProductCat() {
+PRODUCTCAT initProductCat(){
     return initCatalog();
 }
 

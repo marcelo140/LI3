@@ -11,8 +11,6 @@
 #define CLIENT_NUM 20000
 #define PRODUCT_NUM 200000
 
-typedef char bool;
-
 int main() {
 	FILE *clients, *products, *sales;
 	CLIENTCAT clientCat;
