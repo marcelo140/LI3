@@ -41,6 +41,34 @@ AVL insertAVL(AVL p, char *s, void *c) {
 }
 
 /**
+ * Atualiza o conteúdo de um nodo da AVL caracterizado por uma Hash
+ * @param p AVL
+ * @param hsh Hash do nodo
+ * @param cntt Conteúdo novo
+ * @return AVL com o nodo alterado
+ */
+AVL updateAVL(AVL p, char *hsh, void *cntt) {
+
+	int r, stop=0;
+	AVL a = p;
+
+	while (a && !stop) {
+			r = strcmp(hsh, p->hash);
+
+		if (r > 0)
+			a = a->right;
+		else if (r < 0)
+			a = a->left;
+		else {
+			a->content = cntt; 
+			stop = 1;	
+		}
+	}
+
+	return p;
+}
+
+/**
  * Verifica se uma dada AVL é vazia ou não.
  * @return true caso seja vazia, false caso contrário.
  */

@@ -24,7 +24,7 @@ PRODUCTCAT initProductCat(){
  * @return Catálogo de Produtos com o novo produto inserido.
  */
 PRODUCTCAT insertProduct(PRODUCTCAT catalog, PRODUCT product) {
-	return insertCatalog(catalog, product->str);
+	return insertCatalog(catalog, product->str, NULL);
 }
 
 /** 

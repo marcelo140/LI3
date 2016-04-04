@@ -24,16 +24,33 @@ CATALOG initCatalog() {
 }
 
 /**
- * Insere uma dada string num dado Catálogo
+ * Insere conteúdo num dado Catálogo com a respetica Hash
  * @param c Catálogo
  * @param s String a inserir
+ * @param cntt Conteúdo do catálogo
  * @return Catálogo novo
  */
-CATALOG insertCatalog(CATALOG c, char *s) {
-	int pos = s[0] - 'A';
+CATALOG insertCatalog(CATALOG c, char *hash, void *cntt) {
+	int pos = hash[0] - 'A';
 	AVL p = c->root[pos];
 
-	c->root[pos] = insertAVL(p, s, NULL);
+	c->root[pos] = insertAVL(p, hash, cntt);
+
+	return c;
+}
+
+/**
+ * Atualiza o conteúdo de um segmento de um catálogo caracterizado por uma hash
+ * @param c Catálogo
+ * @param hash Hash do segmento
+ * @param cntt Conteúdo novo
+ * @return Catálogo com o conteúdo atualizado
+ */
+CATALOG updateCatalog(CATALOG c, char *hash, void *cntt) {
+	int pos = hash[0] - 'A';
+	AVL p = c->root[pos];
+	
+	c->root[pos] = updateAVL(p, hash, cntt);
 
 	return c;
 }
