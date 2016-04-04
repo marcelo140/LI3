@@ -6,8 +6,9 @@
 typedef struct catalog *CATALOG;
 
 CATALOG initCatalog(void);
-CATALOG insertCatalog(CATALOG c, char *buffer);
-bool lookUpCatalog(CATALOG c, char *buffer);
+CATALOG insertCatalog(CATALOG c, char *hash, void *content);
+CATALOG updateCatalog(CATALOG c, char *hash, void *content);
+bool lookUpCatalog(CATALOG c, char *hash);
 void freeCatalog(CATALOG c);
 
 #endif

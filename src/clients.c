@@ -26,7 +26,7 @@ CLIENTCAT initClientCat() {
  * @return Catálogo de Clientes com o novo cliente inserido.
  */
 CLIENTCAT insertClient(CLIENTCAT catalog, CLIENT client) {
-	return insertCatalog(catalog, client->str);
+	return insertCatalog(catalog, client->str, NULL);
 }
 
 /** 
