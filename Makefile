@@ -1,21 +1,32 @@
-CFLAGS += -O2 -ansi -Wall
+OBJ_FILES := $(patsubst src/%.c, obj/%.o, $(wildcard src/*.c))
+CFLAGS += -O2 -ansi -Wall -Wextra -pedantic -Wunreachable-code \
+                    -Wmissing-prototypes -Wunused-parameter
 
-obj = main.o datacheck.o node.o catalog.o clients.o products.o
+gereVendas: $(OBJ_FILES)
+	$(CC) -o $@ $^
 
-gereVendas: $(obj)
-	$(CC) $(obj) -o gereVendas -lm
-
-debug: CFLAGS := -g -ansi
+debug: CFLAGS := -g
 debug: gereVendas
 
-main.o: datacheck.h
-datacheck.o: datacheck.h
-catalog.o: catalog.h
-node.o: node.h
-clients.o: clients.h
-products.o: products.h
+obj/%.o: src/%.c
+	@mkdir -p obj
+	$(CC) $(CFLAGS) -o $@ -c $<
 
-.PHONY: clean
+obj/main.o: src/datacheck.h src/generic.h
+obj/datacheck.o: src/datacheck.h src/clients.h src/products.h src/generic.h
+obj/catalog.o: src/catalog.h src/avl.h src/generic.h
+obj/avl.o: src/avl.h src/generic.h
+obj/clients.o: src/clients.h src/catalog.h src/generic.h
+obj/products.o: src/products.h src/catalog.h src/generic.h
+
+cleanAll: clean
+	-@rm -rf doc
+
 clean:
-	-rm gereVendas *.o
-	-rm Vendas_1MValidas.txt
+	-@rm -f gereVendas *.o
+	-@rm -f Vendas_1MValidas.txt
+	-@rm -rf obj
+
+.PHONY: doc
+doc:
+	doxygen doxygen.conf

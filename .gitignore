@@ -1,0 +1,16 @@
+# Executable
+gereVendas
+
+# Compiled object files
+*.o
+
+# VIM autocomplete
+.ycm_extra_conf.py
+__pycache__
+
+# Documentation
+doc
+
+# Trash
+*.swp
+.*.swp

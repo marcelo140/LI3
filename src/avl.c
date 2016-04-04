@@ -1,82 +1,115 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-
-#include "node.h"
+#include "avl.h"
 
 #define BUFFER_SIZE 10
 
-static NODE insertNodeAux(NODE p, NODE new, int *update);
-static NODE newABin(char *buffer, NODE left, NODE right);
+typedef enum balance { LH, EH, RH } Balance;
 
-NODE initNode() {
+struct avl {
+	Balance bal;
+	char *hash;
+	void *content;
+	struct avl *left;
+	struct avl *right;
+};
+
+static AVL insertAVLaux(AVL p, AVL new, int *update);
+static AVL newABin(char *hash, void *content, AVL left, AVL right);
+
+/**
+ * Inicia uma nova AVL.
+ * @return Nova AVL
+ */
+AVL initAVL() {
 	return NULL;
 }
 
-NODE insertNode(NODE p, char *s) {
+/**
+ * Insere conteúdo na AVL com Hash característica do Nodo.
+ * @param p AVL a onde inserir
+ * @param s Hash a inserir
+ * @param c Conteúdo a inserir
+ * @return AVL com o novo nodo.
+ */
+AVL insertAVL(AVL p, char *s, void *c) {
 	int update=0;
-	NODE new = newABin(s, NULL, NULL);
+	AVL new = newABin(s, c, NULL, NULL);
 
-	return insertNodeAux(p, new, &update);
+	return insertAVLaux(p, new, &update);
 }
 
-int isEmptyNode(NODE n) {
+/**
+ * Verifica se uma dada AVL é vazia ou não.
+ * @return true caso seja vazia, false caso contrário.
+ */
+bool isEmptyAVL(AVL n) {
 	return (n == NULL);
 }
 
-/*Dado um catálogo e uma String localiza essa string no catálogo.*/
-int lookUpNode(NODE n, char *buffer) {
+/**
+ * Dado um catálogo e uma string verifica se existe essa string na AVL.
+ * @param n AVL
+ * @param s String a procurar
+ * @return true caso encontre, false caso contrário
+ */
+bool lookUpAVL(AVL n, char *s) {
 	int r;
 
 	while(n){
-		r = strcmp(buffer, n->str);
+		r = strcmp(s, n->hash);
 
 		if (r > 0)
 			n = n->right;
 		else if (r < 0)
 			n = n->left;
 		else
-			return 1;
+			return true;
 	}
 
-	return 0;
+	return false;
 }
 
-/* Liberta o espaço ocupado por uma árvore */
-void freeNode(NODE p) {
+/**
+ * Liberta o espaço ocupado por uma AVL
+ * @param p AVL a libertar
+ */
+void freeAVL(AVL p) {
 	if (!p){
-		free(p->str);
-		freeNode(p->left);
-		freeNode(p->right);
+		free(p->hash);
+		freeAVL(p->left);
+		freeAVL(p->right);
 		free(p);
 	}
 }
 
-void printInOrderNode(NODE p) {
+void printInOrderAVL(AVL p) {
 	if (!p)
 		putchar ('\n');
 	else {
-		printInOrderNode(p->left);
-		printf("|%s|\n", p->str);
-		printInOrderNode(p->right);
+		printInOrderAVL(p->left);
+		printf("|%s|\n", p->hash);
+		printInOrderAVL(p->right);
 	}
 }
 
-static NODE newABin(char *buffer, NODE left, NODE right) {
-	NODE new = malloc(sizeof(struct node));
+static AVL newABin(char *hsh, void *contt, AVL left, AVL right) {
+	AVL new = malloc(sizeof(struct avl));
 
 	new->bal = EH;
-	new->str = malloc(sizeof(BUFFER_SIZE));
+	new->hash = malloc(sizeof(BUFFER_SIZE));
+	new->content = contt;
 	new->left = left;
 	new->right = right;
-	strncpy(new->str, buffer, BUFFER_SIZE);
+	strncpy(new->hash, hsh, BUFFER_SIZE);
 
 	return new;
 }
 
 /* Rotação à direita da árvore */
-static NODE rotateRight(NODE p) {
-	NODE aux = NULL;
+static AVL rotateRight(AVL p) {
+	AVL aux = NULL;
 
 	if (!p || !(p->left))
 		return 0;
@@ -90,8 +123,8 @@ static NODE rotateRight(NODE p) {
 }
 
 /* Rotação à esquerda da árvore */
-static NODE rotateLeft(NODE p) {
-	NODE aux = NULL;
+static AVL rotateLeft(AVL p) {
+	AVL aux = NULL;
 
 	if (!p || !(p->right))
 		return 0;
@@ -105,7 +138,7 @@ static NODE rotateLeft(NODE p) {
 }
 
 /* Balança a árvore caso esteja inclinada para a direita*/
-static NODE balanceRight(NODE p) {
+static AVL balanceRight(AVL p) {
 
 	if (p->right->bal == RH) {
 		/* Se o nodo da direita está inclinado para a direita*/
@@ -137,7 +170,7 @@ static NODE balanceRight(NODE p) {
 }
 
 /* Balança a árvore caso esteja inclinada para a esquerda */
-static NODE balanceLeft(NODE p) {
+static AVL balanceLeft(AVL p) {
 
 	if (p->left->bal == LH) {
 		/* Se o nodo da esquerda está inclinado para a esquerda*/
@@ -169,8 +202,8 @@ static NODE balanceLeft(NODE p) {
 }
 
 /* Insere um novo Nodo à direita.*/
-static NODE insertRight(NODE p, NODE new, int *update) {
-	p->right = insertNodeAux(p->right, new, update);
+static AVL insertRight(AVL p, AVL new, int *update) {
+	p->right = insertAVLaux(p->right, new, update);
 
 	if (*update) {
 		switch (p->bal) {
@@ -193,8 +226,8 @@ static NODE insertRight(NODE p, NODE new, int *update) {
 }
 
 /* Insere um novo Nodo à esquerda. */
-static NODE insertLeft(NODE p, NODE new, int *update) {
-	p->left = insertNodeAux(p->left, new, update);
+static AVL insertLeft(AVL p, AVL new, int *update) {
+	p->left = insertAVLaux(p->left, new, update);
 
 	if (*update) {
 		switch (p->bal) {
@@ -216,9 +249,8 @@ static NODE insertLeft(NODE p, NODE new, int *update) {
 	return p;
 }
 
-
-/* Insere o novo Nodo na árvore.*/
-static NODE insertNodeAux(NODE p, NODE new, int *update) {
+/* Insere o novo Nodo na AVL.*/
+static AVL insertAVLaux(AVL p, AVL new, int *update) {
 	int r;
 
 	if (!p) {
@@ -226,7 +258,7 @@ static NODE insertNodeAux(NODE p, NODE new, int *update) {
 		return new;
 	}
 
-	r = strcmp(new->str, p->str);
+	r = strcmp(new->hash, p->hash);
 	if (r > 0)
 		p = insertRight(p, new, update);
 	else if (r < 0)
