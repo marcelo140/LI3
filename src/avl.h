@@ -3,14 +3,7 @@
 
 #include "generic.h"
 
-typedef enum balance { LH, EH, RH } Balance;
-
-typedef struct avl {
-	Balance bal;
-	char *str;
-	struct avl *left;
-	struct avl *right;
-} *AVL;
+typedef struct avl *AVL;
 
 AVL initAVL(void);
 AVL insertAVL(AVL n, char *buffer);

@@ -5,6 +5,15 @@
 
 #define BUFFER_SIZE 10
 
+typedef enum balance { LH, EH, RH } Balance;
+
+struct avl {
+	Balance bal;
+	char *str;
+	struct avl *left;
+	struct avl *right;
+};
+
 static AVL insertAVLaux(AVL p, AVL new, int *update);
 static AVL newABin(char *buffer, AVL left, AVL right);
 
