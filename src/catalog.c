@@ -33,7 +33,7 @@ CATALOG insertCatalog(CATALOG c, char *s) {
 	int pos = s[0] - 'A';
 	AVL p = c->root[pos];
 
-	c->root[pos] = insertAVL(p, s);
+	c->root[pos] = insertAVL(p, s, NULL);
 
 	return c;
 }
@@ -52,7 +52,7 @@ bool lookUpCatalog(CATALOG c, char *s) {
 }
 
 /**
- * Liberta todo o espaço ocupado pelo catálogo 
+ * Liberta todo o espaço ocupado pelo catálogo
  * @param c Catálogo a libertar
  * @return void
  */

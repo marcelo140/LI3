@@ -9,13 +9,14 @@ typedef enum balance { LH, EH, RH } Balance;
 
 struct avl {
 	Balance bal;
-	char *str;
+	char *hash;
+	void *content;
 	struct avl *left;
 	struct avl *right;
 };
 
 static AVL insertAVLaux(AVL p, AVL new, int *update);
-static AVL newABin(char *buffer, AVL left, AVL right);
+static AVL newABin(char *hash, void *content, AVL left, AVL right);
 
 /**
  * Inicia uma nova AVL.
@@ -26,14 +27,15 @@ AVL initAVL() {
 }
 
 /**
- * Insere uma string na AVL
+ * Insere conteúdo na AVL com Hash característica do Nodo.
  * @param p AVL a onde inserir
- * @param s String a inserir
+ * @param s Hash a inserir
+ * @param c Conteúdo a inserir
  * @return AVL com o novo nodo.
  */
-AVL insertAVL(AVL p, char *s) {
+AVL insertAVL(AVL p, char *s, void *c) {
 	int update=0;
-	AVL new = newABin(s, NULL, NULL);
+	AVL new = newABin(s, c, NULL, NULL);
 
 	return insertAVLaux(p, new, &update);
 }
@@ -56,7 +58,7 @@ bool lookUpAVL(AVL n, char *s) {
 	int r;
 
 	while(n){
-		r = strcmp(s, n->str);
+		r = strcmp(s, n->hash);
 
 		if (r > 0)
 			n = n->right;
@@ -75,7 +77,7 @@ bool lookUpAVL(AVL n, char *s) {
  */
 void freeAVL(AVL p) {
 	if (!p){
-		free(p->str);
+		free(p->hash);
 		freeAVL(p->left);
 		freeAVL(p->right);
 		free(p);
@@ -87,19 +89,20 @@ void printInOrderAVL(AVL p) {
 		putchar ('\n');
 	else {
 		printInOrderAVL(p->left);
-		printf("|%s|\n", p->str);
+		printf("|%s|\n", p->hash);
 		printInOrderAVL(p->right);
 	}
 }
 
-static AVL newABin(char *buffer, AVL left, AVL right) {
+static AVL newABin(char *hsh, void *contt, AVL left, AVL right) {
 	AVL new = malloc(sizeof(struct avl));
 
 	new->bal = EH;
-	new->str = malloc(sizeof(BUFFER_SIZE));
+	new->hash = malloc(sizeof(BUFFER_SIZE));
+	new->content = contt;
 	new->left = left;
 	new->right = right;
-	strncpy(new->str, buffer, BUFFER_SIZE);
+	strncpy(new->hash, hsh, BUFFER_SIZE);
 
 	return new;
 }
@@ -246,7 +249,6 @@ static AVL insertLeft(AVL p, AVL new, int *update) {
 	return p;
 }
 
-
 /* Insere o novo Nodo na AVL.*/
 static AVL insertAVLaux(AVL p, AVL new, int *update) {
 	int r;
@@ -256,7 +258,7 @@ static AVL insertAVLaux(AVL p, AVL new, int *update) {
 		return new;
 	}
 
-	r = strcmp(new->str, p->str);
+	r = strcmp(new->hash, p->hash);
 	if (r > 0)
 		p = insertRight(p, new, update);
 	else if (r < 0)

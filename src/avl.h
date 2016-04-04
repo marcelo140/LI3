@@ -6,9 +6,9 @@
 typedef struct avl *AVL;
 
 AVL initAVL(void);
-AVL insertAVL(AVL n, char *buffer);
+AVL insertAVL(AVL n, char *hash, void *content);
 bool isEmptyAVL(AVL n);
-bool lookUpAVL(AVL n, char *buffer);
+bool lookUpAVL(AVL n, char *hash);
 void freeAVL(AVL n);
 void printInOrderAVL(AVL n);
 
