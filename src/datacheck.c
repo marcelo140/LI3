@@ -44,13 +44,8 @@ PRODUCTCAT writePCat(FILE *file, PRODUCTCAT cat, int *sucLn, int *failLn) {
 		line = strtok (buf, "\n\r");
 		product = toProduct(line);
 
-<<<<<<< HEAD:datacheck.c
-		if (checked_line) {
-			insertCatalog(cat, line);
-=======
 		if (product) {
 			cat = insertProduct(cat, product);
->>>>>>> master:src/datacheck.c
 			suc++;
 		} else
 			fail++;
@@ -99,11 +94,7 @@ static int checkSaleLn (char *line, PRODUCTCAT productCat, CLIENTCAT clientCat) 
 
 	for (i = 0; lnOk && token != NULL; i++){
 		switch(i) {
-<<<<<<< HEAD:datacheck.c
-			case 0: lnOk = lookUpCatalog(productCat, token);
-=======
 			case 0: lnOk = lookUpProduct(productCat, toProduct(token));
->>>>>>> master:src/datacheck.c
 						break;
 			case 1: lnOk = ((price = atof(token)) >= 0 && price <= 999.99);
 						break;
@@ -111,11 +102,7 @@ static int checkSaleLn (char *line, PRODUCTCAT productCat, CLIENTCAT clientCat) 
 						break;
 			case 3: lnOk = !strcmp(token, "P") || !strcmp(token, "N");
 						break;
-<<<<<<< HEAD:datacheck.c
-			case 4: lnOk = lookUpCatalog(clientCat, token);
-=======
 			case 4: lnOk = lookUpClient(clientCat, toClient(token));
->>>>>>> master:src/datacheck.c
 						break;
 			case 5: lnOk = (month = atoi(token) >= 1 && month <= 12);
 						break;
@@ -149,16 +136,10 @@ void testsValidSales() {
 
         for (i = 0; token != NULL; i++){
     		switch(i) {
-<<<<<<< HEAD:datacheck.c
-    			case 0: if (!lookUpCatalog(products, token)) {
-                            totalProducts++;
-                            insertCatalog(products, token);
-=======
     			case 0: p = toProduct(token);
                         if (!lookUpProduct(products, p)) {
                             totalProducts++;
                             insertProduct(products, p);
->>>>>>> master:src/datacheck.c
                         }
                         break;
     			case 1: price = atof(token);
@@ -170,16 +151,10 @@ void testsValidSales() {
     					break;
     			case 3: /* N/P */
     					break;
-<<<<<<< HEAD:datacheck.c
-    			case 4: if (!lookUpCatalog(clients, token)) {
-                            totalClients++;
-                            insertCatalog(clients, token);
-=======
     			case 4: c = toClient(token);
 						if (!lookUpClient(clients, c)) {
                             totalClients++;
                             insertClient(clients, c);
->>>>>>> master:src/datacheck.c
                         }
     					break;
     			case 5: /* Month */
