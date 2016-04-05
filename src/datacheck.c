@@ -64,7 +64,6 @@ int checkSales (FILE *file, PRODUCTCAT products, CLIENTCAT clients, int *sucLn, 
 
 	suc = fail = 0;
 
-/* temos que verificar se file existe */
 	while(fgets(buf, BUFF_SIZE, file)) {
 		line = strtok (buf, "\n\r");
 		strcpy(print, line);
@@ -85,7 +84,7 @@ int checkSales (FILE *file, PRODUCTCAT products, CLIENTCAT clients, int *sucLn, 
 }
 
 static int checkSaleLn (char *line, PRODUCTCAT productCat, CLIENTCAT clientCat) {
-	int i, lnOk, quant, month, filial;
+	int i, lnOk, quant, month, branch;
 	double price;
 	char *token;
 
@@ -106,7 +105,7 @@ static int checkSaleLn (char *line, PRODUCTCAT productCat, CLIENTCAT clientCat) 
 						break;
 			case 5: lnOk = (month = atoi(token) >= 1 && month <= 12);
 						break;
-			case 6: lnOk = ((filial = atoi(token)) >= 1 && filial <= 3);
+			case 6: lnOk = ((branch = atoi(token)) >= 1 && branch <= 3);
 						break;
 			default: lnOk = 0;
 		}

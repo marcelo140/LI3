@@ -4,7 +4,7 @@
 #include "generic.h"
 #include "catalog.h"
 
-typedef CATALOG CLIENTCAT;
+typedef struct clientCat *CLIENTCAT;
 typedef struct client *CLIENT;
 
 CLIENTCAT initClientCat(void);

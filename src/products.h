@@ -5,7 +5,7 @@
 #include "catalog.h"
 
 typedef struct product *PRODUCT; 
-typedef CATALOG PRODUCTCAT;
+typedef struct prodcat *PRODUCTCAT;
 
 PRODUCTCAT initProductCat(void);
 PRODUCTCAT insertProduct(PRODUCTCAT catalog, PRODUCT product);
