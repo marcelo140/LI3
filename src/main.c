@@ -29,17 +29,13 @@ int main() {
 	clientCat = initClientCat();
 	productCat = initProductCat();
 
-	clientCat = writeCCat(clients, clientCat, &suc, &fail);
-	printf("Clientes analisados: %d\n", suc+fail);
-	printf("Clientes corretos: %d\n", suc);
-	printf("Clientes incorretos: %d\n", fail);
+	clientCat = writeCCat(clients, clientCat, &suc);
+	printf("Clientes analisados: %d\n", suc);
 
 	putchar('\n');
 
-	productCat = writePCat(products, productCat, &suc, &fail);
-	printf("Produtos analisados: %d\n", suc+fail);
-	printf("Produtos corretos: %d\n", suc);
-	printf("Produtos incorretos: %d\n", fail);
+	productCat = writePCat(products, productCat, &suc);
+	printf("Produtos analisados: %d\n", suc);
 
 	putchar('\n');
 

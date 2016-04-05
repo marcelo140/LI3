@@ -1,85 +1,68 @@
-#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
 #include "datacheck.h"
 
 #define BUFF_SIZE 35
-#define MAX_CATALOG 10000
 
 static int checkSaleLn(char *line, PRODUCTCAT product, CLIENTCAT client);
 
-CLIENTCAT writeCCat(FILE *file, CLIENTCAT cat, int *sucLn, int *failLn) {
-	int suc, fail;
+CLIENTCAT writeCCat(FILE *file, CLIENTCAT cat, int *num) {
+	int n;
 	char buf[BUFF_SIZE], *line;
 	CLIENT client;
 
-	suc = fail = 0;
+	n = 0;
 
 	while(fgets(buf, BUFF_SIZE, file)) {
 		line = strtok (buf, "\n\r");
 		client = toClient(line);
 
-		if (client){
-			cat = insertClient(cat, client);
-			suc++;
-		} else
-			fail++;
+		cat = insertClient(cat, client);
+		n++;
 	}
 
-	*sucLn = suc;
-	*failLn = fail;
+	*num = n;
 
 	return cat;
 }
 
-PRODUCTCAT writePCat(FILE *file, PRODUCTCAT cat, int *sucLn, int *failLn) {
-	int suc, fail;
+PRODUCTCAT writePCat(FILE *file, PRODUCTCAT cat, int *num) {
+	int n;
 	char buf[BUFF_SIZE], *line;
 	PRODUCT product;
 
-	suc = fail = 0;
+	n = 0;
 
 	while(fgets(buf, BUFF_SIZE, file)) {
 		line = strtok (buf, "\n\r");
 		product = toProduct(line);
 
-		if (product) {
-			cat = insertProduct(cat, product);
-			suc++;
-		} else
-			fail++;
+		cat = insertProduct(cat, product);
+		n++;
 	}
 
-	*sucLn = suc;
-	*failLn = fail;
+	*num = n;
 
 	return cat;
 }
 
 int checkSales (FILE *file, PRODUCTCAT products, CLIENTCAT clients, int *sucLn, int *failLn) {
 	int checked_line, suc, fail;
-	char buf[BUFF_SIZE], *line, print[BUFF_SIZE];
-	FILE * validSales = fopen ("Vendas_1MValidas.txt", "w");
+	char buf[BUFF_SIZE], *line;
 
 	suc = fail = 0;
 
 	while(fgets(buf, BUFF_SIZE, file)) {
 		line = strtok (buf, "\n\r");
-		strcpy(print, line);
 		checked_line = checkSaleLn(line, products, clients);
 
-		if (checked_line) {
-			fprintf(validSales, "%s\n", print);
-			suc++;
-		} else
-			fail++;
+		(checked_line) ? suc++ : fail++;
 	}
 
 	*sucLn = suc;
 	*failLn = fail;
 
-	fclose(validSales);
 	return 0;
 }
 
