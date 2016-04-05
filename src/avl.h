@@ -11,6 +11,7 @@ AVL updateAVL(AVL n, char *hash, void *content);
 AVL cloneAVL (AVL p, void* (*cloneCntt) (void * cntt)); 
 bool isEmptyAVL(AVL n);
 bool lookUpAVL(AVL n, char *hash);
+void *getAVLcontent(AVL tree, char *hash);
 void freeAVL(AVL n);
 void printInOrderAVL(AVL n);
 
