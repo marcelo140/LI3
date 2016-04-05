@@ -7,6 +7,9 @@
 
 #define SALE_SIZE 7
 
+#define N 0
+#define P 1
+
 typedef struct sale *SALE;
 
 bool isSale(SALE sale, PRODUCTCAT prodCat, CLIENTCAT clientCat);
@@ -15,8 +18,9 @@ SALE readSale(char *line);
 PRODUCT getProduct(SALE s);
 CLIENT getClient(SALE s);
 double getPrice(SALE s);
-unsigned int getQuant(SALE s);
-unsigned int getMonth(SALE s);
-unsigned int getBranch(SALE s);
+int getQuant(SALE s);
+int getMonth(SALE s);
+int getBranch(SALE s);
+int getMode(SALE s);
 
 #endif

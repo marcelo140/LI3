@@ -72,6 +72,17 @@ PRODUCT toProduct(char *str) {
 }
 
 /**
+ * Dado um PRODUCT devolve uma String (Hash) que lhe corresponde
+ * @param p PRODUCT
+ * @return Hash que lhe corresponde
+ */
+char* fromProduct(PRODUCT p) {
+	char *r = malloc(MAX_BUFF);
+	strncpy(r, p->str, MAX_BUFF);
+	return r;
+}
+
+/**
  * Devolve um clone do um dado PRODUCT
  * @param p PRODUCT a clonar
  * @return PRODUCT novo
@@ -80,7 +91,7 @@ PRODUCT cloneProduct(PRODUCT p) {
 	PRODUCT new = malloc (sizeof (*new));
 	new->str = malloc(MAX_BUFF);
 	
-	strcpy(new->str, p->str);
+	strncpy(new->str, p->str, MAX_BUFF);
 
 	return new;
 }
