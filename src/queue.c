@@ -36,6 +36,11 @@ QUEUE enqueue(QUEUE q, void *element) {
 	return q;
 }
 
+bool isEmptyQueue(QUEUE q) {
+	if (!q) return true;
+	else return (q->size == q->start);
+}
+
 void *dequeue(QUEUE q) {
 	void *element;
 
