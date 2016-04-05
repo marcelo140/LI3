@@ -40,9 +40,9 @@ CATALOG insertCatalog(CATALOG c, char *hash, void *cntt) {
 }
 
 /**
- * Atualiza o conteúdo de um segmento de um catálogo caracterizado por uma hash
+ * Atualiza o conteúdo de um elemento de um catálogo caracterizado por uma hash
  * @param c Catálogo
- * @param hash Hash do segmento
+ * @param hash Hash do elemento
  * @param cntt Conteúdo novo
  * @return Catálogo com o conteúdo atualizado
  */
@@ -53,6 +53,19 @@ CATALOG updateCatalog(CATALOG c, char *hash, void *cntt) {
 	c->root[pos] = updateAVL(p, hash, cntt);
 
 	return c;
+}
+
+/**
+ * Devolve o conteúdo de um elemento caracterizado por uma hash
+ * @param c Catálogo
+ * @param hash Hash do elemento
+ * @return Conteúdo do elemento
+ */
+void* getCatalogContent(CATALOG c, char *hash) {
+	int pos = hash[0] - 'A';
+	AVL p = c->root[pos];
+	
+	return getAVLcontent(p, hash); 
 }
 
 /**
