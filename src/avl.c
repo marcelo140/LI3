@@ -87,7 +87,7 @@ AVL cloneAVL (AVL p, void* (*cloneCntt) (void * cntt)) {
 	AVL new = initAVL();
 	void* cnttAux = NULL;
 
-		q = enqueue(q, p);	
+	q = enqueue(q, p);	
 
 	while (p) {
 		if (p->left)  q = enqueue(q, p->left);
@@ -95,7 +95,7 @@ AVL cloneAVL (AVL p, void* (*cloneCntt) (void * cntt)) {
 
 		if (!isEmptyQueue(q)) {
 			p = dequeue(q);
-			if (cloneCntt) cnttAux = cloneCntt(cnttAux); 
+			if (cloneCntt) cnttAux = cloneCntt(p->content); 
 			new = insertAVL(new, p->hash, cnttAux);
 		}
 	}
