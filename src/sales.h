@@ -15,8 +15,9 @@ SALE toSale(PRODUCT p, CLIENT c, double price, int quant, int month, int branch,
 PRODUCT getProduct(SALE s);
 CLIENT getClient(SALE s);
 double getPrice(SALE s);
-unsigned int getQuant(SALE s);
-unsigned int getMonth(SALE s);
-unsigned int getBranch(SALE s);
+int getQuant(SALE s);
+int getMonth(SALE s);
+int getBranch(SALE s);
+int getMode(SALE s);
 
 #endif

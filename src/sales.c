@@ -8,10 +8,10 @@ struct sale {
 	PRODUCT prod; /** Produto comprado */
 	CLIENT client; /** Cliente que efetuou a compra */
 	double price; /** Preço da compra */
-	unsigned int quantity; /** Quantidade comprada */
-	unsigned int month; /** Mês em que a compra foi efetuada */
-	unsigned int branch; /** Filial onde foi efetuada a venda */
-	unsigned int mode; /** Promoção N (Normal) ou P (Promoção). */
+	int quantity; /** Quantidade comprada */
+	int month; /** Mês em que a compra foi efetuada */
+	int branch; /** Filial onde foi efetuada a venda */
+	int mode; /** Promoção N (Normal) ou P (Promoção). */
 };
 
 /**
@@ -64,14 +64,18 @@ double getPrice(SALE s) {
 	return s->price;
 }
 
-unsigned int getQuant(SALE s) {
+int getQuant(SALE s) {
 	return s->quantity;
 }
 
-unsigned int getMonth(SALE s) {
+int getMonth(SALE s) {
 	return s->month;
 }
 
-unsigned int getBranch(SALE s) {
+int getBranch(SALE s) {
 	return s->branch;
+}
+
+int getMode(SALE s) {
+	return s->mode;
 }
