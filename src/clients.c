@@ -7,6 +7,10 @@
 #define MAX_BUFF 10
 #define CLIENT_LENGTH 6
 
+struct clientCat {
+		CATALOG cat;
+};
+
 struct client{
 	char *str;
 };
@@ -16,35 +20,41 @@ struct client{
  * @return Catálogo de Clientes novo
  */
 CLIENTCAT initClientCat() {
-    return initCatalog();
+	CLIENTCAT cCat = malloc(sizeof (struct clientCat));
+	cCat->cat = initCatalog();
+
+    return cCat;
 }
 
 /** 
  * Insere cliente no catálogo de Clientes.
- * @param catalog Catálogo de Clientes
+ * @param cCat Catálogo de Clientes
  * @param client Cliente a inserir
  * @return Catálogo de Clientes com o novo cliente inserido.
  */
-CLIENTCAT insertClient(CLIENTCAT catalog, CLIENT client) {
-	return insertCatalog(catalog, client->str, NULL);
+CLIENTCAT insertClient(CLIENTCAT cCat, CLIENT client) {
+	cCat->cat = insertCatalog(cCat->cat, client->str, NULL);
+
+	return cCat;
 }
 
 /** 
  * Verifica se um dado cliente existe num dado catálogo
- * @param catalog Catálogo de Clientes
+ * @param cCat Catálogo de Clientes
  * @param client Cliente a procurar
  * @return true se encontrou, false caso contrário
  */
-bool lookUpClient(CLIENTCAT catalog, CLIENT client) {
-	return lookUpCatalog(catalog, client->str);
+bool lookUpClient(CLIENTCAT cCat, CLIENT client) {
+	return lookUpCatalog(cCat->cat, client->str);
 }
 
 /** 
  * Liberta o espaço ocupado pelo Catálogo de Clientes
- * @param catalog Catálogo de Clientes
+ * @param cCat Catálogo de Clientes
  */
-void freeClientCat(CLIENTCAT catalog) {
-	freeCatalog(catalog);
+void freeClientCat(CLIENTCAT cCat) {
+	freeCatalog(cCat->cat);
+	free(cCat);
 }
 
 /** 

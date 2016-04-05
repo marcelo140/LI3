@@ -9,12 +9,19 @@ struct product{
 	char *str;
 };
 
+struct prodcat {
+	CATALOG cat;
+};
+
 /** 
  * Inicia o Catálogo de Produtos
  * @return Catálogo de Produtos novo
  */
 PRODUCTCAT initProductCat(){
-    return initCatalog();
+	PRODUCTCAT prodCat = malloc(sizeof(struct prodcat));
+	prodCat->cat = initCatalog();
+
+	return prodCat;
 }
 
 /** 
@@ -23,8 +30,9 @@ PRODUCTCAT initProductCat(){
  * @param product Produto a inserir
  * @return Catálogo de Produtos com o novo produto inserido.
  */
-PRODUCTCAT insertProduct(PRODUCTCAT catalog, PRODUCT product) {
-	return insertCatalog(catalog, product->str, NULL);
+PRODUCTCAT insertProduct(PRODUCTCAT prodCat, PRODUCT product) {
+	prodCat->cat = insertCatalog(prodCat->cat, product->str, NULL);
+	return prodCat;
 }
 
 /** 
@@ -33,16 +41,17 @@ PRODUCTCAT insertProduct(PRODUCTCAT catalog, PRODUCT product) {
  * @param product Produto a procurar
  * @return true se encontrou, false caso contrário
  */
-bool lookUpProduct(PRODUCTCAT catalog, PRODUCT product) {
-	return lookUpCatalog(catalog, product->str);
+bool lookUpProduct(PRODUCTCAT prodCat, PRODUCT product) {
+	return lookUpCatalog(prodCat->cat, product->str);
 }
 
 /** 
  * Liberta o espaço ocupado pelo Catálogo de Produtos
  * @param catalog Catálogo de Produtos
  */
-void freeProductCat(PRODUCTCAT catalog) {
-	freeCatalog(catalog);
+void freeProductCat(PRODUCTCAT prodCat) {
+	freeCatalog(prodCat->cat);
+	free(prodCat);
 }
 
 /** 
