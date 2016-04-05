@@ -74,6 +74,10 @@ CLIENT toClient(char *str) {
 	return r;
 }
 
+char *fromClient(CLIENT c) {
+	return c->str;
+}
+
 CLIENT cloneClient(CLIENT c) {
 	
 	CLIENT new = malloc(sizeof(*new));
