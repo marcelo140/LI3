@@ -11,6 +11,8 @@ typedef struct fatProduct {
 	double billed[MONTHS][BRANCHES][NP];
 } *FATPRODUCT;
 
+static FATPRODUCT initFatProduct();
+
 /**
  * Inicia uma Faturação Global
  * @return Nova Faturação Global
@@ -20,6 +22,18 @@ FATGLOBAL initFat() {
 		fat->l = initCatalog();
 
 		return fat;
+}
+
+/**
+ * Preenche a Faturação Global com o catálog de Produtos
+ * @param p Catálogo de Produtos
+ * @return Faturação Global preenchida
+ */
+FATGLOBAL fillFat(PRODUCTCAT p) {
+	FATGLOBAL new = initFat();
+	new->l = cloneCatalog(toCatalog(p), NULL);
+
+	return new;
 }
 
 /**
@@ -38,25 +52,29 @@ bool isEmptyFat(FATGLOBAL f) {
  * @return Faturação Global com a nova venda
  */
 FATGLOBAL addFat(FATGLOBAL fat, SALE s) {
-	int i,j,k;
 	char *p = fromProduct(getProduct(s));
 	int month = getMonth(s), branch = getBranch(s), mode = getMode(s);
 	double price = getPrice(s);
 	FATPRODUCT cntt = getCatalogContent(fat->l, p);
 
-	if (!cntt) {
-		cntt = malloc (sizeof(struct fatProduct));
-
-		for (i=0; i < MONTHS; i++)
-			for (j=0; j < BRANCHES; j++)
-				for (k=0; k < NP; k++)
-					cntt->billed[i][j][k] = 0;
-
-	}
+	if (!cntt) cntt = initFatProduct();
 	
 	cntt->billed[month][branch][mode] += price;
 	
 	fat->l = updateCatalog(fat->l, p, cntt);
 
 	return fat;
+}
+
+
+static FATPRODUCT initFatProduct() {
+	int i, j, k;
+	FATPRODUCT new = malloc (sizeof(struct fatProduct));
+
+	for (i=0; i < MONTHS; i++)
+		for (j=0; j < BRANCHES; j++)
+			for (k=0; k < NP; k++)
+				new->billed[i][j][k] = 0;
+
+	return new;
 }
