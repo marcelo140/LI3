@@ -74,6 +74,16 @@ CLIENT toClient(char *str) {
 	return r;
 }
 
+CLIENT cloneClient(CLIENT c) {
+	
+	CLIENT new = malloc(sizeof(*new));
+	new->str = malloc(MAX_BUFF);
+
+	strcpy(new->str, c->str);
+
+	return new;	
+}
+
 bool isClient(char *str) {
 	int i;
 	bool client = true;
