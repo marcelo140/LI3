@@ -15,8 +15,14 @@ struct avl {
 	Balance bal;
 };
 
+static AVL newABin(char *hsh, void *contt, AVL left, AVL right);
+static AVL rotateRight(AVL p);
+static AVL rotateLeft(AVL p);
+static AVL balanceRight(AVL p);
+static AVL balanceLeft(AVL p);
+static AVL insertRight(AVL p, AVL new, int *update);
+static AVL insertLeft(AVL p, AVL new, int *update);
 static AVL insertAVLaux(AVL p, AVL new, int *update);
-static AVL newABin(char *hash, void *content, AVL left, AVL right);
 
 /**
  * Inicia uma nova AVL.
@@ -96,6 +102,29 @@ AVL cloneAVL (AVL p, void* (*cloneCntt) (void * cntt)) {
 
 	return new;
 }
+
+/**
+ * @param tree Árvore a ser procurada
+ * @param hash Hash do element a encontrar
+ * @return se existir retorna o conteúdo do elemento, senão NULL
+ */
+void *getAVLcontent(AVL tree, char *hsh) {
+	int r;
+	
+	while(tree) {
+		r = strcmp(hsh, tree->hash);
+
+		if (r > 0)
+			tree = tree->right;
+		else if (r < 0)
+			tree = tree->left;
+		else
+			return tree->content;
+	}
+	
+	return NULL;
+}
+
 
 /**
  * Verifica se uma dada AVL é vazia ou não.
