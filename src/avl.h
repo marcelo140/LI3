@@ -8,6 +8,7 @@ typedef struct avl *AVL;
 AVL initAVL(void);
 AVL insertAVL(AVL n, char *hash, void *content);
 AVL updateAVL(AVL n, char *hash, void *content);
+AVL cloneAVL (AVL p, void* (*cloneCntt) (void * cntt)); 
 bool isEmptyAVL(AVL n);
 bool lookUpAVL(AVL n, char *hash);
 void freeAVL(AVL n);

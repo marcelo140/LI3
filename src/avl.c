@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include "queue.h"
 #include "avl.h"
 
 #define BUFFER_SIZE 10
@@ -66,6 +67,35 @@ AVL updateAVL(AVL p, char *hsh, void *cntt) {
 	}
 
 	return p;
+}
+
+
+/**
+ * Devolve um clone de uma dada AVL, copiando o seu conteúdo com uma dada função
+ * @param p AVL a clonar
+ * @param cloneCntt Função auxiliar para clonar o conteúdo.
+ * @return Nova AVL
+ */
+AVL cloneAVL (AVL p, void* (*cloneCntt) (void * cntt)) {
+
+	QUEUE q = initQueue();	
+	AVL new = initAVL();
+	void* cnttAux = NULL;
+
+		q = enqueue(q, p);	
+
+	while (p) {
+		if (p->left)  q = enqueue(q, p->left);
+		if (p->right) q = enqueue(q, p->right);
+
+		if (!isEmptyQueue(q)) {
+			p = dequeue(q);
+			if (cloneCntt) cnttAux = cloneCntt(cnttAux); 
+			new = insertAVL(new, p->hash, cnttAux);
+		}
+	}
+
+	return new;
 }
 
 /**
