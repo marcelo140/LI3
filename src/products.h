@@ -15,5 +15,6 @@ bool isProduct(char *str);
 char* fromProduct(PRODUCT p);
 PRODUCT toProduct(char *s);
 PRODUCT cloneProduct(PRODUCT p);
+CATALOG prodToCat(PRODUCTCAT prodCat);
 
 #endif

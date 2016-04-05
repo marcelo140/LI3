@@ -54,6 +54,10 @@ void freeProductCat(PRODUCTCAT prodCat) {
 	free(prodCat);
 }
 
+CATALOG prodToCat(PRODUCTCAT prodCat) {
+	return prodCat->cat;
+}
+
 /** 
  * Converte String para PRODUCT
  * @param str String a converter
