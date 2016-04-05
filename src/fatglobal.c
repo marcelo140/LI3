@@ -3,7 +3,7 @@
 #include "catalog.h"
 #include "fatglobal.h"
 
-struct fatoracao {
+struct faturacao {
 	CATALOG l;
 };
 
@@ -16,4 +16,8 @@ FATGLOBAL initFat() {
 		fat->l = initCatalog();
 
 		return fat;
+}
+
+bool isEmptyFat(FATGLOBAL f) {
+	return (f==NULL);
 }
