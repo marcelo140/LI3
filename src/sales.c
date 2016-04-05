@@ -48,3 +48,27 @@ SALE toSale(PRODUCT p, CLIENT c, double price, int quant, int month, int branch)
 	
 	return s;
 }
+
+PRODUCT getProduct(SALE s) {
+	return s->prod;
+}
+
+CLIENT getClient(SALE s) {
+	return s->client;
+}
+
+double getPrice(SALE s) {
+	return s->price;
+}
+
+unsigned int getQuant(SALE s) {
+	return s->quantity;
+}
+
+unsigned int getMonth(SALE s) {
+	return s->month;
+}
+
+unsigned int getBranch(SALE s) {
+	return s->branch;
+}
