@@ -9,11 +9,10 @@
 typedef enum balance { LH, EH, RH } Balance;
 
 struct avl {
-	Balance bal;
+	struct avl *left, *right;
 	char *hash;
 	void *content;
-	struct avl *left;
-	struct avl *right;
+	Balance bal;
 };
 
 static AVL insertAVLaux(AVL p, AVL new, int *update);
