@@ -38,13 +38,25 @@ bool isEmptyFat(FATGLOBAL f) {
  * @return Faturação Global com a nova venda
  */
 FATGLOBAL addFat(FATGLOBAL fat, SALE s) {
-	
+	int i,j,k;
 	char *p = fromProduct(getProduct(s));
 	int month = getMonth(s), branch = getBranch(s), mode = getMode(s);
 	double price = getPrice(s);
 	FATPRODUCT cntt = getCatalogContent(fat->l, p);
 
+	if (!cntt) {
+		cntt = malloc (sizeof(struct fatProduct));
+
+		for (i=0; i < MONTHS; i++)
+			for (j=0; j < BRANCHES; j++)
+				for (k=0; k < NP; k++)
+					cntt->billed[i][j][k] = 0;
+
+	}
+	
 	cntt->billed[month][branch][mode] += price;
+	
+	fat->l = updateCatalog(fat->l, p, cntt);
 
 	return fat;
 }
