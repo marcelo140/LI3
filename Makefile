@@ -1,6 +1,6 @@
 OBJ_FILES := $(patsubst src/%.c, obj/%.o, $(wildcard src/*.c))
 CFLAGS += -O2 -ansi -Wall -Wextra -pedantic -Wunreachable-code \
-                    -Wmissing-prototypes -Wunused-parameter
+                    -Wunused-parameter
 
 gereVendas: $(OBJ_FILES)
 	$(CC) -o $@ $^
