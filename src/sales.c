@@ -11,6 +11,7 @@ struct sale {
 	unsigned int quantity; /** Quantidade comprada */
 	unsigned int month; /** Mês em que a compra foi efetuada */
 	unsigned int branch; /** Filial onde foi efetuada a venda */
+	unsigned int mode; /** Promoção N (Normal) ou P (Promoção). */
 };
 
 /**
@@ -33,9 +34,10 @@ bool isSale(SALE sale, PRODUCTCAT prodCat, CLIENTCAT clientCat) {
  * @param quant Quantidade comprada
  * @param month Mês da compra
  * @param branch Filial onde foi efetuada a compra
+ * @param mode Modo de promoção N ou P
  * @return nova SALE
  */
-SALE toSale(PRODUCT p, CLIENT c, double price, int quant, int month, int branch) {
+SALE toSale(PRODUCT p, CLIENT c, double price, int quant, int month, int branch, int mode) {
 
 	SALE s = malloc (sizeof(*s));
 
@@ -45,6 +47,7 @@ SALE toSale(PRODUCT p, CLIENT c, double price, int quant, int month, int branch)
 	s->quantity = quant;
 	s->month = month;
 	s->branch = branch;
+	s->mode = mode;
 	
 	return s;
 }
