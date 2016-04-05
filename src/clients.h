@@ -13,6 +13,7 @@ bool lookUpClient(CLIENTCAT catalog, CLIENT client);
 void freeClientCat(CLIENTCAT catalog);
 
 CLIENT toClient(char *str);
+CLIENT cloneClient(CLIENT c);
 bool isClient(char *str);
 
 #endif

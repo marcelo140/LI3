@@ -13,5 +13,6 @@ bool lookUpProduct(PRODUCTCAT catalog, PRODUCT product);
 void freeProductCat(PRODUCTCAT catalog);
 bool isProduct(char *str);
 PRODUCT toProduct(char *s);
+PRODUCT cloneProduct(PRODUCT p);
 
 #endif

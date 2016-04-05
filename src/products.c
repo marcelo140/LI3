@@ -71,6 +71,20 @@ PRODUCT toProduct(char *str) {
 	return r;
 }
 
+/**
+ * Devolve um clone do um dado PRODUCT
+ * @param p PRODUCT a clonar
+ * @return PRODUCT novo
+ */
+PRODUCT cloneProduct(PRODUCT p) {
+	PRODUCT new = malloc (sizeof (*new));
+	new->str = malloc(MAX_BUFF);
+	
+	strcpy(new->str, p->str);
+
+	return new;
+}
+
 bool isProduct (char *str){
 	int i; 
 	bool product;
