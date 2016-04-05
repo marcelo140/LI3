@@ -55,13 +55,23 @@ CATALOG updateCatalog(CATALOG c, char *hash, void *cntt) {
 	return c;
 }
 
+CATALOG cloneCatalog(CATALOG cat, void *(*cloneCntt)(void *cntt)) {
+	CATALOG c = malloc(sizeof(*c));
+	int i;
+
+	for (i = 0; i < ARRAY_SIZE; i++)
+		c->root[i] = cloneAVL(cat->root[i], cloneCntt);
+
+	return c;
+}
+
 /**
  * Devolve o conteúdo de um elemento caracterizado por uma hash
  * @param c Catálogo
  * @param hash Hash do elemento
  * @return Conteúdo do elemento
  */
-void* getCatalogContent(CATALOG c, char *hash) {
+void* getCatontent(CATALOG c, char *hash) {
 	int pos = hash[0] - 'A';
 	AVL p = c->root[pos];
 	
