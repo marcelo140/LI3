@@ -83,23 +83,22 @@ AVL updateAVL(AVL p, char *hsh, void *cntt) {
  */
 AVL cloneAVL (AVL p, void* (*cloneCntt) (void * cntt)) {
 
-	QUEUE q = initQueue();	
+	QUEUE q = initQueue();
 	AVL new = initAVL();
 	void* cnttAux = NULL;
 
 	q = enqueue(q, p);	
 
-	while (p) {
+	while (!isEmptyQueue(q)) {
+		p = dequeue(q);
+		if (cloneCntt) cnttAux = cloneCntt(p->content); 
+		new = insertAVL(new, p->hash, cnttAux);
+	
 		if (p->left)  q = enqueue(q, p->left);
 		if (p->right) q = enqueue(q, p->right);
-
-		if (!isEmptyQueue(q)) {
-			p = dequeue(q);
-			if (cloneCntt) cnttAux = cloneCntt(p->content); 
-			new = insertAVL(new, p->hash, cnttAux);
-		}
 	}
 
+	free(q);
 	return new;
 }
 

@@ -1,54 +1,63 @@
 #include <stdlib.h>
+#include <string.h>
 
 #include "queue.h"
 
 struct queue {
-	void *queue[BASE_SIZE];
-	int start;
-	int size;
+	void **queue;
 	int capacity;
+	int start;
+	int pos;
+	int size;
 };
 
 QUEUE initQueue() {
-	QUEUE q = malloc (sizeof(*q));
-	q->size = 0;
+	QUEUE q = malloc (sizeof(struct queue));
+	q->queue = malloc (sizeof(void *) * QUEUE_BASE_SIZE);
+	q->capacity = QUEUE_BASE_SIZE;
 	q->start = 0;
-	q->capacity = BASE_SIZE;
+	q->pos = 0;
+	q->size = 0;
 
 	return q;
 }
 
 QUEUE enqueue(QUEUE q, void *element) {
-	int pos;
 
-	if (q->start + q->size == q->capacity){
-		q->capacity = 2*q->capacity;
-		q = realloc(q, q->capacity);
+	if (q->size == q->capacity){
+		q->queue = realloc(q->queue, 2*q->capacity);
+		memcpy(&(q->queue[q->capacity]), q->queue, q->start);
+		q->capacity *= 2;
 	}
 	
-	pos = (q->start + q->size) % q->capacity;
-	q->queue[pos] = element;
+	q->queue[q->pos % q->capacity] = element;
+	q->pos++;
 	q->size++;
-
-	if (q->size == q->capacity)
-			q->size = 0;
 
 	return q;
 }
 
 bool isEmptyQueue(QUEUE q) {
-	if (!q) return true;
-	else return (q->size == q->start);
+	return (!q) ? true : (q->size == 0);
 }
 
 void *dequeue(QUEUE q) {
 	void *element;
+	
+	if (q->size == 0)
+		return NULL;
 
 	element = q->queue[q->start];
 	q->start++;
+	q->size--;
 
 	if (q->start == q->capacity)
 			q->start = 0;
 
 	return element;
+}
+
+void freeQueue(QUEUE q){
+	free(q->queue);
+	free(q);
 }

@@ -4,6 +4,7 @@
 #include <stdio.h>
 
 #include "generic.h"
+#include "fatglobal.h"
 #include "clients.h"
 #include "products.h"
 
@@ -13,7 +14,7 @@
 PRODUCTCAT writePCat(FILE *file, PRODUCTCAT cat, int *num);
 CLIENTCAT writeCCat(FILE *file, CLIENTCAT cat, int *num);
 
-int checkSales (FILE *file, PRODUCTCAT products, CLIENTCAT clients, int *sucLn, int *failLn);
+int checkSales (FILE *file, FATGLOBAL fat, PRODUCTCAT products, CLIENTCAT clients, int *sucLn, int *failLn);
 void testsValidSales(void);
 
 #endif

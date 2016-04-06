@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 #include "datacheck.h"
+#include "fatglobal.h"
 #include "clients.h"
 #include "products.h"
 
@@ -10,6 +11,7 @@
 
 int main() {
 	FILE *clients, *products, *sales;
+	FATGLOBAL fat;
 	CLIENTCAT clientCat;
 	PRODUCTCAT productCat;
 	int suc, fail;
@@ -25,6 +27,7 @@ int main() {
 
 	clientCat = initClientCat();
 	productCat = initProductCat();
+	fat = initFat();
 
 	clientCat = writeCCat(clients, clientCat, &suc);
 	printf("Clientes analisados: %d\n", suc);
@@ -35,13 +38,15 @@ int main() {
 	printf("Produtos analisados: %d\n", suc);
 
 	putchar('\n');
+	fat = fillFat(productCat);
 
-	checkSales(sales, productCat, clientCat, &suc, &fail);
+	checkSales(sales, fat, productCat, clientCat, &suc, &fail);
 	printf("Vendas analisadas: %d\n", suc+fail);
 	printf("Vendas corretas: %d\n", suc);
 	printf("Vendas incorretas: %d\n", fail);
 
 	putchar('\n');
+
 
 	freeClientCat(clientCat);
 	freeProductCat(productCat);

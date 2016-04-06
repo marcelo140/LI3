@@ -46,22 +46,26 @@ PRODUCTCAT writePCat(FILE *file, PRODUCTCAT cat, int *num) {
 	return cat;
 }
 
-int checkSales (FILE *file, PRODUCTCAT products, CLIENTCAT clients, int *sucLn, int *failLn) {
+int checkSales (FILE *file, FATGLOBAL fat, PRODUCTCAT products, CLIENTCAT clients, int *sucLn, int *failLn) {
 	SALE s;
 	char buf[BUFF_SIZE], *line;
-	int suc, fail;
+	int suc, total;
 
-	suc = fail = 0;
+	suc = total = 0;
 
 	while(fgets(buf, BUFF_SIZE, file)) {
 		line = strtok (buf, "\n\r");
 		s = readSale(line);
+		total++;
 
-		(isSale(s, products, clients)) ? suc++ : fail++;
+		if (isSale(s, products, clients)) {
+			addFat(fat, s);	
+		 	suc++;
+		}
 	}
 
 	*sucLn = suc;
-	*failLn = fail;
+	*failLn = total - suc;
 
 	return 0;
 }

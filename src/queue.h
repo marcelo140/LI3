@@ -1,7 +1,7 @@
 #ifndef __QUEUE_H__
 #define __QUEUE_H__
 
-#define BASE_SIZE 30
+#define QUEUE_BASE_SIZE 100
 
 #include "generic.h"
 
@@ -11,5 +11,6 @@ QUEUE initQueue(void);
 QUEUE enqueue(QUEUE q, void *element);
 bool isEmptyQueue(QUEUE q);
 void *dequeue(QUEUE q);
+void freeQueue(QUEUE q);
 
 #endif
