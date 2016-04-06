@@ -9,9 +9,9 @@
 typedef enum balance { LH, EH, RH } Balance;
 
 struct avl {
-	struct avl *left, *right;
 	char *hash;
 	void *content;
+	struct avl *left, *right;
 	Balance bal;
 };
 
@@ -101,6 +101,13 @@ AVL cloneAVL (AVL p, void* (*cloneCntt) (void * cntt)) {
 	}
 
 	return new;
+}
+
+int countNodes(AVL tree) {
+	if (!tree)
+		return 0;
+
+	return 1 + countNodes(tree->left) + countNodes(tree->right);
 }
 
 /**
