@@ -8,6 +8,7 @@ struct faturacao {
 };
 
 typedef struct fatProduct {
+	int totalSales[MONTHS][BRANCHES][NP];
 	double billed[MONTHS][BRANCHES][NP];
 } *FATPRODUCT;
 
@@ -61,7 +62,8 @@ FATGLOBAL addFat(FATGLOBAL fat, SALE s) {
 		cntt = initFatProduct();
 	
 	cntt->billed[month][branch][mode] += price;
-	
+	cntt->totalSales[month][branch][mode]++;
+
 	fat->l = updateCatalog(fat->l, p, cntt);
 
 	return fat;
@@ -74,8 +76,10 @@ static FATPRODUCT initFatProduct() {
 
 	for (i=0; i < MONTHS; i++)
 		for (j=0; j < BRANCHES; j++)
-			for (k=0; k < NP; k++)
+			for (k=0; k < NP; k++) {
 				new->billed[i][j][k] = 0;
+				new->totalSales[i][j][k] = 0;
+			}
 
 	return new;
 }
