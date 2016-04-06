@@ -71,7 +71,7 @@ CATALOG cloneCatalog(CATALOG cat, void *(*cloneCntt)(void *cntt)) {
  * @param hash Hash do elemento
  * @return Conteúdo do elemento
  */
-void* getCatontent(CATALOG c, char *hash) {
+void* getCatContent(CATALOG c, char *hash) {
 	int pos = hash[0] - 'A';
 	AVL p = c->root[pos];
 	

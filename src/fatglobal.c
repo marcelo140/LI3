@@ -31,7 +31,7 @@ FATGLOBAL initFat() {
  */
 FATGLOBAL fillFat(PRODUCTCAT p) {
 	FATGLOBAL new = initFat();
-	new->l = cloneCatalog(toCatalog(p), NULL);
+	new->l = cloneCatalog(prodToCat(p), NULL);
 
 	return new;
 }
@@ -55,9 +55,10 @@ FATGLOBAL addFat(FATGLOBAL fat, SALE s) {
 	char *p = fromProduct(getProduct(s));
 	int month = getMonth(s), branch = getBranch(s), mode = getMode(s);
 	double price = getPrice(s);
-	FATPRODUCT cntt = getCatalogContent(fat->l, p);
+	FATPRODUCT cntt = getCatContent(fat->l, p);
 
-	if (!cntt) cntt = initFatProduct();
+	if (!cntt) 
+		cntt = initFatProduct();
 	
 	cntt->billed[month][branch][mode] += price;
 	

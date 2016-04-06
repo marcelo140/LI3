@@ -8,9 +8,6 @@
 #define CLIENTS_PATH "Clientes.txt"
 #define PRODUCTS_PATH "Produtos.txt"
 
-#define CLIENT_NUM 20000
-#define PRODUCT_NUM 200000
-
 int main() {
 	FILE *clients, *products, *sales;
 	CLIENTCAT clientCat;
