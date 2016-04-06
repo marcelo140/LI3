@@ -62,8 +62,8 @@ SALE readSale(char *line) {
 	PRODUCT p;
 	CLIENT c;
 	char *token;
-	double price;
-	int i, quant, month, branch, mode;
+	double price = 0;
+	int i, quant=0, month=0, branch=0, mode=0;
 
 	token = strtok(line, " ");
 
