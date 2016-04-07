@@ -16,6 +16,10 @@ struct sale {
 	int mode; /** Promoção N (Normal) ou P (Promoção). */
 };
 
+SALE initSale() {
+	return malloc(sizeof(struct sale));
+}
+
 /**
  * Verifica se uma SALE é válida.
  * @param sale SALE a verificar
@@ -29,7 +33,8 @@ bool isSale(SALE sale, PRODUCTCAT prodCat, CLIENTCAT clientCat) {
 }
 
 /**
- * Cria um SALE novo.
+ * Preenche uma dada SALE.
+ * @param s SALE a preencher
  * @param p Produto
  * @param c Client
  * @param price Preço da venda
@@ -39,9 +44,7 @@ bool isSale(SALE sale, PRODUCTCAT prodCat, CLIENTCAT clientCat) {
  * @param mode Modo de promoção N ou P
  * @return nova SALE
  */
-SALE toSale(PRODUCT p, CLIENT c, double price, int quant, int month, int branch, int mode) {
-
-	SALE s = malloc (sizeof(*s));
+SALE updateSale(SALE s, PRODUCT p, CLIENT c, double price, int quant, int month, int branch, int mode) {
 
 	s->prod = cloneProduct(p);
 	s->client = cloneClient(c);
@@ -58,13 +61,14 @@ SALE toSale(PRODUCT p, CLIENT c, double price, int quant, int month, int branch,
  * @param line Linha a ser lida
  * @return Sale resultante
  */
-SALE readSale(char *line) {
+SALE readSale(SALE s, char *line) {
 	PRODUCT p;
 	CLIENT c;
 	char *token;
 	double price = 0;
 	int i, quant=0, month=0, branch=0, mode=0;
 
+	
 	token = strtok(line, " ");
 
 	for (i = 0; token != NULL; i++){
@@ -85,9 +89,16 @@ SALE readSale(char *line) {
 						break;
 		}
 		token = strtok(NULL, " ");
-	}
+	} 
 
-	return toSale(p, c, price, quant, month, branch, mode);	
+	return updateSale(s, p, c, price, quant, month, branch, mode);	
+}
+/**
+ * Liberta o espaço ocupado pela SALE s
+ * @param s SALE a libertar
+ */
+void freeSale(SALE s) {
+	free(s);
 }
 
 PRODUCT getProduct(SALE s) {

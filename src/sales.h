@@ -12,9 +12,11 @@
 
 typedef struct sale *SALE;
 
+SALE initSale();
 bool isSale(SALE sale, PRODUCTCAT prodCat, CLIENTCAT clientCat);
-SALE toSale(PRODUCT p, CLIENT c, double price, int quant, int month, int branch, int mode);
-SALE readSale(char *line);
+SALE updateSale(SALE s, PRODUCT p, CLIENT c, double price, int quant, int month, int branch, int mode);
+SALE readSale(SALE s, char *line);
+void freeSale(SALE s);
 PRODUCT getProduct(SALE s);
 CLIENT getClient(SALE s);
 double getPrice(SALE s);
