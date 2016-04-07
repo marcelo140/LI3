@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "catTest.h"
+#include "catalogTest.h"
 #include "../src/catalog.h"
 
 #define INSERT_CATALOG_NUM 3
