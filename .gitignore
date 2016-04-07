@@ -1,5 +1,6 @@
-# Executable
+# Executables
 gereVendas
+tester
 
 # Compiled object files
 *.o
