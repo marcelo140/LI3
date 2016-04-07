@@ -12,7 +12,7 @@ obj/%.o: src/%.c
 	@mkdir -p obj
 	$(CC) $(CFLAGS) -o $@ -c $<
 
-obj/main.o: src/datacheck.h src/generic.h
+obj/main.o: src/datacheck.h src/clients.h src/products.h src/generic.h
 obj/datacheck.o: src/datacheck.h src/clients.h src/products.h src/generic.h src/sales.h 
 obj/catalog.o: src/catalog.h src/avl.h src/generic.h
 obj/avl.o: src/avl.h src/generic.h src/queue.h

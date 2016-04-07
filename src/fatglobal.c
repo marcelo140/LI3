@@ -19,10 +19,10 @@ static FATPRODUCT initFatProduct();
  * @return Nova Faturação Global
  */
 FATGLOBAL initFat() {
-		FATGLOBAL fat = malloc(sizeof (*fat));
-		fat->l = initCatalog();
+	FATGLOBAL fat = malloc(sizeof (*fat));
+	fat->l = initCatalog(13);
 
-		return fat;
+	return fat;
 }
 
 /**
@@ -46,7 +46,7 @@ bool isEmptyFat(FATGLOBAL f) {
 	return (f==NULL);
 }
 
-/**
+/************************AVISO NÃO FUNCIONA!                   NÃO FUNCIONA!!!
  * Adiciona uma venda à Faturação Global
  * @param fat Faturação Global
  * @param s SALE que representa a venda
@@ -56,7 +56,7 @@ FATGLOBAL addFat(FATGLOBAL fat, SALE s) {
 	char *p = fromProduct(getProduct(s));
 	int month = getMonth(s), branch = getBranch(s), mode = getMode(s);
 	double price = getPrice(s);
-	FATPRODUCT cntt = getCatContent(fat->l, p);
+	FATPRODUCT cntt = getCatContent(fat->l, 0, p);
 
 	if (!cntt) 
 		cntt = initFatProduct();
@@ -64,7 +64,7 @@ FATGLOBAL addFat(FATGLOBAL fat, SALE s) {
 	cntt->billed[month-1][branch-1][mode] += price;
 	cntt->totalSales[month-1][branch-1][mode]++;
 
-	fat->l = updateCatalog(fat->l, p, cntt);
+	fat->l = updateCatalog(fat->l, 0, p, cntt);
 
 	return fat;
 }

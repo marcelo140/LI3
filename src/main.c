@@ -2,7 +2,6 @@
 #include <time.h>
 
 #include "datacheck.h"
-#include "fatglobal.h"
 #include "clients.h"
 #include "products.h"
 

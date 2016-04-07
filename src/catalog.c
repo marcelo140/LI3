@@ -5,21 +5,24 @@
 
 #include <stdio.h>
 
-#define ARRAY_SIZE 26
-
 struct catalog{
-	AVL root[ARRAY_SIZE];
+	AVL *root;
+	int size;
 };
 
 /**
  * Inicia um novo Catálogo
+ * @param n Número de índices do catálogo
  * @return O novo Catálogo
  */
-CATALOG initCatalog() {
+CATALOG initCatalog(int n) {
 	CATALOG c = malloc(sizeof (*c));
 	int i;
+	
+	c->root = malloc(sizeof(*c->root) * n);
+	c->size = n;
 
-	for (i=0; i<ARRAY_SIZE; i++)
+	for (i=0; i < n; i++)
 		c->root[i] = initAVL();
 
 	return c;
@@ -28,15 +31,15 @@ CATALOG initCatalog() {
 /**
  * Insere conteúdo num dado Catálogo com a respetica Hash
  * @param c Catálogo
+ * @param i Índice onde inserir
  * @param s String a inserir
  * @param cntt Conteúdo do catálogo
  * @return Catálogo novo
  */
-CATALOG insertCatalog(CATALOG c, char *hash, void *cntt) {
-	int pos = hash[0] - 'A';
-	AVL p = c->root[pos];
+CATALOG insertCatalog(CATALOG c, int i, char *hash, void *cntt) {
+	AVL p = c->root[i];
 
-	c->root[pos] = insertAVL(p, hash, cntt);
+	c->root[i] = insertAVL(p, hash, cntt);
 
 	return c;
 }
@@ -44,15 +47,15 @@ CATALOG insertCatalog(CATALOG c, char *hash, void *cntt) {
 /**
  * Atualiza o conteúdo de um elemento de um catálogo caracterizado por uma hash
  * @param c Catálogo
+ * @param i Índice onde atualizar
  * @param hash Hash do elemento
  * @param cntt Conteúdo novo
  * @return Catálogo com o conteúdo atualizado
  */
-CATALOG updateCatalog(CATALOG c, char *hash, void *cntt) {
-	int pos = hash[0] - 'A';
-	AVL p = c->root[pos];
+CATALOG updateCatalog(CATALOG c, int i, char *hash, void *cntt) {
+	AVL p = c->root[i];
 	
-	c->root[pos] = updateAVL(p, hash, cntt);
+	c->root[i] = updateAVL(p, hash, cntt);
 
 	return c;
 }
@@ -61,7 +64,7 @@ CATALOG cloneCatalog(CATALOG cat, void *(*cloneCntt)(void *cntt)) {
 	CATALOG c = malloc(sizeof(*c));
 	int i;
 
-	for (i = 0; i < ARRAY_SIZE; i++)
+	for (i = 0; i < c->size; i++)
 		c->root[i] = cloneAVL(cat->root[i], cloneCntt);
 	
 	return c;
@@ -70,12 +73,12 @@ CATALOG cloneCatalog(CATALOG cat, void *(*cloneCntt)(void *cntt)) {
 /**
  * Devolve o conteúdo de um elemento caracterizado por uma hash
  * @param c Catálogo
+ * @param i Índice do conteúdo a devolver
  * @param hash Hash do elemento
  * @return Conteúdo do elemento
  */
-void* getCatContent(CATALOG c, char *hash) {
-	int pos = hash[0] - 'A';
-	AVL p = c->root[pos];
+void* getCatContent(CATALOG c, int i, char *hash) {
+	AVL p = c->root[i];
 	
 	return getAVLcontent(p, hash); 
 }
@@ -83,14 +86,19 @@ void* getCatContent(CATALOG c, char *hash) {
 /**
  * Dado um Catálogo e uma String localiza essa string no catálogo.
  * @param c Catálogo
+ * @param i Índice onde procurar
  * @param s String a procurar
  * @return true caso encontre, false caso contrário
  */
-bool lookUpCatalog(CATALOG c, char *s) {
-	int pos = s[0] - 'A';
-	AVL p = c->root[pos];
+bool lookUpCatalog(CATALOG c, int i, char *s) {
+	AVL p = c->root[i];
 
 	return lookUpAVL(p, s);
+}
+
+
+int countCatElems(CATALOG c, int i){
+	return countNodes(c->root[i]);
 }
 
 /**
@@ -98,16 +106,11 @@ bool lookUpCatalog(CATALOG c, char *s) {
  * @param c Catálogo a libertar
  * @return void
  */
-
-int countCatElems(CATALOG c, char index) {
-	return countNodes(c->root[index - 'A']);
-}
-
 void freeCatalog(CATALOG c){
 	int i;
 
 	if (c){
-		for (i=0; i<ARRAY_SIZE; i++) freeAVL(c->root[i]);
+		for (i=0; i < c->size; i++) freeAVL(c->root[i]);
 		free(c);
 	}
 }
