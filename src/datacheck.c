@@ -71,7 +71,9 @@ int checkSales (FILE *file, FATGLOBAL fat, PRODUCTCAT products, CLIENTCAT client
 		time += (double) (end - begin) / CLOCKS_PER_SEC;
 	}
 
-	printf("tempo %lfs\n", time);
+	printf("tempo %fs\n", time);
+
+	free(s);
 
 	*sucLn = suc;
 	*failLn = total - suc;

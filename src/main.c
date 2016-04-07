@@ -35,7 +35,7 @@ int main() {
 	clientCat = writeCCat(clients, clientCat, &suc);
 	end = clock();
 	time = (double) (end - begin) / CLOCKS_PER_SEC;
-	printf("Clientes analisados: %d (%lfs)\n", suc, time);
+	printf("Clientes analisados: %d (%fs)\n", suc, time);
 
 
 	putchar('\n');
@@ -44,7 +44,7 @@ int main() {
 	productCat = writePCat(products, productCat, &suc);
 	end = clock();
 	time = (double) (end - begin) / CLOCKS_PER_SEC;
-	printf("Produtos analisados: %d (%lfs)\n", suc, time);
+	printf("Produtos analisados: %d (%fs)\n", suc, time);
 
 	putchar('\n');
 	
@@ -52,7 +52,7 @@ int main() {
 	fat = fillFat(productCat);
 	end = clock();
 	time = (double) (end - begin) / CLOCKS_PER_SEC;
-	printf("FillFat (%lfs)\n", time);
+	printf("FillFat (%fs)\n", time);
 
 	putchar('\n');
 
@@ -61,7 +61,7 @@ int main() {
 	checkSales(sales, fat, productCat, clientCat, &suc, &fail);
 	end = clock();
 	time = (double) (end - begin) / CLOCKS_PER_SEC;
-	printf("Vendas analisadas: %d (%lfs)\n", suc+fail, time);
+	printf("Vendas analisadas: %d (%fs)\n", suc+fail, time);
 	printf("Vendas corretas: %d\n", suc);
 	printf("Vendas incorretas: %d\n", fail);
 
