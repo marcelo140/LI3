@@ -6,7 +6,7 @@ gereVendas: $(OBJ_FILES)
 	$(CC) -o $@ $^
 
 debug: CFLAGS := -g
-debug: gereVendas
+debug: clean gereVendas
 
 obj/%.o: src/%.c
 	@mkdir -p obj

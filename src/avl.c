@@ -95,6 +95,7 @@ AVL cloneAVL (AVL p, void* (*cloneCntt) (void *cntt)) {
 		if (p->left)  q = enqueue(q,p->left);
 		if (p->right) q = enqueue(q,p->right);
 	}
+
 	freeQueue(q);
 	return new; 
 }
