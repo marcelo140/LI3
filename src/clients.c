@@ -21,7 +21,7 @@ struct client{
  */
 CLIENTCAT initClientCat() {
 	CLIENTCAT cCat = malloc(sizeof (struct clientCat));
-	cCat->cat = initCatalog();
+	cCat->cat = initCatalog(26);
 
     return cCat;
 }
@@ -33,7 +33,7 @@ CLIENTCAT initClientCat() {
  * @return Catálogo de Clientes com o novo cliente inserido.
  */
 CLIENTCAT insertClient(CLIENTCAT cCat, CLIENT client) {
-	cCat->cat = insertCatalog(cCat->cat, client->str, NULL);
+	cCat->cat = insertCatalog(cCat->cat, client->str[0] - 'A', client->str, NULL);
 
 	return cCat;
 }
@@ -45,7 +45,7 @@ CLIENTCAT insertClient(CLIENTCAT cCat, CLIENT client) {
  * @return true se encontrou, false caso contrário
  */
 bool lookUpClient(CLIENTCAT cCat, CLIENT client) {
-	return lookUpCatalog(cCat->cat, client->str);
+	return lookUpCatalog(cCat->cat, client->str[0] - 'A', client->str);
 }
 
 /** 

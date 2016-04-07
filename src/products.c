@@ -19,7 +19,7 @@ struct prodcat {
  */
 PRODUCTCAT initProductCat(){
 	PRODUCTCAT prodCat = malloc(sizeof(struct prodcat));
-	prodCat->cat = initCatalog();
+	prodCat->cat = initCatalog(26);
 
 	return prodCat;
 }
@@ -31,7 +31,7 @@ PRODUCTCAT initProductCat(){
  * @return Catálogo de Produtos com o novo produto inserido.
  */
 PRODUCTCAT insertProduct(PRODUCTCAT prodCat, PRODUCT product) {
-	prodCat->cat = insertCatalog(prodCat->cat, product->str, NULL);
+	prodCat->cat = insertCatalog(prodCat->cat, product->str[0] - 'A', product->str, NULL);
 	return prodCat;
 }
 
@@ -42,7 +42,7 @@ PRODUCTCAT insertProduct(PRODUCTCAT prodCat, PRODUCT product) {
  * @return true se encontrou, false caso contrário
  */
 bool lookUpProduct(PRODUCTCAT prodCat, PRODUCT product) {
-	return lookUpCatalog(prodCat->cat, product->str);
+	return lookUpCatalog(prodCat->cat, product->str[0] - 'A', product->str);
 }
 
 /** 
