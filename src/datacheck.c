@@ -1,5 +1,6 @@
 #include <string.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include "datacheck.h"
 #include "sales.h"
@@ -47,22 +48,30 @@ PRODUCTCAT writePCat(FILE *file, PRODUCTCAT cat, int *num) {
 }
 
 int checkSales (FILE *file, FATGLOBAL fat, PRODUCTCAT products, CLIENTCAT clients, int *sucLn, int *failLn) {
-	SALE s;
+	SALE s = initSale();
 	char buf[BUFF_SIZE], *line;
 	int suc, total;
+	
+	clock_t begin, end;
+	double time = 0;
 
 	suc = total = 0;
 
 	while(fgets(buf, BUFF_SIZE, file)) {
 		line = strtok (buf, "\n\r");
-		s = readSale(line);
+		begin = clock();
+		s = readSale(s, line);
+		end = clock();
 		total++;
-
+		
 		if (isSale(s, products, clients)) {
 			addFat(fat, s);	
 		 	suc++;
 		}
+		time += (double) (end - begin) / CLOCKS_PER_SEC;
 	}
+
+	printf("tempo %lfs\n", time);
 
 	*sucLn = suc;
 	*failLn = total - suc;
