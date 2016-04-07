@@ -28,6 +28,7 @@ static NODE balanceLeft(NODE node);
 static NODE insertRight(NODE node, NODE new, int *update);
 static NODE insertLeft(NODE node, NODE new, int *update);
 static NODE insertNode(NODE node, NODE new, int *update);
+static bool equalsNode(NODE a, NODE b);
 static void freeNode(NODE node);
 
 /**
@@ -156,6 +157,23 @@ void *getAVLcontent(AVL tree, char *hash) {
  */
 bool isEmptyAVL(AVL tree) {
 	return (tree->size == 0);
+}
+
+bool equalsAVL(AVL a, AVL b) {
+	return equalsNode(a->head, b->head);
+}
+
+bool equalsNode(NODE a, NODE b) {
+	if (!a && !b)
+		return true;
+
+	if (!a || !b)
+		return false;
+
+	if (!strcmp(a->hash, b->hash) && a->content == b->content)
+		return equalsNode(a->left, b->left) && equalsNode(a->right, b->right);
+
+	return false;
 }
 
 /**
