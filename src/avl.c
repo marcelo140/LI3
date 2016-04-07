@@ -74,14 +74,14 @@ AVL updateAVL(AVL p, char *hsh, void *cntt) {
 	return p;
 }
 
-
+#include <stdio.h>
 /**
  * Devolve um clone de uma dada AVL, copiando o seu conteúdo com uma dada função
  * @param p AVL a clonar
  * @param cloneCntt Função auxiliar para clonar o conteúdo.
  * @return Nova AVL
  */
-AVL cloneAVL (AVL p, void* (*cloneCntt) (void * cntt)) {
+AVL cloneAVL (AVL p, void* (*cloneCntt) (void *cntt)) {
 
 	QUEUE q = initQueue();
 	AVL new = initAVL();
@@ -89,13 +89,13 @@ AVL cloneAVL (AVL p, void* (*cloneCntt) (void * cntt)) {
 
 	q = enqueue(q, p);	
 
-	while (!isEmptyQueue(q)) {
-		p = dequeue(q);
-		if (cloneCntt) cnttAux = cloneCntt(p->content); 
+	while((p = dequeue(q))) {
+
+		if (cloneCntt) cnttAux = cloneCntt(p->content);
 		new = insertAVL(new, p->hash, cnttAux);
-	
-		if (p->left)  q = enqueue(q, p->left);
-		if (p->right) q = enqueue(q, p->right);
+		
+		if (p->left)  q = enqueue(q,p->left);
+		if (p->right) q = enqueue(q,p->right);
 	}
 
 	free(q);

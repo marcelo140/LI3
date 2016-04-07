@@ -75,6 +75,10 @@ PRODUCT toProduct(char *str) {
 	return r;
 }
 
+int countProducts(PRODUCTCAT prodCat, char index) {
+	return countCatElems(prodCat->cat, index);
+}
+
 /**
  * Dado um PRODUCT devolve uma String (Hash) que lhe corresponde
  * @param p PRODUCT

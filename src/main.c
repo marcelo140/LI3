@@ -27,7 +27,6 @@ int main() {
 
 	clientCat = initClientCat();
 	productCat = initProductCat();
-	fat = initFat();
 
 	clientCat = writeCCat(clients, clientCat, &suc);
 	printf("Clientes analisados: %d\n", suc);

@@ -25,8 +25,8 @@ QUEUE initQueue() {
 QUEUE enqueue(QUEUE q, void *element) {
 
 	if (q->size == q->capacity){
-		q->queue = realloc(q->queue, 2*q->capacity);
-		memcpy(&(q->queue[q->capacity]), q->queue, q->start);
+		q->queue = realloc(q->queue, 2*q->capacity*sizeof(void *));
+		memcpy(&(q->queue[q->capacity]), q->queue, q->start * sizeof(void *));
 		q->capacity *= 2;
 	}
 	

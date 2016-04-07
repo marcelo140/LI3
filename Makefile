@@ -27,7 +27,7 @@ clean:
 	-@rm -f gereVendas *.o
 	-@rm -f Vendas_1MValidas.txt
 	-@rm -rf obj
-	-@rm vg*
+	-@rm -f vg*
 
 .PHONY: doc
 doc:

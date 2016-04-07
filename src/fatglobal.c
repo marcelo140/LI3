@@ -49,7 +49,7 @@ bool isEmptyFat(FATGLOBAL f) {
 /**
  * Adiciona uma venda à Faturação Global
  * @param fat Faturação Global
- * @param s SALE que reprensta a venda
+ * @param s SALE que representa a venda
  * @return Faturação Global com a nova venda
  */
 FATGLOBAL addFat(FATGLOBAL fat, SALE s) {
@@ -61,8 +61,8 @@ FATGLOBAL addFat(FATGLOBAL fat, SALE s) {
 	if (!cntt) 
 		cntt = initFatProduct();
 	
-	cntt->billed[month][branch][mode] += price;
-	cntt->totalSales[month][branch][mode]++;
+	cntt->billed[month-1][branch-1][mode] += price;
+	cntt->totalSales[month-1][branch-1][mode]++;
 
 	fat->l = updateCatalog(fat->l, p, cntt);
 

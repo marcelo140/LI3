@@ -3,6 +3,8 @@
 #include "catalog.h"
 #include "avl.h"
 
+#include <stdio.h>
+
 #define ARRAY_SIZE 26
 
 struct catalog{
@@ -61,7 +63,7 @@ CATALOG cloneCatalog(CATALOG cat, void *(*cloneCntt)(void *cntt)) {
 
 	for (i = 0; i < ARRAY_SIZE; i++)
 		c->root[i] = cloneAVL(cat->root[i], cloneCntt);
-
+	
 	return c;
 }
 
@@ -96,6 +98,11 @@ bool lookUpCatalog(CATALOG c, char *s) {
  * @param c Catálogo a libertar
  * @return void
  */
+
+int countCatElems(CATALOG c, char index) {
+	return countNodes(c->root[index - 'A']);
+}
+
 void freeCatalog(CATALOG c){
 	int i;
 

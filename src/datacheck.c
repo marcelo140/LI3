@@ -71,7 +71,6 @@ int checkSales (FILE *file, FATGLOBAL fat, PRODUCTCAT products, CLIENTCAT client
 }
 
 void testsValidSales() {
-
     int i, priceIsZero=0, totalQuant=0, quantity=0, totalClients=0, totalProducts=0;
     float price, billed=0;
     char line[BUFF_SIZE], *token;

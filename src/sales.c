@@ -75,7 +75,7 @@ SALE readSale(char *line) {
 						break;
 			case 2: quant = atoi(token);
 						break;
-			case 3: mode = strcmp(token, "N");
+			case 3: mode = strcmp(token, "N") ? 1 : 0;
 						break;
 			case 4: c = toClient(token);
 						break;

@@ -12,5 +12,6 @@ CATALOG cloneCatalog(CATALOG cat, void *(*cloneCntt)(void *cntt));
 void* getCatContent(CATALOG c, char *hash);
 bool lookUpCatalog(CATALOG c, char *hash);
 void freeCatalog(CATALOG c);
+int countCatElems(CATALOG c, char index);
 
 #endif
