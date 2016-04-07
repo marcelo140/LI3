@@ -69,7 +69,6 @@ FATGLOBAL addFat(FATGLOBAL fat, SALE s) {
 	return fat;
 }
 
-
 static FATPRODUCT initFatProduct() {
 	int i, j, k;
 	FATPRODUCT new = malloc (sizeof(struct fatProduct));

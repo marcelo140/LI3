@@ -5,15 +5,16 @@
 
 typedef struct avl *AVL;
 
-AVL initAVL(void);
+AVL initAVL();
 AVL insertAVL(AVL n, char *hash, void *content);
 AVL updateAVL(AVL n, char *hash, void *content);
-AVL cloneAVL (AVL p, void* (*cloneCntt) (void * cntt));
-int countNodes(AVL tree); 
 bool isEmptyAVL(AVL n);
+int countNodes(AVL tree); 
 bool lookUpAVL(AVL n, char *hash);
 void *getAVLcontent(AVL tree, char *hash);
 void freeAVL(AVL n);
+
+AVL cloneAVL (AVL p, void* (*cloneCntt) (void * cntt));
 void printInOrderAVL(AVL n);
 
 #endif
