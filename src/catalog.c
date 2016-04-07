@@ -60,6 +60,7 @@ CATALOG updateCatalog(CATALOG c, int i, char *hash, void *cntt) {
 	return c;
 }
 
+/*
 CATALOG cloneCatalog(CATALOG cat, void *(*cloneCntt)(void *cntt)) {
 	CATALOG c = malloc(sizeof(*c));
 	int i;
@@ -69,7 +70,7 @@ CATALOG cloneCatalog(CATALOG cat, void *(*cloneCntt)(void *cntt)) {
 	
 	return c;
 }
-
+*/
 /**
  * Devolve o conteúdo de um elemento caracterizado por uma hash
  * @param c Catálogo
