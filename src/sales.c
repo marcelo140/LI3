@@ -65,31 +65,29 @@ SALE readSale(SALE s, char *line) {
 	PRODUCT p;
 	CLIENT c;
 	char *token;
-	double price = 0;
-	int i, quant=0, month=0, branch=0, mode=0;
+	double price;
+	int quant, month, branch, mode;
 
-	
 	token = strtok(line, " ");
+	p = toProduct(token);
+	
+	token = strtok(NULL, " ");
+	price = atof(token);
 
-	for (i = 0; token != NULL; i++){
-		switch(i) {
-			case 0: p = toProduct(token);
-						break;
-			case 1: price = atof(token);
-						break;
-			case 2: quant = atoi(token);
-						break;
-			case 3: mode = strcmp(token, "N") ? 1 : 0;
-						break;
-			case 4: c = toClient(token);
-						break;
-			case 5: month = atoi(token);
-						break;
-			case 6: branch = atoi(token);
-						break;
-		}
-		token = strtok(NULL, " ");
-	} 
+	token = strtok(NULL, " ");
+	quant = atoi(token);
+
+	token = strtok(NULL, " ");
+	mode = strcmp(token, "N") ? 1 : 0;
+
+	token = strtok(NULL, " ");
+	c = toClient(token);
+
+	token = strtok(NULL, " ");
+	month = atoi(token);
+
+	token = strtok(NULL, " ");
+	branch = atoi(token);
 
 	return updateSale(s, p, c, price, quant, month, branch, mode);	
 }
