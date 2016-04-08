@@ -175,6 +175,12 @@ PRODUCTSET fillProductSet(PRODUCTCAT prodCat, PRODUCTSET ps, char index) {
 	return ps;
 }
 
+PRODUCT getProductSet(PRODUCTSET ps, int pos) {
+	char *str = getDataSet(ps->set, pos);
+
+	return toProduct(str);
+}
+
 int getProductSetSize(PRODUCTSET ps) {
 	return getDataSetSize(ps->set);
 }

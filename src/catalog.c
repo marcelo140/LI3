@@ -125,7 +125,7 @@ DATASET initDataSet(int n) {
 	return ds;
 }
 
-DATASET insertData(DATASET ds, char *data) {
+DATASET insertDataSet(DATASET ds, char *data) {
 	ds->set = insertHashSet(ds->set, data);
 	return ds;
 }
@@ -135,7 +135,7 @@ DATASET fillDataSet(CATALOG cat, DATASET ds, int i) {
 	return ds;
 }
 
-char *getData(DATASET ds, int pos) {
+char *getDataSet(DATASET ds, int pos) {
 	return getHashSetPos(ds->set, pos);
 }
 

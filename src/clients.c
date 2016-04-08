@@ -16,9 +16,7 @@ struct client{
 };
 
 struct clientSet {
-	int size;
-	int sp;
-	char **set;
+	DATASET set;
 };
 
 /** 
@@ -132,10 +130,7 @@ bool isClient(char *str) {
  */
 CLIENTSET initClientSet(int n) {
 	CLIENTSET new = malloc (sizeof (*new));
-
-	new->sp = 0;
-	new->size = 0;
-	new->set = malloc (sizeof(char *) * n);
+	new->set = initDataSet(n);
 
 	return new;
 }
@@ -147,15 +142,35 @@ CLIENTSET initClientSet(int n) {
  * @return CLIENTSET com o novo CLIENT
  */
 CLIENTSET insertClientSet(CLIENTSET cs, CLIENT c) {
-
 	char *str = fromClient(c);
+	cs->set = insertDataSet(cs->set, str);
 	
-	if (cs->size == cs->sp) {
-		cs->size *=2;
-		cs->set = realloc(cs->set, cs->size * sizeof(char *));
-	}
+	return cs;
+}
 
-	cs->set[cs->sp] = str;
+/**
+ * @param catProd Catálogo onde se encontra a informação pretendida
+ * @param cs Set onde se pretende guardar a informação
+ * @param index Posição do catálogo onde se encontra a informação
+ * @return Set preenchido
+ */
+CLIENTSET fillClientSet(CLIENTCAT catProd, CLIENTSET cs, char index) {
+	cs->set = fillDataSet(catProd->cat, cs->set, index - 'A');
 
 	return cs;
+}
+
+/**
+ * @param cs Set de clientes
+ * @param pos Posição do cliente
+ * @return Cliente
+ */
+CLIENT getClientSet(CLIENTSET cs, int pos) {
+	char *str = getDataSet(cs->set, pos);
+	
+	return toClient(str);
+}
+
+int getClientSetSize(CLIENTSET cs) {
+	return getDataSetSize(cs->set);
 }

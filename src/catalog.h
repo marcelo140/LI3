@@ -18,7 +18,7 @@ int countCatElems(CATALOG c, int i);
 DATASET initDataSet(int n);
 DATASET insertDataSet(DATASET ds, char *data);
 DATASET fillDataSet(CATALOG cat, DATASET ds, int i);
-char *getData(DATASET ds, int pos);
+char *getDataSet(DATASET ds, int pos);
 int getDataSetSize(DATASET ds); 
 
 #endif
