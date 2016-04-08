@@ -11,11 +11,13 @@ PRODUCTCAT initProductCat(void);
 PRODUCTCAT insertProduct(PRODUCTCAT catalog, PRODUCT product);
 bool lookUpProduct(PRODUCTCAT catalog, PRODUCT product);
 void freeProductCat(PRODUCTCAT catalog);
+int countProducts(PRODUCTCAT prodCat, char index);
+
 bool isProduct(char *str);
 char* fromProduct(PRODUCT p);
 PRODUCT toProduct(char *s);
 PRODUCT cloneProduct(PRODUCT p);
-CATALOG prodToCat(PRODUCTCAT prodCat);
-int countProducts(PRODUCTCAT prodCat, char index);
+void freeProduct(PRODUCT p);
 
+CATALOG prodToCat(PRODUCTCAT prodCat);
 #endif

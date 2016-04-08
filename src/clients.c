@@ -88,6 +88,15 @@ CLIENT cloneClient(CLIENT c) {
 	return new;	
 }
 
+/**
+ * Liberta memória ocupada pelo cliente
+ * @param c Cliente a ser libertado
+ */
+void freeClient(CLIENT c) {
+	free(c->str);
+	free(c);
+}
+
 bool isClient(char *str) {
 	int i;
 	bool client = true;
