@@ -17,8 +17,9 @@ void *getAVLcontent(AVL tree, char *hash);
 void freeAVL(AVL n);
 
 HASHSET initHashSet(int n);
-HASHSET insertHashSet(HASHSET hs, char *hash);
 HASHSET getInOrderAVL(HASHSET hs, AVL tree);
+HASHSET unionHSets(HASHSET hs1, HASHSET hs2);
+HASHSET diffHSets(HASHSET hs1, HASHSET hs2);
 char* getHashSetPos(HASHSET hs, int pos);
 int getHashSetSize(HASHSET hs);
 void freeHashSet(HASHSET set);
