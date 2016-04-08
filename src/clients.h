@@ -17,4 +17,8 @@ char *fromClient(CLIENT c);
 CLIENT cloneClient(CLIENT c);
 bool isClient(char *str);
 
+
+CLIENTSET initClientSet(int n);
+CLIENTSET insertClientSet(CLIENTSET cs, CLIENT c);
+
 #endif

@@ -3,8 +3,6 @@
 #include "catalog.h"
 #include "avl.h"
 
-#include <stdio.h>
-
 struct catalog{
 	AVL *root;
 	int size;

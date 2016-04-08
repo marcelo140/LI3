@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
 #include "queue.h"
 #include "avl.h"
 
@@ -20,6 +19,12 @@ struct avl {
 	int size;
 };
 
+struct hashSet {
+	int size;
+	int sp;
+	char **set;
+};
+
 static NODE newNode(char *hash, void *content, NODE left, NODE right);
 static NODE rotateRight(NODE node);
 static NODE rotateLeft(NODE node);
@@ -30,6 +35,7 @@ static NODE insertLeft(NODE node, NODE new, int *update);
 static NODE insertNode(NODE node, NODE new, int *update);
 static bool equalsNode(NODE a, NODE b);
 static void freeNode(NODE node);
+static HASHSET getInOrderAVLaux(HASHSET hs, NODE n); 
 
 /**
  * Inicia uma nova AVL.
@@ -219,17 +225,52 @@ static void freeNode(NODE node) {
 	}
 }
 
-/*
-void printInOrderAVL(AVL p) {
-	if (!p)
-		putchar ('\n');
-	else {
-		printInOrderAVL(p->left);
-		printf("|%s|\n", p->hash);
-		printInOrderAVL(p->right);
-	}
+HASHSET initHashSet(int n) {
+
+	HASHSET new = malloc(sizeof(*new));
+
+	new->size = n;
+	new->sp = 0;
+	new->set = malloc(sizeof(char *) * n);
+
+	return new;
 }
-*/
+
+HASHSET insertHashSet(HASHSET hs, char *hash) {
+	
+	if (hs->sp == hs->size) {
+		hs->size *= 2;
+		hs->set = realloc(hs->set, hs->size * sizeof(char *));
+	}
+	
+	hs->set[hs->sp] = hash;
+	hs->sp++;
+
+	return hs;
+}
+
+
+HASHSET getInOrderAVL(HASHSET hs, AVL tree) {
+	
+	if (tree) hs = getInOrderAVLaux(hs, tree->head);
+
+	return hs;
+}
+
+char* getHashSetPos(HASHSET hs, int pos) {
+	return hs->set[pos];
+}
+
+static HASHSET getInOrderAVLaux(HASHSET hs, NODE n) {
+
+	if (n) {
+		hs = getInOrderAVLaux(hs, n->left);
+		hs = insertHashSet(hs, n->hash);
+		hs = getInOrderAVLaux(hs, n->right);
+	}
+
+	return hs;
+}
 
 static NODE newNode(char *hash, void *content, NODE left, NODE right) {
 	NODE new = malloc(sizeof(struct node));
