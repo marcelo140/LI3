@@ -261,6 +261,10 @@ char* getHashSetPos(HASHSET hs, int pos) {
 	return hs->set[pos];
 }
 
+int getHashSetSize(HASHSET hs) {
+	return hs->size;
+}
+
 static HASHSET getInOrderAVLaux(HASHSET hs, NODE n) {
 
 	if (n) {

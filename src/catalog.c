@@ -138,3 +138,7 @@ DATASET fillDataSet(CATALOG cat, DATASET ds, int i) {
 char *getData(DATASET ds, int pos) {
 	return getHashSetPos(ds->set, pos);
 }
+
+int getDataSetSize(DATASET ds) {
+	return getHashSetSize(ds->set);
+}

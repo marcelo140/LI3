@@ -25,5 +25,6 @@ PRODUCTSET initProductSet(int n);
 PRODUCTSET insertProductSet(PRODUCTSET ps, PRODUCT p);
 PRODUCTSET fillProductSet(PRODUCTCAT cat, PRODUCTSET ps, char index);
 PRODUCT getProduct(PRODUCTSET ps, int pos);
+int getProductSetSize(PRODUCTSET ps);
 
 #endif
