@@ -9,10 +9,7 @@ gereVendas: $(OBJ_FILES)
 	$(CC) -o $@ $^
 
 tester: $(TESTER_FILES) $(EXTRA_TESTER_FILES)
-	$(CC) -o $@ $^
-	clear
-	./tester
-	@rm -f tester
+	$(CC) -g -o $@ $^
 
 debug: CFLAGS := -g
 debug: clean gereVendas
