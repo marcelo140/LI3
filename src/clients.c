@@ -15,6 +15,12 @@ struct client{
 	char *str;
 };
 
+struct clientSet {
+	int size;
+	int sp;
+	char **set;
+};
+
 /** 
  * Inicia o Catálogo de Clientes
  * @return Catálogo de Clientes novo
@@ -107,4 +113,40 @@ bool isClient(char *str) {
 	}
 
 	return client;
+}
+
+
+/**
+ * Inicializa um CLIENTSET com um tamanho n
+ * @param n Tamanho mínimo do CLIENTSET
+ * @return CLIENTSET inicializado
+ */
+CLIENTSET initClientSet(int n) {
+	CLIENTSET new = malloc (sizeof (*new));
+
+	new->sp = 0;
+	new->size = 0;
+	new->set = malloc (sizeof(char *) * n);
+
+	return new;
+}
+
+/**
+ * Insere um CLIENT num CLIENTSET
+ * @param ps CLIENTSET onde inserir
+ * @param p CLIENT a inserir
+ * @return CLIENTSET com o novo CLIENT
+ */
+CLIENTSET insertClientSet(CLIENTSET cs, CLIENT c) {
+
+	char *str = fromClient(c);
+	
+	if (cs->size == cs->sp) {
+		cs->size *=2;
+		cs->set = realloc(cs->set, cs->size * sizeof(char *));
+	}
+
+	cs->set[cs->sp] = str;
+
+	return cs;
 }

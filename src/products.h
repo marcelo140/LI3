@@ -6,6 +6,7 @@
 
 typedef struct product *PRODUCT; 
 typedef struct prodcat *PRODUCTCAT;
+typedef struct productSet *PRODUCTSET;
 
 PRODUCTCAT initProductCat(void);
 PRODUCTCAT insertProduct(PRODUCTCAT catalog, PRODUCT product);
@@ -17,5 +18,8 @@ PRODUCT toProduct(char *s);
 PRODUCT cloneProduct(PRODUCT p);
 CATALOG prodToCat(PRODUCTCAT prodCat);
 int countProducts(PRODUCTCAT prodCat, char index);
+
+PRODUCTSET initProductSet(int n); 
+PRODUCTSET insertProductSet(PRODUCTSET ps, PRODUCT p);
 
 #endif
