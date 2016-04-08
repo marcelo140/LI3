@@ -8,6 +8,10 @@ struct catalog{
 	int size;
 };
 
+struct dataSet {
+	HASHSET set;
+};
+
 /**
  * Inicia um novo Catálogo
  * @param n Número de índices do catálogo
@@ -112,4 +116,25 @@ void freeCatalog(CATALOG c){
 		for (i=0; i < c->size; i++) freeAVL(c->root[i]);
 		free(c);
 	}
+}
+
+DATASET initDataSet(int n) {
+	DATASET ds = malloc(sizeof(struct dataSet));
+	ds->set = initHashSet(n);
+
+	return ds;
+}
+
+DATASET insertData(DATASET ds, char *data) {
+	ds->set = insertHashSet(ds->set, data);
+	return ds;
+}
+
+DATASET fillDataSet(CATALOG cat, DATASET ds, int i) {
+	ds->set = getInOrderAVL(ds->set, cat->root[i]);
+	return ds;
+}
+
+char *getData(DATASET ds, int pos) {
+	return getHashSetPos(ds->set, pos);
 }

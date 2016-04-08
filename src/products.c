@@ -14,9 +14,7 @@ struct prodcat {
 };
 
 struct productSet {
-	int size;
-	int sp;
-	char** set;
+	DATASET set;	
 }; 
 
 /** 
@@ -147,10 +145,7 @@ bool isProduct (char *str){
  */
 PRODUCTSET initProductSet(int n) {
 	PRODUCTSET new = malloc (sizeof (*new));
-
-	new->sp = 0;
-	new->size = 0;
-	new->set = malloc (sizeof(char *) * n);
+	new->set = initDataSet(n);
 
 	return new;
 }
@@ -162,15 +157,20 @@ PRODUCTSET initProductSet(int n) {
  * @return PRODUCTSET com o novo PRODUCT
  */
 PRODUCTSET insertProductSet(PRODUCTSET ps, PRODUCT p) {
-
 	char *str = fromProduct(p);
+	ps->set = insertDataSet(ps->set, str);
 	
-	if (ps->size == ps->sp) {
-		ps->size *=2;
-		ps->set = realloc(ps->set, ps->size * sizeof(char *));
-	}
+	return ps;
+}
 
-	ps->set[ps->sp] = str;
+/**
+ * @param prodCat Catálogo onde se encontra a informação
+ * @param ps Set onde vai ser guardada a informação
+ * @param index Index do catálogo onde se encontra a informação pretendida
+ * @return Set com a informação pretendida
+ */
+PRODUCTSET fillProductSet(PRODUCTCAT prodCat, PRODUCTSET ps, char index) {
+	ps->set = fillDataSet(prodCat->cat, ps->set, index - 'A');
 
 	return ps;
 }
