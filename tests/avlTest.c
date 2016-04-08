@@ -9,12 +9,14 @@
 #define LOOK_UP_NUM 3
 #define EQUALS_NUM 4
 #define UPDATE_NUM 4
+#define SETS_NUM 7
 
 static int test_countNodes();
 static int test_isEmpty();
 static int test_lookUp();
 static int test_equals();
 static int test_update();
+static int test_sets();
 
 int test_AVL() {
 	int res, passed_tests = 0;
@@ -39,6 +41,9 @@ int test_AVL() {
 	passed_tests += res;
 	printf("update: %d/%d\n", res, UPDATE_NUM);
 
+	res = test_sets();
+	passed_tests += res;
+	printf("sets: %d/%d\n", res, SETS_NUM);
 	return passed_tests;
 }
 
@@ -175,5 +180,79 @@ static int test_update() {
 		passed_tests++;
 
 	freeAVL(tree);
+	return passed_tests;
+}
+
+int test_sets() {
+	AVL tree1, tree2;
+	HASHSET set1, set2, set3;
+	int passed_tests = 0;
+
+	tree1 = initAVL();
+	tree2 = initAVL();
+	set1 = initHashSet(10);
+	set2 = initHashSet(10);
+
+	tree1 = insertAVL(tree1, "05", NULL);
+	tree1 = insertAVL(tree1, "08", NULL);
+	tree1 = insertAVL(tree1, "09", NULL);
+	tree1 = insertAVL(tree1, "13", NULL);
+	tree1 = insertAVL(tree1, "16", NULL);
+	tree1 = insertAVL(tree1, "28", NULL);
+
+	tree2 = insertAVL(tree2, "08", NULL);
+	tree2 = insertAVL(tree2, "29", NULL);
+	tree2 = insertAVL(tree2, "09", NULL);
+	tree2 = insertAVL(tree2, "16", NULL);
+
+	set1 = getInOrderAVL(set1, tree1);
+	set2 = getInOrderAVL(set2, tree2);
+	
+	if (getHashSetSize(set1) == 6){
+		printf("Passed test1\n");
+		passed_tests++;
+	}
+
+	if (getHashSetSize(set2) == 4){
+		printf("Passed test2\n");
+		passed_tests++;
+	}
+
+	set3 = diffHSets(set1, set2);
+
+	if (getHashSetSize(set3) == 4) {
+		printf("Passed test3");
+		passed_tests++;
+	}
+
+	if (!strcmp(getHashSetPos(set3, 1), "13")){
+		printf("Passed test4\n");
+		passed_tests++;
+	}
+
+	freeHashSet(set3);
+	set3 = unionHSets(set1, set2);
+
+	if (getHashSetSize(set3) == 7){
+		printf("Passed test5\n");
+		passed_tests++;
+	}
+
+	if (!strcmp(getHashSetPos(set3, 3), "13")){
+		printf("Passed test6\n");
+		passed_tests++;
+	}
+
+	if (!strcmp(getHashSetPos(set3, 5), "28")){
+		printf("Passed test7");
+		passed_tests++;
+	}
+
+	freeAVL(tree1);
+	freeAVL(tree2);
+	freeHashSet(set1);
+	freeHashSet(set2);
+	freeHashSet(set3);
+	
 	return passed_tests;
 }
