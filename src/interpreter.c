@@ -2,48 +2,38 @@
 #include <stdio.h>
 #include "interpreter.h"
 #include "clients.h"
-
+#include "products.h"
 #define LINES_NUM 20
 
 void present(PRODUCTSET ps) {
-	char *str, nav='\0', onav;
-	int i, cpag = 0, totalPags= psetSize(ps);
+	char *str, nav='\0'; 
+	int i, cpage = 1, totalPages, cont=0, total = getPSetSize(ps) ;
 	PRODUCT p;
 
- 
-	totalPags = (totalPags / LINES_NUM); /* + (totalPags % LINES_NUM != 0); */
+	totalPages = (total / LINES_NUM) + (total % LINES_NUM != 0);
 
-	while (cpag <= totalPags) {
+	while (cpage <= totalPages) {
 		
-		system("clear");
-		printf("==========( Página %d de %d )==========\n", cpag, totalPags);
-
+		printf("==========( Página %d de %d )==========\n", cpage, totalPages);
 	
-		for (i=0; i < LINES_NUM; i++) {
-			p = getPsetData(ps, cpag*LINES_NUM + i);
-
-			if (!p) break; 
+		for (i=0; i < LINES_NUM && cont < total; cont++, i++) {
+			p = getPSetData(ps, cont);
 
 			str = fromProduct(p);
 
-			printf("\t%s\n", str);
+			printf("\t\t%s\n", str);
 
 			freeProduct(p);
 			free(str);
 		}
 
-		printf(" <--(b)-- (=================) --(n)--> \n");	
+		printf("<----(b)---- (=============) --(enter)-->\n");	
 
-		while(1) {
-			onav = nav;
+		while(nav != 'b' && nav != 'q' && nav != '\n') {
 			nav = getchar();
-		
-			if (nav == '\n') nav = onav;	
-			if (nav == 'b' && cpag > 0) { cpag--; break; }
-			if (nav == 'n') { cpag++; break; }
-			if (nav == 'q') {break;}
 		}
-
 		if (nav == 'q') break;	
+
+		cpage = (nav == '\n') ? cpage+1 : cpage-1;
 	}
 }

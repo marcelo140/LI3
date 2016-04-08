@@ -15,11 +15,10 @@ int main() {
 	FATGLOBAL fat;
 	CLIENTCAT clientCat;
 	PRODUCTCAT productCat;
-	PRODUCTSET ps;
 	int suc, fail;
 
 	double time;
-	clock_t end, begin;
+	time_t end, begin;
 
 	clients = fopen(CLIENTS_PATH, "r");
 	products = fopen(PRODUCTS_PATH, "r");
@@ -67,10 +66,6 @@ int main() {
 	printf("Vendas incorretas: %d\n", fail);
 
 	putchar('\n');
-
-	ps = initPSet(400);
-	ps = fillPSet(productCat, ps, 'A');
-	present(ps);
 
 	freeClientCat(clientCat);
 	freeProductCat(productCat);
