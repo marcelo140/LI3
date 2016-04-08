@@ -19,10 +19,10 @@ CLIENT cloneClient(CLIENT c);
 void freeClient(CLIENT c);
 bool isClient(char *str);
 
-CLIENTSET initClientSet(int n);
-CLIENTSET insertClientSet(CLIENTSET cs, CLIENT c);
-CLIENTSET fillClientSet(CLIENTCAT catProd, CLIENTSET cs, char index);
-CLIENT getClientSet(CLIENTSET cs, int pos);
-int getClientSetSize(CLIENTSET cs);
-void freeCSet(CLIENTSET cs);
+CLIENTSET initCset(int n);
+CLIENTSET insertCset(CLIENTSET cs, CLIENT c);
+CLIENTSET fillCset(CLIENTCAT catProd, CLIENTSET cs, char index);
+CLIENT getCsetData(CLIENTSET cs, int pos);
+int csetSize(CLIENTSET cs);
+
 #endif

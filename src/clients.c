@@ -128,7 +128,7 @@ bool isClient(char *str) {
  * @param n Tamanho mínimo do CLIENTSET
  * @return CLIENTSET inicializado
  */
-CLIENTSET initClientSet(int n) {
+CLIENTSET initCset(int n) {
 	CLIENTSET new = malloc (sizeof (*new));
 	new->set = initDataSet(n);
 
@@ -141,7 +141,7 @@ CLIENTSET initClientSet(int n) {
  * @param p CLIENT a inserir
  * @return CLIENTSET com o novo CLIENT
  */
-CLIENTSET insertClientSet(CLIENTSET cs, CLIENT c) {
+CLIENTSET insertCset(CLIENTSET cs, CLIENT c) {
 	char *str = fromClient(c);
 	cs->set = insertDataSet(cs->set, str);
 	
@@ -154,7 +154,7 @@ CLIENTSET insertClientSet(CLIENTSET cs, CLIENT c) {
  * @param index Posição do catálogo onde se encontra a informação
  * @return Set preenchido
  */
-CLIENTSET fillClientSet(CLIENTCAT catProd, CLIENTSET cs, char index) {
+CLIENTSET fillCset(CLIENTCAT catProd, CLIENTSET cs, char index) {
 	cs->set = fillDataSet(catProd->cat, cs->set, index - 'A');
 
 	return cs;
@@ -165,13 +165,13 @@ CLIENTSET fillClientSet(CLIENTCAT catProd, CLIENTSET cs, char index) {
  * @param pos Posição do cliente
  * @return Cliente
  */
-CLIENT getClientSet(CLIENTSET cs, int pos) {
+CLIENT getCsetData(CLIENTSET cs, int pos) {
 	char *str = getDataSet(cs->set, pos);
 	
 	return toClient(str);
 }
 
-int getClientSetSize(CLIENTSET cs) {
+int csetSize(CLIENTSET cs) {
 	return getDataSetSize(cs->set);
 }
 

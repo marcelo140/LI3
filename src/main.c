@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <time.h>
 
+#include "interpreter.h"
 #include "datacheck.h"
 #include "clients.h"
 #include "products.h"
@@ -14,6 +15,7 @@ int main() {
 	FATGLOBAL fat;
 	CLIENTCAT clientCat;
 	PRODUCTCAT productCat;
+	PRODUCTSET ps;
 	int suc, fail;
 
 	double time;
@@ -66,6 +68,9 @@ int main() {
 
 	putchar('\n');
 
+	ps = initPSet(400);
+	ps = fillPSet(productCat, ps, 'A');
+	present(ps);
 
 	freeClientCat(clientCat);
 	freeProductCat(productCat);

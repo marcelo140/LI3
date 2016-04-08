@@ -143,7 +143,7 @@ bool isProduct (char *str){
  * @param n Tamanho mínimo do PRODUCTSET
  * @return PRODUCTSET inicializado
  */
-PRODUCTSET initProductSet(int n) {
+PRODUCTSET initPSet(int n) {
 	PRODUCTSET new = malloc (sizeof (*new));
 	new->set = initDataSet(n);
 
@@ -156,7 +156,7 @@ PRODUCTSET initProductSet(int n) {
  * @param p PRODUCT a inserir
  * @return PRODUCTSET com o novo PRODUCT
  */
-PRODUCTSET insertProductSet(PRODUCTSET ps, PRODUCT p) {
+PRODUCTSET insertPSet(PRODUCTSET ps, PRODUCT p) {
 	char *str = fromProduct(p);
 	ps->set = insertDataSet(ps->set, str);
 	
@@ -169,19 +169,19 @@ PRODUCTSET insertProductSet(PRODUCTSET ps, PRODUCT p) {
  * @param index Index do catálogo onde se encontra a informação pretendida
  * @return Set com a informação pretendida
  */
-PRODUCTSET fillProductSet(PRODUCTCAT prodCat, PRODUCTSET ps, char index) {
+PRODUCTSET fillPSet(PRODUCTCAT prodCat, PRODUCTSET ps, char index) {
 	ps->set = fillDataSet(prodCat->cat, ps->set, index - 'A');
 
 	return ps;
 }
 
-PRODUCT getProductSet(PRODUCTSET ps, int pos) {
+PRODUCT getPSetData(PRODUCTSET ps, int pos) {
 	char *str = getDataSet(ps->set, pos);
 
 	return toProduct(str);
 }
 
-int getProductSetSize(PRODUCTSET ps) {
+int getPSetSize(PRODUCTSET ps) {
 	return getDataSetSize(ps->set);
 }
 

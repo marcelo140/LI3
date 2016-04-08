@@ -4,7 +4,7 @@
 #include "generic.h"
 #include "catalog.h"
 
-typedef struct product *PRODUCT; 
+typedef struct product *PRODUCT;
 typedef struct prodcat *PRODUCTCAT;
 typedef struct productSet *PRODUCTSET;
 
@@ -22,7 +22,7 @@ void freeProduct(PRODUCT p);
 
 CATALOG prodToCat(PRODUCTCAT prodCat);
 
-PRODUCTSET initPSet(int n); 
+PRODUCTSET initPSet(int n);
 PRODUCTSET insertPSet(PRODUCTSET ps, PRODUCT p);
 PRODUCTSET fillPSet(PRODUCTCAT cat, PRODUCTSET ps, char index);
 PRODUCT getPSetData(PRODUCTSET ps, int pos);
