@@ -20,7 +20,6 @@ void freeClient(CLIENT c);
 bool isClient(char *str);
 
 CLIENTSET initCset(int n);
-CLIENTSET insertCset(CLIENTSET cs, CLIENT c);
 CLIENTSET fillCset(CLIENTCAT catProd, CLIENTSET cs, char index);
 CLIENT getCsetData(CLIENTSET cs, int pos);
 int csetSize(CLIENTSET cs);
