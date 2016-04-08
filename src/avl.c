@@ -101,28 +101,29 @@ AVL updateAVL(AVL tree, char *hash, void *content) {
  * @param cloneCntt Função auxiliar para clonar o conteúdo.
  * @return Nova AVL
  */
-
-/*
 AVL cloneAVL (AVL p, void* (*cloneCntt) (void *cntt)) {
 	QUEUE q = initQueue();
 	AVL new = initAVL();
+	NODE n;
 	void* cnttAux = NULL;
 
-	q = enqueue(q, p);	
+	n = p->head;
+	new->size = p->size;
 
-	while((p = dequeue(q))) {
+	q = enqueue(q, n);	
 
-		if (cloneCntt) cnttAux = cloneCntt(p->content);
-		new = insertAVL(new, p->hash, cnttAux);
+	while((n = dequeue(q))) {
+
+		if (cloneCntt) cnttAux = cloneCntt(n->content);
+		new = insertAVL(new, n->hash, cnttAux);
 		
-		if (p->left)  q = enqueue(q,p->left);
-		if (p->right) q = enqueue(q,p->right);
+		if (n->left)  q = enqueue(q,n->left);
+		if (n->right) q = enqueue(q,n->right);
 	}
 
 	freeQueue(q);
 	return new; 
 }
-*/
 
 /**
  * Conta o número de elementos presentes na árvore
