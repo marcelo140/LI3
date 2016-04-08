@@ -125,11 +125,6 @@ DATASET initDataSet(int n) {
 	return ds;
 }
 
-DATASET insertDataSet(DATASET ds, char *data) {
-	ds->set = insertHashSet(ds->set, data);
-	return ds;
-}
-
 DATASET fillDataSet(CATALOG cat, DATASET ds, int i) {
 	ds->set = getInOrderAVL(ds->set, cat->root[i]);
 	return ds;

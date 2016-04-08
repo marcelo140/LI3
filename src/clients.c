@@ -136,19 +136,6 @@ CLIENTSET initCset(int n) {
 }
 
 /**
- * Insere um CLIENT num CLIENTSET
- * @param ps CLIENTSET onde inserir
- * @param p CLIENT a inserir
- * @return CLIENTSET com o novo CLIENT
- */
-CLIENTSET insertCset(CLIENTSET cs, CLIENT c) {
-	char *str = fromClient(c);
-	cs->set = insertDataSet(cs->set, str);
-	
-	return cs;
-}
-
-/**
  * @param catProd Catálogo onde se encontra a informação pretendida
  * @param cs Set onde se pretende guardar a informação
  * @param index Posição do catálogo onde se encontra a informação

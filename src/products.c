@@ -151,19 +151,6 @@ PRODUCTSET initPSet(int n) {
 }
 
 /**
- * Insere um PRODUCT num PRODUCTSET
- * @param ps PRODUCTSET onde inserir
- * @param p PRODUCT a inserir
- * @return PRODUCTSET com o novo PRODUCT
- */
-PRODUCTSET insertPSet(PRODUCTSET ps, PRODUCT p) {
-	char *str = fromProduct(p);
-	ps->set = insertDataSet(ps->set, str);
-	
-	return ps;
-}
-
-/**
  * @param prodCat Catálogo onde se encontra a informação
  * @param ps Set onde vai ser guardada a informação
  * @param index Index do catálogo onde se encontra a informação pretendida
