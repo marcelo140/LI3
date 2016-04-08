@@ -9,5 +9,6 @@ typedef struct transaction *TRANSACTION;
 TRANSACTION initTransaction ();
 TRANSACTION setBilled(TRANSACTION t, int month, int MODE, int value);
 TRANSACTION setQuantity(TRANSACTION t, int month, int MODE, int value);
+void freeTransaction(TRANSACTION t);
 
 #endif

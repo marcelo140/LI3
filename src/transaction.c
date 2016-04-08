@@ -55,3 +55,11 @@ TRANSACTION addQuantity(TRANSACTION t, int month, int MODE, int value) {
 
 	return t;	
 }
+
+/**
+ * Liberta o espaço ocupado pela TRANSACTION t
+ * @param t TRANSACTION a libertar
+ */
+void freeTransaction(TRANSACTION t) {
+	free(t);
+}
