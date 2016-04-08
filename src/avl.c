@@ -35,7 +35,8 @@ static NODE insertLeft(NODE node, NODE new, int *update);
 static NODE insertNode(NODE node, NODE new, int *update);
 static bool equalsNode(NODE a, NODE b);
 static void freeNode(NODE node);
-static HASHSET getInOrderAVLaux(HASHSET hs, NODE n); 
+static HASHSET getInOrderAVLaux(HASHSET hs, NODE n);
+static HASHSET insertHashSet(HASHSET hs, char *hash); 
 
 /**
  * Inicia uma nova AVL.
@@ -236,7 +237,7 @@ HASHSET initHashSet(int n) {
 	return new;
 }
 
-HASHSET insertHashSet(HASHSET hs, char *hash) {
+static HASHSET insertHashSet(HASHSET hs, char *hash) {
 	
 	if (hs->sp == hs->size) {
 		hs->size *= 2;
@@ -274,6 +275,61 @@ static HASHSET getInOrderAVLaux(HASHSET hs, NODE n) {
 	}
 
 	return hs;
+}
+
+HASHSET unionHSets(HASHSET hs1, HASHSET hs2) {
+	HASHSET new = initHashSet(100);
+	int s1, s2, s1_max, s2_max;
+	
+	s1 = s2 = 0;
+	s1_max = hs1->size;
+	s2_max = hs2->size;
+
+	while(s1 < s1_max && s2 < s2_max){
+		if (hs1->set[s1] < hs2->set[s2]) {
+			insertHashSet(new, hs1->set[s1]);
+			s1++;
+		}else if (hs2->set[s2] < hs1->set[s1]){
+			insertHashSet(new, hs2->set[s1]);
+			s2++;
+		}else{
+			insertHashSet(new, hs2->set[s2]);
+			s1++;
+			s2++;
+		}
+	}
+
+	for(; s1 < s1_max; s1++)
+		insertHashSet(new, hs1->set[s1]);
+
+	for(; s2 < s2_max; s2++)
+		insertHashSet(new, hs2->set[s2]);
+
+	return new;
+}
+
+HASHSET diffHSets(HASHSET hs1, HASHSET hs2) {
+	HASHSET new = initHashSet(100);
+	int s1, s2, s1_max, s2_max;
+
+	s1 = s2 = 0;
+	s1_max = hs1->size;
+	s2_max = hs2->size;
+
+	while(s1 < s1_max && s2 < s2_max){
+		if (hs1->set[s1] < hs2->set[s2]) {
+			insertHashSet(new, hs1->set[s1]);
+			s1++;
+		}else if (hs2->set[s2] < hs1->set[s1]){
+			insertHashSet(new, hs2->set[s1]);
+			s2++;
+		}else{
+			s1++;
+			s2++;
+		}
+	}
+
+	return new;
 }
 
 void freeHashSet(HASHSET hs) {
