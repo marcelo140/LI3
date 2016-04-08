@@ -6,6 +6,7 @@
 
 typedef struct clientCat *CLIENTCAT;
 typedef struct client *CLIENT;
+typedef struct clientSet *CLIENTSET;
 
 CLIENTCAT initClientCat();
 CLIENTCAT insertClient(CLIENTCAT catalog, CLIENT client);

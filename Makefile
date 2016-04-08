@@ -1,5 +1,6 @@
 OBJ_FILES := $(patsubst src/%.c, obj/%.o, $(wildcard src/*.c))
 TESTER_FILES := $(patsubst tests/%.c, tests/obj/%.o, $(wildcard tests/*.c))
+EXTRA_TESTER_FILES := $(patsubst tests/%Test.c, obj/%.o, $(wildcard tests/*Test.c))
 
 CFLAGS += -O2 -ansi -Wall -Wextra -pedantic -Wunreachable-code \
                     -Wunused-parameter
@@ -7,8 +8,11 @@ CFLAGS += -O2 -ansi -Wall -Wextra -pedantic -Wunreachable-code \
 gereVendas: $(OBJ_FILES)
 	$(CC) -o $@ $^
 
-tester: $(TESTER_FILES)
+tester: $(TESTER_FILES) $(EXTRA_TESTER_FILES)
 	$(CC) -o $@ $^
+	clear
+	./tester
+	@rm -f tester
 
 debug: CFLAGS := -g
 debug: clean gereVendas
@@ -17,9 +21,9 @@ obj/%.o: src/%.c
 	@mkdir -p obj
 	$(CC) $(CFLAGS) -o $@ -c $<
 
-test/obj/$.o: tests/%.c
-	@mkdir -p test/obj
-	@(CC) -O2 -o $@ -c $<
+tests/obj/%.o: tests/%.c
+	@mkdir -p tests/obj
+	$(CC) $(CFLAGS) -o $@ -c $<
 
 obj/main.o: src/datacheck.h src/clients.h src/products.h src/generic.h
 obj/datacheck.o: src/datacheck.h src/clients.h src/products.h src/generic.h src/sales.h 
@@ -30,9 +34,9 @@ obj/clients.o: src/clients.h src/catalog.h src/generic.h
 obj/products.o: src/products.h src/catalog.h src/generic.h
 obj/sales.o: src/sales.h src/clients.h src/products.h src/generic.h
 
-tests/obj/main.o: tests/avlTest.h tests/catTest.h 
-tests/obj/catTest.o: tests/catTest.h src/catalog.h
-tests/obj/avlTest.o: tests/avlTest.h src/avl.h
+tests/obj/main.o: tests/avlTest.h tests/catalogTest.h 
+tests/obj/catalogTest.o: tests/catalogTest.h obj/catalog.o
+tests/obj/avlTest.o: tests/avlTest.h obj/avl.o
 
 
 cleanAll: clean

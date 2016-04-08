@@ -13,6 +13,12 @@ struct prodcat {
 	CATALOG cat;
 };
 
+struct productSet {
+	int size;
+	int sp;
+	char** set;
+}; 
+
 /** 
  * Inicia o Catálogo de Produtos
  * @return Catálogo de Produtos novo
@@ -66,9 +72,6 @@ CATALOG prodToCat(PRODUCTCAT prodCat) {
 PRODUCT toProduct(char *str) {
 	PRODUCT r = malloc (sizeof (*r));
 
-/*	if (!isProduct(str))
-		return NULL;
-*/
 	r->str = malloc(MAX_BUFF);
 	strncpy(r->str, str, MAX_BUFF);
 
@@ -135,4 +138,39 @@ bool isProduct (char *str){
 	}
 
 	return product;
+}
+
+/**
+ * Inicializa um PRODUCTSET com um tamanho n
+ * @param n Tamanho mínimo do PRODUCTSET
+ * @return PRODUCTSET inicializado
+ */
+PRODUCTSET initProductSet(int n) {
+	PRODUCTSET new = malloc (sizeof (*new));
+
+	new->sp = 0;
+	new->size = 0;
+	new->set = malloc (sizeof(char *) * n);
+
+	return new;
+}
+
+/**
+ * Insere um PRODUCT num PRODUCTSET
+ * @param ps PRODUCTSET onde inserir
+ * @param p PRODUCT a inserir
+ * @return PRODUCTSET com o novo PRODUCT
+ */
+PRODUCTSET insertProductSet(PRODUCTSET ps, PRODUCT p) {
+
+	char *str = fromProduct(p);
+	
+	if (ps->size == ps->sp) {
+		ps->size *=2;
+		ps->set = realloc(ps->set, ps->size * sizeof(char *));
+	}
+
+	ps->set[ps->sp] = str;
+
+	return ps;
 }
