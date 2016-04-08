@@ -2,6 +2,7 @@
 
 #include "catalogTest.h"
 #include "avlTest.h"
+#include "heapTest.h"
 
 void printHeader(const char *str);
 
@@ -13,6 +14,12 @@ int main () {
 
 	printHeader("TESTING CATALOG");
 	test_Cat();
+
+	putchar('\n');
+
+	printHeader("TESTING HEAP");
+	test_heap();
+
 	return 0;
 }
 
