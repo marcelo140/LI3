@@ -208,45 +208,31 @@ int test_sets() {
 	set1 = getInOrderAVL(set1, tree1);
 	set2 = getInOrderAVL(set2, tree2);
 	
-	if (getHashSetSize(set1) == 6){
-		printf("Passed test1\n");
+	if (getHashSetSize(set1) == 6)
 		passed_tests++;
-	}
 
-	if (getHashSetSize(set2) == 4){
-		printf("Passed test2\n");
+	if (getHashSetSize(set2) == 4)
 		passed_tests++;
-	}
 
 	set3 = diffHSets(set1, set2);
 
-	if (getHashSetSize(set3) == 4) {
-		printf("Passed test3");
+	if (getHashSetSize(set3) == 4)
 		passed_tests++;
-	}
 
-	if (!strcmp(getHashSetPos(set3, 1), "13")){
-		printf("Passed test4\n");
+	if (!strcmp(getHashSetPos(set3, 1), "13"))
 		passed_tests++;
-	}
 
 	freeHashSet(set3);
 	set3 = unionHSets(set1, set2);
 
-	if (getHashSetSize(set3) == 7){
-		printf("Passed test5\n");
+	if (getHashSetSize(set3) == 7)
 		passed_tests++;
-	}
 
-	if (!strcmp(getHashSetPos(set3, 3), "13")){
-		printf("Passed test6\n");
+	if (!strcmp(getHashSetPos(set3, 3), "13"))
 		passed_tests++;
-	}
 
-	if (!strcmp(getHashSetPos(set3, 5), "28")){
-		printf("Passed test7");
+	if (!strcmp(getHashSetPos(set3, 5), "28"))
 		passed_tests++;
-	}
 
 	freeAVL(tree1);
 	freeAVL(tree2);
