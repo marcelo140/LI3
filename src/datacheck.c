@@ -51,8 +51,7 @@ int checkSales (FILE *file, FATGLOBAL fat, PRODUCTCAT products, CLIENTCAT client
 	SALE s = initSale();
 	char buf[BUFF_SIZE], *line;
 	int suc, total;
-	
-	clock_t begin, end;
+	time_t begin, end;
 	double time = 0;
 
 	suc = total = 0;
