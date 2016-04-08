@@ -184,3 +184,8 @@ PRODUCT getProductSet(PRODUCTSET ps, int pos) {
 int getProductSetSize(PRODUCTSET ps) {
 	return getDataSetSize(ps->set);
 }
+
+void freePSet(PRODUCTSET ps) {
+	freeDataSet(ps->set);
+	free(ps);
+}

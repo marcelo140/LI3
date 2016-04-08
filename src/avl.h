@@ -21,6 +21,7 @@ HASHSET insertHashSet(HASHSET hs, char *hash);
 HASHSET getInOrderAVL(HASHSET hs, AVL tree);
 char* getHashSetPos(HASHSET hs, int pos);
 int getHashSetSize(HASHSET hs);
+void freeHashSet(HASHSET set);
 
 /*
 AVL cloneAVL (AVL p, void* (*cloneCntt) (void * cntt));

@@ -142,3 +142,8 @@ char *getDataSet(DATASET ds, int pos) {
 int getDataSetSize(DATASET ds) {
 	return getHashSetSize(ds->set);
 }
+
+void freeDataSet(DATASET ds) {
+	freeHashSet(ds->set);
+	free(ds);
+}

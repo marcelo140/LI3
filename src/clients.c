@@ -174,3 +174,8 @@ CLIENT getClientSet(CLIENTSET cs, int pos) {
 int getClientSetSize(CLIENTSET cs) {
 	return getDataSetSize(cs->set);
 }
+
+void freeCSet(CLIENTSET cs) {
+	freeDataSet(cs->set);
+	free(cs);	
+}

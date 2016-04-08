@@ -24,5 +24,5 @@ CLIENTSET insertClientSet(CLIENTSET cs, CLIENT c);
 CLIENTSET fillClientSet(CLIENTCAT catProd, CLIENTSET cs, char index);
 CLIENT getClientSet(CLIENTSET cs, int pos);
 int getClientSetSize(CLIENTSET cs);
-
+void freeCSet(CLIENTSET cs);
 #endif

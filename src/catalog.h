@@ -20,5 +20,6 @@ DATASET insertDataSet(DATASET ds, char *data);
 DATASET fillDataSet(CATALOG cat, DATASET ds, int i);
 char *getDataSet(DATASET ds, int pos);
 int getDataSetSize(DATASET ds); 
+void freeDataSet(DATASET set);
 
 #endif

@@ -21,10 +21,12 @@ PRODUCT cloneProduct(PRODUCT p);
 void freeProduct(PRODUCT p);
 
 CATALOG prodToCat(PRODUCTCAT prodCat);
-PRODUCTSET initProductSet(int n); 
-PRODUCTSET insertProductSet(PRODUCTSET ps, PRODUCT p);
-PRODUCTSET fillProductSet(PRODUCTCAT cat, PRODUCTSET ps, char index);
-PRODUCT getProductSet(PRODUCTSET ps, int pos);
-int getProductSetSize(PRODUCTSET ps);
+
+PRODUCTSET initPSet(int n); 
+PRODUCTSET insertPSet(PRODUCTSET ps, PRODUCT p);
+PRODUCTSET fillPSet(PRODUCTCAT cat, PRODUCTSET ps, char index);
+PRODUCT getPSetData(PRODUCTSET ps, int pos);
+int getPSetSize(PRODUCTSET ps);
+void freePSet(PRODUCTSET ps);
 
 #endif

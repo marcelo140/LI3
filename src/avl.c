@@ -276,6 +276,15 @@ static HASHSET getInOrderAVLaux(HASHSET hs, NODE n) {
 	return hs;
 }
 
+void freeHashSet(HASHSET hs) {
+	int i;
+
+	for(i = 0; i < hs->sp; i++)
+		free(hs->set[i]);
+
+	free(hs);
+}
+
 static NODE newNode(char *hash, void *content, NODE left, NODE right) {
 	NODE new = malloc(sizeof(struct node));
 
