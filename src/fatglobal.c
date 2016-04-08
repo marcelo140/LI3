@@ -3,16 +3,11 @@
 #include "catalog.h"
 #include "fatglobal.h"
 
+#define CATALOG_SIZE 26
+
 struct faturacao {
 	CATALOG l;
 };
-
-typedef struct fatProduct {
-	int totalSales[MONTHS][BRANCHES][NP];
-	double billed[MONTHS][BRANCHES][NP];
-} *FATPRODUCT;
-
-static FATPRODUCT initFatProduct();
 
 /**
  * Inicia uma Faturação Global
@@ -20,7 +15,7 @@ static FATPRODUCT initFatProduct();
  */
 FATGLOBAL initFat() {
 	FATGLOBAL fat = malloc(sizeof (*fat));
-	fat->l = initCatalog(13);
+	fat->l = initCatalog(CATALOG_SIZE);
 
 	return fat;
 }
@@ -32,7 +27,7 @@ FATGLOBAL initFat() {
  */
 FATGLOBAL fillFat(PRODUCTCAT p) {
 	FATGLOBAL new = initFat();
-/*	new->l = cloneCatalog(prodToCat(p), NULL); */
+	new->l = cloneCatalog(prodToCat(p), NULL); 
 
 	return new;
 }
@@ -46,39 +41,3 @@ bool isEmptyFat(FATGLOBAL f) {
 	return (f==NULL);
 }
 
-/************************AVISO NÃO FUNCIONA!                   NÃO FUNCIONA!!!
- * Adiciona uma venda à Faturação Global
- * @param fat Faturação Global
- * @param s SALE que representa a venda
- * @return Faturação Global com a nova venda
- */
-FATGLOBAL addFat(FATGLOBAL fat, SALE s) {
-	char *p = fromProduct(getProduct(s));
-	int month = getMonth(s), branch = getBranch(s), mode = getMode(s);
-	double price = getPrice(s);
-	FATPRODUCT cntt = getCatContent(fat->l, 0, p);
-
-	if (!cntt) 
-		cntt = initFatProduct();
-	
-	cntt->billed[month-1][branch-1][mode] += price;
-	cntt->totalSales[month-1][branch-1][mode]++;
-
-	fat->l = updateCatalog(fat->l, 0, p, cntt);
-
-	return fat;
-}
-
-static FATPRODUCT initFatProduct() {
-	int i, j, k;
-	FATPRODUCT new = malloc (sizeof(struct fatProduct));
-
-	for (i=0; i < MONTHS; i++)
-		for (j=0; j < BRANCHES; j++)
-			for (k=0; k < NP; k++) {
-				new->billed[i][j][k] = 0;
-				new->totalSales[i][j][k] = 0;
-			}
-
-	return new;
-}
