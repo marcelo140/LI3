@@ -333,15 +333,16 @@ HASHSET diffHSets(HASHSET hs1, HASHSET hs2) {
 		}
 	}
 
+	for(; s1 < s1_max; s1++)
+		new = insertHashSet(new, hs1->set[s1]);
+
+	for(; s2 < s2_max; s2++)
+		new = insertHashSet(new, hs2->set[s2]);
+
 	return new;
 }
 
 void freeHashSet(HASHSET hs) {
-	int i;
-
-	for(i = 0; i < hs->sp; i++)
-		free(hs->set[i]);
-
 	free(hs);
 }
 
