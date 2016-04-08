@@ -107,6 +107,15 @@ PRODUCT cloneProduct(PRODUCT p) {
 	return new;
 }
 
+/**
+ * Liberta a memória ocupado por um produto
+ * @param prod Produto a ser libertado
+ */
+void freeProduct(PRODUCT prod) {
+	free(prod->str);
+	free(prod);
+}
+
 bool isProduct (char *str){
 	int i; 
 	bool product;

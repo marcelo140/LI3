@@ -66,6 +66,7 @@ int checkSales (FILE *file, FATGLOBAL fat, PRODUCTCAT products, CLIENTCAT client
 		
 		if (isSale(s, products, clients)) {
 /*			addFat(fat, s);	 */
+			freeSale(s, M_CONTENT);
 		 	suc++;
 		}
 		time += (double) (end - begin) / CLOCKS_PER_SEC;

@@ -46,8 +46,8 @@ bool isSale(SALE sale, PRODUCTCAT prodCat, CLIENTCAT clientCat) {
  */
 SALE updateSale(SALE s, PRODUCT p, CLIENT c, double price, int quant, int month, int branch, int mode) {
 
-	s->prod = cloneProduct(p);
-	s->client = cloneClient(c);
+	s->prod = p;
+	s->client = c;
 	s->price = price;
 	s->quantity = quant;
 	s->month = month;
@@ -94,9 +94,14 @@ SALE readSale(SALE s, char *line) {
 /**
  * Liberta o espaço ocupado pela SALE s
  * @param s SALE a libertar
+ * @param mode Especifica se toda a estrutura deve ser libertada ou apenas o seu conteúdo
  */
-void freeSale(SALE s) {
-	free(s);
+void freeSale(SALE s, int mode) {
+	freeProduct(s->prod);
+	freeClient(s->client);
+
+	if (mode == M_TOTAL)
+		free(s);
 }
 
 PRODUCT getProduct(SALE s) {
