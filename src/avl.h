@@ -17,13 +17,12 @@ AVL replaceAVL (AVL tree, char *hash, void *content);
 AVL cloneAVL   (AVL tree);
 
 bool lookUpAVL  (AVL tree, char *hash);
-bool equalsAVL  (AVL a, AVL b);
+bool equalsAVL  (AVL tree, AVL b);
 bool isEmptyAVL (AVL tree);
 
 void* getAVLcontent (AVL tree, char *hash);
 int   countNodes    (AVL tree);
 void  freeAVL       (AVL n);
-
 
 HASHSET initHashSet   (int n);
 HASHSET fillHashSet   (HASHSET hs, AVL tree);
@@ -33,9 +32,5 @@ HASHSET diffHSets     (HASHSET hs1, HASHSET hs2);
 char *getHashSetPos  (HASHSET hs, int pos);
 int   getHashSetSize (HASHSET hs);
 void  freeHashSet    (HASHSET set);
-
-/*
-void printInOrderAVL(AVL n);
-*/
 
 #endif
