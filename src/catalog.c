@@ -63,6 +63,11 @@ CATALOG updateCatalog(CATALOG c, int i, char *hash, void *cntt) {
 	return c;
 }
 
+void *replaceCatalog(CATALOG c, int i, char *hash, void *cntt) {
+	AVL p = c->root[i];
+	
+	return replaceAVL(p, hash, cntt);
+}
 
 CATALOG cloneCatalog(CATALOG cat) {
 	CATALOG c = malloc(sizeof(*c));

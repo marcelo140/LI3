@@ -13,13 +13,13 @@ AVL initAVL  (void* (*join)   (void*, void*),
 
 AVL insertAVL  (AVL tree, char *hash, void *content);
 AVL updateAVL  (AVL tree, char *hash, void *content);
-AVL replaceAVL (AVL tree, char *hash, void *content);
 AVL cloneAVL   (AVL tree);
 
 bool lookUpAVL  (AVL tree, char *hash);
 bool equalsAVL  (AVL tree, AVL b);
 bool isEmptyAVL (AVL tree);
 
+void* replaceAVL    (AVL tree, char *hash, void *content);
 void* getAVLcontent (AVL tree, char *hash);
 int   countNodes    (AVL tree);
 void  freeAVL       (AVL n);

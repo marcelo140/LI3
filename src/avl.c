@@ -3,7 +3,7 @@
 #include "queue.h"
 #include "avl.h"
 
-#define BUFFER_SIZE 10
+#define HASH_SIZE 10
 
 typedef enum balance { LH, EH, RH } Balance;
 
@@ -116,10 +116,11 @@ AVL updateAVL(AVL tree, char *hash, void *content) {
  * @param tree Árvore com o elemento a ser modificado
  * @param hash Identificador do elemento
  * @param content Novo conteúdo do elemento
- * @result Árvore com o elemento substituido
+ * @result Conteúdo antigo do nodo
  */
-AVL replaceAVL(AVL tree, char *hash, void *content) {
+void *replaceAVL(AVL tree, char *hash, void *content) {
 	NODE p;
+	void *oldContent;
 	int res;
 	bool stop;
 
@@ -134,13 +135,14 @@ AVL replaceAVL(AVL tree, char *hash, void *content) {
 		else if (res < 0)
 			p = p->left;
 		else {
-			tree->free(p->content);
+			oldContent = p->content;
+
 			p->content = content;
 			stop = true;
 		}
 	}
 
-	return tree;
+	return oldContent;
 }
 
 /**
@@ -423,11 +425,11 @@ static NODE newNode(char *hash, void *content, NODE left, NODE right) {
 	NODE new = malloc(sizeof(struct node));
 
 	new->bal = EH;
-	new->hash = malloc(sizeof(BUFFER_SIZE));
+	new->hash = malloc(sizeof(char)*sizeof(HASH_SIZE));
 	new->content = content;
 	new->left = left;
 	new->right = right;
-	strncpy(new->hash, hash, BUFFER_SIZE);
+	strncpy(new->hash, hash, HASH_SIZE);
 
 	return new;
 }

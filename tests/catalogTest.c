@@ -7,7 +7,7 @@
 #define UPDATE_CATALOG_NUM 4
 
 static int test_insertCatalog();
-static int test_updateCatalog(); 
+static int test_replaceCatalog(); 
 
 int test_Cat() {
 
@@ -17,9 +17,9 @@ int test_Cat() {
 	passed_tests += res;
 	printf("insertCatalog: %d/%d\n", res, INSERT_CATALOG_NUM );
 
-	res = test_updateCatalog();
+	res = test_replaceCatalog();
 	passed_tests += res;
-	printf("updateCatalog: %d/%d\n", res, UPDATE_CATALOG_NUM); 
+	printf("replaceCatalog: %d/%d\n", res, UPDATE_CATALOG_NUM); 
 
 	return passed_tests;
 }
@@ -44,7 +44,7 @@ static int test_insertCatalog() {
 	return testes_passou;
 }
 
-static int test_updateCatalog() {
+static int test_replaceCatalog() {
 	
 	int testes_passou = 0;
 	CATALOG c = initCatalog(10, NULL, NULL, NULL, NULL);
@@ -55,10 +55,10 @@ static int test_updateCatalog() {
 	c = insertCatalog(c, 2, "Candance", NULL);
 	c = insertCatalog(c, 0, "Carlos", cont1);
 
-	c = updateCatalog(c, 0, "Cientista", cont1);	
-	c = updateCatalog(c, 0, "Escolhido", cont2);	
-	c = updateCatalog(c, 3, "Candance", cont3);
-	c = updateCatalog(c, 0, "Cientista", cont2);	
+	replaceCatalog(c, 0, "Cientista", cont1);	
+	replaceCatalog(c, 0, "Escolhido", cont2);	
+	replaceCatalog(c, 3, "Candance", cont3);
+	replaceCatalog(c, 0, "Cientista", cont2);	
 	
 	if (getCatContent(c, 0, "Cientista") == cont2) { printf("Passou 1\n"); testes_passou++; }
 	if (getCatContent(c, 2, "Candance")  == NULL ) { printf("Passou 2\n"); testes_passou++; }	

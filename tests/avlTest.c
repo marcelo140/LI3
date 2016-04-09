@@ -8,14 +8,14 @@
 #define IS_EMPTY_NUM 2
 #define LOOK_UP_NUM 3
 #define EQUALS_NUM 4
-#define UPDATE_NUM 4
+#define REPLACE_NUM 4
 #define SETS_NUM 7
 
 static int test_countNodes();
 static int test_isEmpty();
 static int test_lookUp();
 static int test_equals();
-static int test_update();
+static int test_replace();
 static int test_sets();
 
 int test_AVL() {
@@ -37,9 +37,9 @@ int test_AVL() {
 	passed_tests += res;
 	printf("equals: %d/%d\n", res, EQUALS_NUM);
 
-	res = test_update();
+	res = test_replace();
 	passed_tests += res;
-	printf("update: %d/%d\n", res, UPDATE_NUM);
+	printf("replace: %d/%d\n", res, REPLACE_NUM);
 
 	res = test_sets();
 	passed_tests += res;
@@ -145,7 +145,7 @@ static int test_equals() {
 	return passed_tests;
 }
 
-static int test_update() {
+static int test_replace() {
 	AVL tree = initAVL(NULL, NULL, NULL, NULL);
 	int passed_tests = 0;
 	char *res;
@@ -159,9 +159,9 @@ static int test_update() {
 	tree = insertAVL(tree, "02", str2);
 	tree = insertAVL(tree, "03", NULL);
 
-	tree = updateAVL(tree, "01", str3);
-	tree = updateAVL(tree, "03", str4);
-	tree = updateAVL(tree, "19", str2);
+	replaceAVL(tree, "01", str3);
+	replaceAVL(tree, "03", str4);
+	replaceAVL(tree, "19", str2);
 
 	res = getAVLcontent(tree, "01");
 	if (!strcmp(res, str3))
