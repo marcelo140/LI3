@@ -6,25 +6,34 @@
 typedef struct avl *AVL;
 typedef struct hashSet *HASHSET;
 
-AVL initAVL();
-AVL insertAVL(AVL tree, char *hash, void *content);
-AVL updateAVL(AVL n, char *hash, void *content);
-bool isEmptyAVL(AVL n);
-bool equalsAVL(AVL a, AVL b);
-int countNodes(AVL tree); 
-bool lookUpAVL(AVL tree, char *hash);
-void *getAVLcontent(AVL tree, char *hash);
-void freeAVL(AVL n);
+AVL initAVL  (void* (*join)   (void*, void*), 
+              bool  (*equals) (void*, void*), 
+              void* (*clone)  (void*), 
+              void  (*free)   (void *));
 
-HASHSET initHashSet(int n);
-HASHSET getInOrderAVL(HASHSET hs, AVL tree);
-HASHSET unionHSets(HASHSET hs1, HASHSET hs2);
-HASHSET diffHSets(HASHSET hs1, HASHSET hs2);
-char* getHashSetPos(HASHSET hs, int pos);
-int getHashSetSize(HASHSET hs);
-void freeHashSet(HASHSET set);
+AVL insertAVL  (AVL tree, char *hash, void *content);
+AVL updateAVL  (AVL tree, char *hash, void *content);
+AVL replaceAVL (AVL tree, char *hash, void *content);
+AVL cloneAVL   (AVL tree);
 
-AVL cloneAVL (AVL p, void* (*cloneCntt) (void * cntt));
+bool lookUpAVL  (AVL tree, char *hash);
+bool equalsAVL  (AVL a, AVL b);
+bool isEmptyAVL (AVL tree);
+
+void* getAVLcontent (AVL tree, char *hash);
+int   countNodes    (AVL tree);
+void  freeAVL       (AVL n);
+
+
+HASHSET initHashSet   (int n);
+HASHSET fillHashSet   (HASHSET hs, AVL tree);
+HASHSET unionHSets    (HASHSET hs1, HASHSET hs2);
+HASHSET diffHSets     (HASHSET hs1, HASHSET hs2);
+
+char *getHashSetPos  (HASHSET hs, int pos);
+int   getHashSetSize (HASHSET hs);
+void  freeHashSet    (HASHSET set);
+
 /*
 void printInOrderAVL(AVL n);
 */

@@ -205,8 +205,8 @@ int test_sets() {
 	tree2 = insertAVL(tree2, "09", NULL);
 	tree2 = insertAVL(tree2, "16", NULL);
 
-	set1 = getInOrderAVL(set1, tree1);
-	set2 = getInOrderAVL(set2, tree2);
+	set1 = fillHashSet(set1, tree1);
+	set2 = fillHashSet(set2, tree2);
 	
 	if (getHashSetSize(set1) == 6)
 		passed_tests++;

@@ -17,7 +17,8 @@ struct dataSet {
  * @param n Número de índices do catálogo
  * @return O novo Catálogo
  */
-CATALOG initCatalog(int n) {
+CATALOG initCatalog(int n, void* (*join)(void*, void *), bool (*equals)(void*, void*), void* (*clone)(void*), void (*free)(void *)) {
+
 	CATALOG c = malloc(sizeof (*c));
 	int i;
 	
@@ -25,7 +26,7 @@ CATALOG initCatalog(int n) {
 	c->size = n;
 
 	for (i=0; i < n; i++)
-		c->root[i] = initAVL();
+		c->root[i] = initAVL(join, equals, clone, free);
 
 	return c;
 }
@@ -63,12 +64,12 @@ CATALOG updateCatalog(CATALOG c, int i, char *hash, void *cntt) {
 }
 
 
-CATALOG cloneCatalog(CATALOG cat, void *(*cloneCntt)(void *cntt)) {
+CATALOG cloneCatalog(CATALOG cat) {
 	CATALOG c = malloc(sizeof(*c));
 	int i;
 
 	for (i = 0; i < c->size; i++)
-		c->root[i] = cloneAVL(cat->root[i], cloneCntt);
+		c->root[i] = cloneAVL(cat->root[i]);
 	
 	return c;
 }
@@ -126,7 +127,7 @@ DATASET initDataSet(int n) {
 }
 
 DATASET fillDataSet(CATALOG cat, DATASET ds, int i) {
-	ds->set = getInOrderAVL(ds->set, cat->root[i]);
+	ds->set = fillHashSet(ds->set, cat->root[i]);
 	return ds;
 }
 

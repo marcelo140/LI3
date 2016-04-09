@@ -23,7 +23,7 @@ struct productSet {
  */
 PRODUCTCAT initProductCat(){
 	PRODUCTCAT prodCat = malloc(sizeof(struct prodcat));
-	prodCat->cat = initCatalog(26);
+	prodCat->cat = initCatalog(26, NULL, NULL, NULL, NULL);
 
 	return prodCat;
 }
