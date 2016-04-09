@@ -9,7 +9,7 @@ gereVendas: $(OBJ_FILES)
 	$(CC) -o $@ $^
 
 tester: $(TESTER_FILES) $(EXTRA_TESTER_FILES)
-	$(CC) -g -o $@ $^
+	$(CC) -g -o $@ src/queue.c $^
 
 debug: CFLAGS := -g
 debug: clean gereVendas
