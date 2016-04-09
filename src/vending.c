@@ -27,6 +27,21 @@ VENDING initVending() {
 	return new;
 }
 
+/** 
+ * Adiciona uma nova faturação e uma nova quantidade à VENDING
+ * @param v VENDING a modificar
+ * @param month Mês em questão
+ * @param billed Faturação a adicionar
+ * @param quantity Quantidade a adicionar
+ * @return VENDING alterada 
+ */
+VENDING updateVending(VENDING v, int month, int MODE, double billed, int quantity) {
+	v->billed[month][MODE] += billed;
+	v->quantity[month][MODE] += quantity;
+
+	return v;
+}
+
 /**
  * Adicionar ao total faturado o valor faturado num dado mes num dado modo.
  * @param v VENDING a adicionar
@@ -35,7 +50,7 @@ VENDING initVending() {
  * @param value Valor a somar
  * @return VENDING atualizada
  */
-VENDING addBilled(VENDING v, int month, int MODE, int value) {
+VENDING addBilled(VENDING v, int month, int MODE, double value) {
 	v->billed[month][MODE] += value;
 
 	return v;	

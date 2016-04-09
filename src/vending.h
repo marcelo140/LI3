@@ -6,8 +6,9 @@
 
 typedef struct vending *VENDING;
 
-VENDING initTransaction ();
-VENDING setBilled(VENDING t, int month, int MODE, int value);
+VENDING initTransaction ();  
+VENDING updateVending(VENDING v, int month, int MODE, double billed, int quantity); 
+VENDING setBilled(VENDING t, int month, int MODE, double value);
 VENDING setQuantity(VENDING t, int month, int MODE, int value);
 double getBilled(VENDING v, int month, int MODE);
 int getQuantity(VENDING v, int month, int MODE);
