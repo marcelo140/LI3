@@ -1,20 +1,20 @@
 #include <stdlib.h>
-#include "transaction.h"
+#include "vending.h"
 
 #define MONTHS 12
 #define NP 2
 
-struct transaction {
+struct vending{
 	double billed[MONTHS][NP];
 	int quantity[MONTHS][NP];
 };
 
 /**
- * Inicializa a TRANSACTION e coloca todos os seus valores a 0;
- * @return nova TRANSACTION
+ * Inicializa a VENDING e coloca todos os seus valores a 0;
+ * @return nova VENDING
  */
-TRANSACTION initTransaction () {
-	TRANSACTION new = malloc (sizeof(*new));
+VENDING initTransaction () {
+	VENDING new = malloc (sizeof(*new));
 	int i;
 
 	for (i=0; i < MONTHS; i++) {
@@ -29,13 +29,13 @@ TRANSACTION initTransaction () {
 
 /**
  * Adicionar ao total faturado o valor faturado num dado mes num dado modo.
- * @param t TRANSACTION a adicionar
+ * @param t VENDING a adicionar
  * @param m Mês da venda
  * @param MODE MODE_N caso seja normal, MODE_P caso tenha promoção
  * @param value Valor a somar
- * @return TRANSACTION atualizada
+ * @return VENDING atualizada
  */
-TRANSACTION addBilled(TRANSACTION t, int month, int MODE, int value) {
+VENDING addBilled(VENDING t, int month, int MODE, int value) {
 	t->billed[month][MODE] += value;
 
 	return t;	
@@ -43,23 +43,23 @@ TRANSACTION addBilled(TRANSACTION t, int month, int MODE, int value) {
 
 /**
  * Adicionar à quantidade total o valor num dado mes num dado modo.
- * @param t TRANSACTION a adicionar
+ * @param t VENDING a adicionar
  * @param m Mês da venda
  * @param MODE MODE_N caso seja normal, MODE_P caso tenha promoção
  * @param value Valor a somar
- * @return TRANSACTION atualizada
+ * @return VENDING atualizada
  */
 
-TRANSACTION addQuantity(TRANSACTION t, int month, int MODE, int value) {
+VENDING addQuantity(VENDING t, int month, int MODE, int value) {
 	t->quantity[month][MODE] += value;
 
 	return t;	
 }
 
 /**
- * Liberta o espaço ocupado pela TRANSACTION t
- * @param t TRANSACTION a libertar
+ * Liberta o espaço ocupado pela VENDING t
+ * @param t VENDING a libertar
  */
-void freeTransaction(TRANSACTION t) {
+void freeTransaction(VENDING t) {
 	free(t);
 }
