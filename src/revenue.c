@@ -1,20 +1,20 @@
 #include <stdlib.h>
-#include "vending.h"
+#include "revenue.h"
 
 #define MONTHS 12
 #define PROMO 2
 
-struct vending{
+struct revenue{
 	double billed[MONTHS][PROMO];
 	int quantity[MONTHS][PROMO];
 };
 
 /**
- * Inicializa a VENDING e coloca todos os seus valores a 0;
- * @return nova VENDING
+ * Inicializa a REVENUE e coloca todos os seus valores a 0;
+ * @return nova REVENUE
  */
-VENDING initVending() {
-	VENDING new = malloc (sizeof(*new));
+REVENUE initRevenue() {
+	REVENUE new = malloc (sizeof(*new));
 	int i;
 
 	for (i=0; i < MONTHS; i++) {
@@ -28,74 +28,74 @@ VENDING initVending() {
 }
 
 /** 
- * Adiciona uma nova faturação e uma nova quantidade à VENDING
- * @param v VENDING a modificar
+ * Adiciona uma nova faturação e uma nova quantidade à REVENUE
+ * @param r REVENUE a modificar
  * @param month Mês em questão
  * @param billed Faturação a adicionar
  * @param quantity Quantidade a adicionar
- * @return VENDING alterada 
+ * @return REVENUE alterada 
  */
-VENDING updateVending(VENDING v, int month, int MODE, double billed, int quantity) {
-	v->billed[month][MODE] += billed;
-	v->quantity[month][MODE] += quantity;
+REVENUE updateRevenue(REVENUE r, int month, int MODE, double billed, int quantity) {
+	r->billed[month][MODE] += billed;
+	r->quantity[month][MODE] += quantity;
 
-	return v;
+	return r;
 }
 
 /**
  * Adicionar ao total faturado o valor faturado num dado mes num dado modo.
- * @param v VENDING a adicionar
+ * @param r REVENUE a adicionar
  * @param m Mês da venda
  * @param MODE MODE_N caso seja normal, MODE_P caso tenha promoção
  * @param value Valor a somar
- * @return VENDING atualizada
+ * @return REVENUE atualizada
  */
-VENDING addBilled(VENDING v, int month, int MODE, double value) {
-	v->billed[month][MODE] += value;
+REVENUE addBilled(REVENUE r, int month, int MODE, double value) {
+	r->billed[month][MODE] += value;
 
-	return v;	
+	return r;	
 }
 
 /**
  * Adicionar à quantidade total o valor num dado mes num dado modo.
- * @param v VENDING a adicionar
+ * @param r REVENUE a adicionar
  * @param m Mês da venda
  * @param MODE MODE_N caso seja normal, MODE_P caso tenha promoção
  * @param value Valor a somar
- * @return VENDING atualizada
+ * @return REVENUE atualizada
  */
-VENDING addQuantity(VENDING v, int month, int MODE, int value) {
-	v->quantity[month][MODE] += value;
+REVENUE addQuantity(REVENUE r, int month, int MODE, int value) {
+	r->quantity[month][MODE] += value;
 
-	return v;	
+	return r;	
 }
 
 /**
  * Devolve o total faturado num dado mês numa dada promoção
- * @param v VENDING
+ * @param r REVENUE
  * @param month Mês em questão
  * @param MODE Modo da promoção
  * @return O total faturado
  */
-double getBilled(VENDING v, int month, int MODE) {
-	return v->billed[month][MODE]; 
+double getBilled(REVENUE r, int month, int MODE) {
+	return r->billed[month][MODE]; 
 }
 
 /**
  * Devolve a quantidade total vendida num dado mês num dada promoção
- * @param v VENDING
+ * @param r REVENUE
  * @param month Mês em questão
  * @param MODE Modo da promoção
  * @return A quantidade total vendida
  */
-int getQuantity(VENDING v, int month, int MODE) {
-	return v->quantity[month][MODE];
+int getQuantity(REVENUE r, int month, int MODE) {
+	return r->quantity[month][MODE];
 }
 
 /**
- * Liberta o espaço ocupado pela VENDING t
- * @param t VENDING a libertar
+ * Liberta o espaço ocupado pela REVENUE  
+ * @param r REVENUE a libertar
  */
-void freeTransaction(VENDING v) {
-	free(v);
+void freeRevenue(REVENUE r) {
+	free(r);
 }
