@@ -8,8 +8,8 @@ typedef struct revenue *REVENUE;
 
 REVENUE initRevenue();  
 REVENUE updateRevenue(REVENUE r, int month, int MODE, double billed, int quantity); 
-REVENUE setBilled(REVENUE r, int month, int MODE, double value);
-REVENUE setQuantity(REVENUE r, int month, int MODE, int value);
+REVENUE addBilled(REVENUE r, int month, int MODE, double value);
+REVENUE addQuantity(REVENUE r, int month, int MODE, int value);
 double getBilled(REVENUE r, int month, int MODE);
 int getQuantity(REVENUE r, int month, int MODE);
 void freeRevenue(REVENUE r);
