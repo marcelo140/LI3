@@ -39,7 +39,7 @@ static NODE insertRight(NODE node, NODE new, int *update);
 static NODE insertLeft(NODE node, NODE new, int *update);
 static NODE insertNode(NODE node, NODE new, int *update);
 static bool equalsNode(NODE a, NODE b, bool (*equals)(void*, void*));
-static void freeNode(NODE node);
+static void freeNode(NODE node, void (*freeContent)(void *));
 static HASHSET fillHashSetaux(HASHSET hs, NODE n);
 static HASHSET insertHashSet(HASHSET hs, char *hash); 
 
@@ -281,16 +281,21 @@ bool lookUpAVL(AVL tree, char *hash) {
  */
 void freeAVL(AVL tree) {
 	if (!tree){
-		freeNode(tree->head);
+		freeNode(tree->head, tree->free);
 		free(tree);
 	}	
 }
 
-static void freeNode(NODE node) {
+static void freeNode(NODE node, void (*freeContent)(void*)) {
 	if (!node) {
 		free(node->hash);
-		freeNode(node->left);
-		freeNode(node->right);
+	
+		if (freeContent)
+			freeContent(node->hash);
+
+		freeNode(node->left, freeContent);
+		freeNode(node->right, freeContent);
+		free(node);
 	}
 }
 
