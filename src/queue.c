@@ -52,7 +52,7 @@ void *dequeue(QUEUE q) {
 	q->size--;
 
 	if (q->start == q->capacity)
-			q->start = 0;
+		q->start = 0;
 
 	return element;
 }
