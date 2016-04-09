@@ -34,7 +34,8 @@ obj/interpreter.o: src/interpreter.h src/clients.h src/products.h
 
 tests/obj/main.o: tests/avlTest.h tests/catalogTest.h 
 tests/obj/catalogTest.o: tests/catalogTest.h obj/catalog.o
-tests/obj/avlTest.o: tests/avlTest.h obj/avl.o
+tests/obj/avlTest.o: tests/avlTest.h obj/avl.o obj/queue.o
+tests/obj/revenueTest.o: tests/revenueTest.h obj/revenue.o
 
 
 cleanAll: clean

@@ -48,7 +48,7 @@ int test_AVL() {
 }
 
 static int test_countNodes() {
-	AVL tree = initAVL();
+	AVL tree = initAVL(NULL, NULL, NULL, NULL);
 	int passed_tests= 0;
 
 	if (countNodes(tree) == 0)
@@ -65,7 +65,7 @@ static int test_countNodes() {
 }
 
 static int test_isEmpty() {
-	AVL tree = initAVL();
+	AVL tree = initAVL(NULL, NULL, NULL, NULL);
 	int passed_tests = 0;
 
 	if (isEmptyAVL(tree))
@@ -81,7 +81,7 @@ static int test_isEmpty() {
 }
 
 static int test_lookUp() {
-	AVL tree = initAVL();
+	AVL tree = initAVL(NULL, NULL, NULL, NULL);
 	int passed_tests = 0;
 
 	tree = insertAVL(tree, "escolhido", NULL);
@@ -108,8 +108,8 @@ static int test_equals() {
 	AVL tree1, tree2;
 	int passed_tests = 0;
 
-	tree1 = initAVL();
-	tree2 = initAVL();
+	tree1 = initAVL(NULL, NULL, NULL, NULL);
+	tree2 = initAVL(NULL, NULL, NULL, NULL);
 
 	if (equalsAVL(tree1, tree2))
 		passed_tests++;
@@ -146,7 +146,7 @@ static int test_equals() {
 }
 
 static int test_update() {
-	AVL tree = initAVL();
+	AVL tree = initAVL(NULL, NULL, NULL, NULL);
 	int passed_tests = 0;
 	char *res;
 
@@ -188,8 +188,8 @@ int test_sets() {
 	HASHSET set1, set2, set3;
 	int passed_tests = 0;
 
-	tree1 = initAVL();
-	tree2 = initAVL();
+	tree1 = initAVL(NULL, NULL, NULL, NULL);
+	tree2 = initAVL(NULL, NULL, NULL, NULL);
 	set1 = initHashSet(10);
 	set2 = initHashSet(10);
 
