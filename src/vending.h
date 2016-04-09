@@ -9,6 +9,8 @@ typedef struct vending *VENDING;
 VENDING initTransaction ();
 VENDING setBilled(VENDING t, int month, int MODE, int value);
 VENDING setQuantity(VENDING t, int month, int MODE, int value);
+double getBilled(VENDING v, int month, int MODE);
+int getQuantity(VENDING v, int month, int MODE);
 void freeTransaction(VENDING t);
 
 #endif
