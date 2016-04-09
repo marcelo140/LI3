@@ -15,7 +15,7 @@ struct faturacao {
  */
 FATGLOBAL initFat() {
 	FATGLOBAL fat = malloc(sizeof (*fat));
-	fat->l = initCatalog(CATALOG_SIZE);
+	fat->l = initCatalog(CATALOG_SIZE, NULL, NULL, NULL, NULL);
 
 	return fat;
 }
