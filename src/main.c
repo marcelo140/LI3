@@ -49,7 +49,7 @@ int main() {
 	putchar('\n');
 	
 	begin = clock();
-	fat = fillFat(productCat);
+	fat = initFat(productCat);
 	end = clock();
 	time = (double) (end - begin) / CLOCKS_PER_SEC;
 	printf("FillFat (%fs)\n", time);
