@@ -8,6 +8,9 @@
 #define LEFT(i) (2*i)+1
 #define PARENT(i) (i-1)/2
 
+#define COMPARE h->compare
+#define LIST h->list
+
 static void bubbleUp(HEAP h, int pos);
 static void bubbleDown(HEAP h, int pos);
 static void swap(HEAP h, int pos1, int pos2);
@@ -40,7 +43,7 @@ HEAP initHeap(int (*compare)(void *key1, void *key2)) {
 }
 
 HEAP insertHeap(HEAP h, void *key, void *content) {
-	HEAPNODE node = h->list[h->size];
+	HEAPNODE node = LIST[h->size];
 
 	node->key = key;
 	node->content = content;
@@ -52,7 +55,7 @@ HEAP insertHeap(HEAP h, void *key, void *content) {
 }
 
 void *removeHeap(HEAP h, void **content) {
-	HEAPNODE node = h->list[0];
+	HEAPNODE node = LIST[0];
 
 	h->size--;
 	h->list[0] = h->list[h->size];
@@ -65,10 +68,8 @@ void *removeHeap(HEAP h, void **content) {
 }
 
 static void bubbleUp(HEAP h, int pos) {
-	int (*comparator)(void *key1, void *key2) = h->compare;
-	HEAPNODE *list = h->list;
 
-	while(pos && comparator(list[pos]->key, list[PARENT(pos)]->key) < 0) {
+	while(pos && COMPARE(LIST[pos]->key, LIST[PARENT(pos)]->key) < 0) {
 		swap(h, pos, PARENT(pos));
 		pos = PARENT(pos);
 	}	
@@ -76,20 +77,18 @@ static void bubbleUp(HEAP h, int pos) {
 
 static void bubbleDown(HEAP h, int pos) {
 	void *key1, *key2;
-	HEAPNODE *list = h->list;
-	int (*comparator)(void *key1, void *key2) = h->compare;
 	int child;
 
 	while(LEFT(pos) < h->size) {
 		if (RIGHT(pos) >= h->size){
 			child = LEFT(pos);
 		}else{
-			key1 = list[LEFT(pos)]->key;
-			key2 = list[RIGHT(pos)]->key;
-			child = (comparator(key1, key2) < 0) ? LEFT(pos) : RIGHT(pos);
+			key1 = LIST[LEFT(pos)]->key;
+			key2 = LIST[RIGHT(pos)]->key;
+			child = (COMPARE(key1, key2) < 0) ? LEFT(pos) : RIGHT(pos);
 		}
 
-		if (comparator(list[child]->key, list[pos]->key) >= 0){
+		if (COMPARE(LIST[child]->key, LIST[pos]->key) >= 0){
 			break;
 		}else{
 			swap(h, pos, child);
@@ -103,10 +102,11 @@ int getHeapSize(HEAP h) {
 }
 
 static void swap(HEAP h, int pos1, int pos2) {
-	HEAPNODE tmp = h->list[pos1];
-	
-	h->list[pos1] = h->list[pos2];
-	h->list[pos2] = tmp;
+	HEAPNODE tmp;
+
+	tmp = LIST[pos1];	
+	LIST[pos1] = LIST[pos2];
+	LIST[pos2] = tmp;
 }
 
 void freeHeap(HEAP h) {
