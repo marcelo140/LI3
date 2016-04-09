@@ -27,7 +27,7 @@ FATGLOBAL initFat() {
  */
 FATGLOBAL fillFat(PRODUCTCAT p) {
 	FATGLOBAL new = initFat();
-	new->l = cloneCatalog(prodToCat(p), NULL); 
+	new->l = cloneCatalog(prodToCat(p)); 
 
 	return new;
 }

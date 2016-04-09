@@ -25,7 +25,7 @@ struct clientSet {
  */
 CLIENTCAT initClientCat() {
 	CLIENTCAT cCat = malloc(sizeof (struct clientCat));
-	cCat->cat = initCatalog(26);
+	cCat->cat = initCatalog(26, NULL, NULL, NULL, NULL);
 
     return cCat;
 }

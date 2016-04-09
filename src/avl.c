@@ -17,6 +17,11 @@ typedef struct node {
 struct avl {
 	NODE head;
 	int size;
+
+	void* (*join)   (void *newContent, void *oldContent);
+	bool  (*equals) (void *content1, void *content2);
+	void* (*clone)  (void *content);
+	void  (*free)   (void *content);
 };
 
 struct hashSet {
@@ -33,20 +38,27 @@ static NODE balanceLeft(NODE node);
 static NODE insertRight(NODE node, NODE new, int *update);
 static NODE insertLeft(NODE node, NODE new, int *update);
 static NODE insertNode(NODE node, NODE new, int *update);
-static bool equalsNode(NODE a, NODE b);
+static bool equalsNode(NODE a, NODE b, bool (*equals)(void*, void*));
 static void freeNode(NODE node);
-static HASHSET getInOrderAVLaux(HASHSET hs, NODE n);
+static HASHSET fillHashSetaux(HASHSET hs, NODE n);
 static HASHSET insertHashSet(HASHSET hs, char *hash); 
 
 /**
  * Inicia uma nova AVL.
  * @return Nova AVL
  */
-AVL initAVL() {
+AVL initAVL(void* (*join)(void*, void*), bool (*equals)(void*, void*), 
+            void* (*clone)(void*), void (*free)(void *)){
+
 	AVL tree = malloc (sizeof (struct avl));
 
 	tree->head= NULL;
 	tree->size = 0;
+
+	tree->join = join;
+	tree->equals = equals;
+	tree->clone = clone;
+	tree->free = free;
 
 	return tree;
 }
@@ -76,8 +88,12 @@ AVL insertAVL(AVL tree, char *hash, void *content) {
  * @return AVL com o nodo alterado
  */
 AVL updateAVL(AVL tree, char *hash, void *content) {
-	int res, stop=0;
-	NODE p = tree->head;
+	NODE p;
+	int res;
+	bool stop;
+
+	p = tree->head;
+	stop = false;
 
 	while (p && !stop) {
 		res = strcmp(hash, p->hash);
@@ -87,8 +103,40 @@ AVL updateAVL(AVL tree, char *hash, void *content) {
 		else if (res < 0)
 			p = p->left;
 		else {
-			p->content = content; 
+			p->content = tree->join(content, p->content); 
 			stop = 1;	
+		}
+	}
+
+	return tree;
+}
+
+/**
+ * Substitui o conteúdo atual do elemento com a hash indicada com o novo conteúdo, libertando o conteúdo antigo
+ * @param tree Árvore com o elemento a ser modificado
+ * @param hash Identificador do elemento
+ * @param content Novo conteúdo do elemento
+ * @result Árvore com o elemento substituido
+ */
+AVL replaceAVL(AVL tree, char *hash, void *content) {
+	NODE p;
+	int res;
+	bool stop;
+
+	p = tree->head;
+	stop = false;
+
+	while(p && !stop) {
+		res = strcmp(hash, p->hash);
+
+		if (res > 0)
+			p = p->right;
+		else if (res < 0)
+			p = p->left;
+		else {
+			tree->free(p->content);
+			p->content = content;
+			stop = true;
 		}
 	}
 
@@ -101,21 +149,23 @@ AVL updateAVL(AVL tree, char *hash, void *content) {
  * @param cloneCntt Função auxiliar para clonar o conteúdo.
  * @return Nova AVL
  */
-AVL cloneAVL (AVL p, void* (*cloneCntt) (void *cntt)) {
+AVL cloneAVL (AVL tree) { 
 	QUEUE q = initQueue();
-	AVL new = initAVL();
+	AVL new = initAVL(tree->join, tree->equals, tree->clone, tree->free);
 	NODE n;
-	void* cnttAux = NULL;
+	void* cntt = NULL;
 
-	n = p->head;
-	new->size = p->size;
+	n = tree->head;
+	new->size = tree->size;
 
 	q = enqueue(q, n);	
 
 	while((n = dequeue(q))) {
 
-		if (cloneCntt) cnttAux = cloneCntt(n->content);
-		new = insertAVL(new, n->hash, cnttAux);
+		if (tree->clone) 
+			cntt = tree->clone(n->content);
+
+		new = insertAVL(new, n->hash, cntt);
 		
 		if (n->left)  q = enqueue(q,n->left);
 		if (n->right) q = enqueue(q,n->right);
@@ -167,19 +217,36 @@ bool isEmptyAVL(AVL tree) {
 	return (tree->size == 0);
 }
 
+/**
+ * Verifica se duas árvores são iguais
+ * @param a Árvore alvo da verificação
+ * @param b Árvore alvo da verificação
+ * @result true caso sejam iguais, false caso contrário
+ */
 bool equalsAVL(AVL a, AVL b) {
-	return equalsNode(a->head, b->head);
+	if (a->equals == b->equals)
+		return equalsNode(a->head, b->head, a->equals);
+
+	return false;
 }
 
-bool equalsNode(NODE a, NODE b) {
+bool equalsNode(NODE a, NODE b, bool (*equals)(void*, void*)) {
+	bool sameHash, sameContent = true;
+
 	if (!a && !b)
 		return true;
 
 	if (!a || !b)
 		return false;
 
-	if (!strcmp(a->hash, b->hash) && a->content == b->content)
-		return equalsNode(a->left, b->left) && equalsNode(a->right, b->right);
+	sameHash = !strcmp(a->hash, b->hash);
+
+	if (equals)
+		sameContent = equals(a->content, b->content);
+
+	if (sameHash && sameContent)
+		return equalsNode(a->left,  b->left,  equals) && 
+			   equalsNode(a->right, b->right, equals);
 
 	return false;
 }
@@ -252,9 +319,9 @@ static HASHSET insertHashSet(HASHSET hs, char *hash) {
 }
 
 
-HASHSET getInOrderAVL(HASHSET hs, AVL tree) {
+HASHSET fillHashSet(HASHSET hs, AVL tree) {
 	
-	if (tree) hs = getInOrderAVLaux(hs, tree->head);
+	if (tree) hs = fillHashSetaux(hs, tree->head);
 
 	return hs;
 }
@@ -267,12 +334,12 @@ int getHashSetSize(HASHSET hs) {
 	return hs->sp;
 }
 
-static HASHSET getInOrderAVLaux(HASHSET hs, NODE n) {
+static HASHSET fillHashSetaux(HASHSET hs, NODE n) {
 
 	if (n) {
-		hs = getInOrderAVLaux(hs, n->left);
+		hs = fillHashSetaux(hs, n->left);
 		hs = insertHashSet(hs, n->hash);
-		hs = getInOrderAVLaux(hs, n->right);
+		hs = fillHashSetaux(hs, n->right);
 	}
 
 	return hs;

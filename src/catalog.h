@@ -6,10 +6,10 @@
 typedef struct catalog *CATALOG;
 typedef struct dataSet *DATASET;
 
-CATALOG initCatalog(int n);
+CATALOG initCatalog(int n, void* (*join)(void*, void *), bool (*equals)(void*, void*), void* (*clone)(void*), void (*free)(void *));
 CATALOG insertCatalog(CATALOG c, int i, char *hash, void *content);
 CATALOG updateCatalog(CATALOG c, int i, char *hash, void *content);
-CATALOG cloneCatalog(CATALOG cat, void *(*cloneCntt)(void *cntt)); 
+CATALOG cloneCatalog(CATALOG cat);
 void* getCatContent(CATALOG c, int i, char *hash);
 bool lookUpCatalog(CATALOG c, int i, char *hash);
 void freeCatalog(CATALOG c);
