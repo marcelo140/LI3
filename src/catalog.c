@@ -69,12 +69,14 @@ void *replaceCatalog(CATALOG c, int i, char *hash, void *cntt) {
 	return replaceAVL(p, hash, cntt);
 }
 
-CATALOG cloneCatalog(CATALOG cat) {
+CATALOG cloneCat(CATALOG cat, void* (*join) (void*, void *), bool (*equals)(void*, void*),
+                              void* (*clone)(void*),         void (*free)(void *)) {
+	
 	CATALOG c = malloc(sizeof(*c));
 	int i;
 
 	for (i = 0; i < c->size; i++)
-		c->root[i] = cloneAVL(cat->root[i]);
+		c->root[i] = cloneAVL(cat->root[i], join, equals, clone, free);
 	
 	return c;
 }

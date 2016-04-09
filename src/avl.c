@@ -151,12 +151,15 @@ void *replaceAVL(AVL tree, char *hash, void *content) {
  * @param cloneCntt Função auxiliar para clonar o conteúdo.
  * @return Nova AVL
  */
-AVL cloneAVL (AVL tree) { 
+AVL cloneAVL(AVL tree, void* (*join) (void*, void*), bool (*equals)(void*, void*), 
+                       void* (*clone)(void*),        void (*free)  (void *)){
+
 	QUEUE q = initQueue();
-	AVL new = initAVL(tree->join, tree->equals, tree->clone, tree->free);
+	AVL new;
 	NODE n;
 	void* cntt = NULL;
 
+	new = initAVL(join, equals, clone, free);
 	n = tree->head;
 	new->size = tree->size;
 
