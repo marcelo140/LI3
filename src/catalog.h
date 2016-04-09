@@ -6,17 +6,19 @@
 typedef struct catalog *CATALOG;
 typedef struct dataSet *DATASET;
 
-CATALOG initCatalog (int n, 
+CATALOG initCatalog (int n,
+					 void* (*init)   (), 
                      void* (*join)   (void*, void *), 
                      bool  (*equals) (void*, void*), 
                      void* (*clone)  (void*), 
-                     void  (*free)   (void *));
+                     void  (*free)   (void*));
 
 CATALOG cloneCat    (CATALOG cat,
-                     void* (*join)   (void*, void *),
+					 void* (*init)   (), 
+                     void* (*join)   (void*, void*),
                      bool  (*equals) (void*, void*),
                      void* (*clone)  (void*),
-                     void  (*free)   (void *));
+                     void  (*free)   (void*));
 
 CATALOG insertCatalog (CATALOG c, int i, char *hash, void *content);
 CATALOG updateCatalog (CATALOG c, int i, char *hash, void *content);

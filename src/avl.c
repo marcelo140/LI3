@@ -18,6 +18,7 @@ struct avl {
 	NODE head;
 	int size;
 
+	void* (*init)   ();
 	void* (*join)   (void *newContent, void *oldContent);
 	bool  (*equals) (void *content1, void *content2);
 	void* (*clone)  (void *content);
@@ -47,7 +48,7 @@ static HASHSET insertHashSet(HASHSET hs, char *hash);
  * Inicia uma nova AVL.
  * @return Nova AVL
  */
-AVL initAVL(void* (*join)(void*, void*), bool (*equals)(void*, void*), 
+AVL initAVL(void* (*init) (), void* (*join)(void*, void*), bool (*equals)(void*, void*), 
             void* (*clone)(void*), void (*free)(void *)){
 
 	AVL tree = malloc (sizeof (struct avl));
@@ -55,6 +56,7 @@ AVL initAVL(void* (*join)(void*, void*), bool (*equals)(void*, void*),
 	tree->head= NULL;
 	tree->size = 0;
 
+	tree->init = init;
 	tree->join = join;
 	tree->equals = equals;
 	tree->clone = clone;
@@ -103,7 +105,10 @@ AVL updateAVL(AVL tree, char *hash, void *content) {
 		else if (res < 0)
 			p = p->left;
 		else {
-			p->content = tree->join(content, p->content); 
+			if (!p->content)
+				p->content = tree->init();
+
+			p->content = tree->join(p->content, content); 
 			stop = 1;	
 		}
 	}
@@ -120,7 +125,7 @@ AVL updateAVL(AVL tree, char *hash, void *content) {
  */
 void *replaceAVL(AVL tree, char *hash, void *content) {
 	NODE p;
-	void *oldContent;
+	void *oldContent = NULL;
 	int res;
 	bool stop;
 
@@ -151,17 +156,16 @@ void *replaceAVL(AVL tree, char *hash, void *content) {
  * @param cloneCntt Função auxiliar para clonar o conteúdo.
  * @return Nova AVL
  */
-AVL cloneAVL(AVL tree, void* (*join) (void*, void*), bool (*equals)(void*, void*), 
-                       void* (*clone)(void*),        void (*free)  (void *)){
+AVL cloneAVL(AVL tree, void* (*init)(), void* (*join) (void*, void*),
+             bool (*equals)(void*, void*), void* (*clone)(void*), void (*free)  (void *)){
 
 	QUEUE q = initQueue();
 	AVL new;
 	NODE n;
 	void* cntt = NULL;
 
-	new = initAVL(join, equals, clone, free);
+	new = initAVL(init, join, equals, clone, free);
 	n = tree->head;
-	new->size = tree->size;
 
 	q = enqueue(q, n);	
 
@@ -428,7 +432,7 @@ static NODE newNode(char *hash, void *content, NODE left, NODE right) {
 	NODE new = malloc(sizeof(struct node));
 
 	new->bal = EH;
-	new->hash = malloc(sizeof(char)*sizeof(HASH_SIZE));
+	new->hash = malloc(sizeof(char)*HASH_SIZE);
 	new->content = content;
 	new->left = left;
 	new->right = right;

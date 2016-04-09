@@ -17,7 +17,7 @@ struct dataSet {
  * @param n Número de índices do catálogo
  * @return O novo Catálogo
  */
-CATALOG initCatalog(int n, void* (*join)(void*, void *), bool (*equals)(void*, void*), void* (*clone)(void*), void (*free)(void *)) {
+CATALOG initCatalog(int n, void* (*init)(), void* (*join)(void*, void *), bool (*equals)(void*, void*), void* (*clone)(void*), void (*free)(void *)) {
 
 	CATALOG c = malloc(sizeof (*c));
 	int i;
@@ -26,7 +26,7 @@ CATALOG initCatalog(int n, void* (*join)(void*, void *), bool (*equals)(void*, v
 	c->size = n;
 
 	for (i=0; i < n; i++)
-		c->root[i] = initAVL(join, equals, clone, free);
+		c->root[i] = initAVL(init, join, equals, clone, free);
 
 	return c;
 }
@@ -43,7 +43,7 @@ CATALOG insertCatalog(CATALOG c, int i, char *hash, void *cntt) {
 	AVL p = c->root[i];
 
 	c->root[i] = insertAVL(p, hash, cntt);
-
+	
 	return c;
 }
 
@@ -69,14 +69,16 @@ void *replaceCatalog(CATALOG c, int i, char *hash, void *cntt) {
 	return replaceAVL(p, hash, cntt);
 }
 
-CATALOG cloneCat(CATALOG cat, void* (*join) (void*, void *), bool (*equals)(void*, void*),
-                              void* (*clone)(void*),         void (*free)(void *)) {
+CATALOG cloneCat(CATALOG cat, void* (*init)(), void* (*join) (void*, void *), bool (*equals)(void*, void*), void* (*clone)(void*), void (*free)(void *)) {
 	
 	CATALOG c = malloc(sizeof(*c));
 	int i;
 
-	for (i = 0; i < c->size; i++)
-		c->root[i] = cloneAVL(cat->root[i], join, equals, clone, free);
+	c->size = cat->size;
+	c->root = malloc(sizeof(*c->root) * cat->size);
+
+	for (i = 0; i < cat->size; i++)
+		c->root[i] = cloneAVL(cat->root[i], init, join, equals, clone, free);
 	
 	return c;
 }
