@@ -2,6 +2,7 @@
 
 #include "catalog.h"
 #include "fatglobal.h"
+#include "revenue.h"
 
 #define CATALOG_SIZE 26
 
