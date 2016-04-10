@@ -23,6 +23,7 @@ struct hash {
 	int key;
 };
 
+static HASH copyHash(HASH hash);
 static int quadraticProbing(HASHTABLE ht, int key);
 
 /**
@@ -62,18 +63,17 @@ HASHTABLE insertHashT(HASHTABLE ht, void *back, SALE s) {
 	hash = createHash(ht, fromProduct(p));
 	key = hash->key;
 
-	if (CONTENT(key).hash != NULL && !strcmp(CONTENT(key).hash->seed, hash->seed)) 
+	if (CONTENT(key).hash != NULL && strcmp(CONTENT(key).hash->seed, hash->seed)) 
 		key = quadraticProbing(ht, key);
 
 	/* Se já existe, apenas atualiza */
-	if (strcmp(CONTENT(key).hash->seed, hash->seed)) {
+	if (CONTENT(key).hash == NULL || strcmp(CONTENT(key).hash->seed, hash->seed)) {
 		CONTENT(key).back = back;
-		CONTENT(key).hash = hash;
+		CONTENT(key).hash = copyHash(hash);
 	}
 	CONTENT(key).revenue = addSale(CONTENT(key).revenue, s);
 		
 
-	freeProduct(p);
 	freeHash(hash);
 	
 	return ht;
@@ -84,8 +84,13 @@ HASHTABLE insertHashT(HASHTABLE ht, void *back, SALE s) {
  * @param ht HASHTABLE a libertar
  */
 void freeHashTable(HASHTABLE ht) {
+	int i;
+	
 	freeRevenue(ht->content->revenue);
-	freeHash(ht->content->hash);
+	
+	for (i=0; i < ht->capacity; i++)
+		if (CONTENT(i).hash) freeHash(CONTENT(i).hash);
+
 	free(ht->content);
 	free(ht);
 }
@@ -189,9 +194,19 @@ static int quadraticProbing(HASHTABLE ht, int key) {
 	int i, pos = key + 1;
 
 	for (i=1; pos != key || i > ht->capacity; i++) {
-		if (CONTENT(pos).hash == NULL) key = pos;
+		if (CONTENT(pos).hash == NULL || CONTENT(pos).hash->key == key) key = pos;
 		else pos = (key + i*i) % ht->capacity; 
 	}
 	
 	return pos;
+}
+
+static HASH copyHash(HASH hash) {
+
+	HASH new = malloc(sizeof (*new));
+	new->key = hash->key;
+	new->seed = malloc(MAX_STR_SIZE);
+	strcpy(new->seed, hash->seed);
+	
+	return new;
 }
