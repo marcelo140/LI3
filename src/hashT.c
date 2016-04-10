@@ -5,7 +5,7 @@
 
 #define MAX_STR_SIZE 10
 #define BASE_CAPACITY 31
-#define CONT_REVENUE(i) ht->content[i].revenue 
+#define CONTENT(i) ht->content[i]
 
 
 typedef struct hashCntt {
@@ -41,7 +41,7 @@ HASHTABLE initHashTable() {
 }
 
 HASHTABLE insertHashT(HASHTABLE ht, void *back, SALE s) {
-	int quantity, billed, month, mode;
+	int quantity, billed, month, mode, i, key, pos;
 	PRODUCT p;
 	HASH hash;
 
@@ -53,18 +53,72 @@ HASHTABLE insertHashT(HASHTABLE ht, void *back, SALE s) {
 	p = getProduct(s);
 	hash = createHash(ht, fromProduct(p));
 	freeProduct(p);
+	key = hash->key;
 
-	if (ht->content[hash->key].hash == NULL) {
+	if (ht->content[key].hash != NULL && !strcmp(CONTENT(key).hash->seed, hash->seed)) {
+		pos = key+1 % ht->capacity; 
+		for (i=1; pos != key || i > ht->capacity; i++) {
 
-		ht->content[hash->key].back = back;
-		ht->content[hash->key].hash = hash;
-		CONT_REVENUE(hash->key) = updateRevenue(CONT_REVENUE(hash->key), 
-											month, mode, billed, quantity);
-	}else {
-		
+			if (ht->content[pos].hash == NULL) key = pos;
+			else pos = (key + i*i) % ht->capacity; 
+		}
 	}
 
+	/* Se já existe, apenas atualiza */
+	if (strcmp(CONTENT(key).hash->seed, hash->seed)) {
+		ht->content[key].back = back;
+		ht->content[key].hash = hash;
+	}
+	CONTENT(key).revenue = updateRevenue(CONTENT(key).revenue,
+		   									month, mode, billed, quantity);
+		
+
 	return ht;
+}
+
+/**
+ * Liberta o espaço ocupado por uma HashTable
+ * @param ht HASHTABLE a libertar
+ */
+void freeHashTable(HASHTABLE ht) {
+	freeRevenue(ht->content->revenue);
+	freeHash(ht->content->hash);
+	free(ht->content);
+	free(ht);
+}
+
+/**
+ * Devolve o endereço do pai do elemento com essa hash
+ * @param ht HASHTABLE a consultar
+ * @param hash Hash do elemento
+ * @return o endereço pai do elemento
+ */
+void* getParent(HASHTABLE ht, HASH hash) {
+	return ht->content[hash->key].back;
+}
+
+/**
+ * Devolve o total faturado de um dado elemento num certo mês, com ou sem promoção
+ * @param ht HASHTABLE a consultar
+ * @param hash HASH do elemento
+ * @param month Mês a consultar
+ * @param MODE MODE_N caso seja normal, MODE_P caso seja promoção
+ * @return Total faturado do elemento no dado mes e modo
+ */
+double getHashBilled(HASHTABLE ht, HASH hash, int month, int MODE) {
+	return getBilled(CONTENT(hash->key).revenue, month, MODE);
+}
+
+/**
+ * Devolve a quantidade total comprada de um dado elemento, num certo mês, com ou sem promoção
+ * @param ht HASHTABLE a consultar
+ * @param hash HASH do elemento
+ * @param month Mês a consultar
+ * @param MODE MODE_N caso seja normal, MODE_P caso seja promoção
+ * @return Quantidade total comprada de um dado elemento num dado mês e modo
+ */
+int getHashQuantity(HASHTABLE ht, HASH hash, int month, int MODE) {
+	return getQuantity(CONTENT(hash->key).revenue, month, MODE);
 }
 
 /**
@@ -88,4 +142,13 @@ HASH createHash(HASHTABLE ht, char *seed) {
 	new->key %= ht->capacity;
 
 	return new;
+}
+
+/**
+ * Liberta o espaço ocupado pela HASH
+ * @param hash HASH a libertar
+ */
+void freeHash(HASH hash) {
+	free(hash->seed);
+	free(hash);
 }
