@@ -19,6 +19,7 @@ CLIENTCAT writeCCat(FILE *file, CLIENTCAT cat, int *num) {
 		client = toClient(line);
 
 		cat = insertClient(cat, client);
+		freeClient(client);
 		n++;
 	}
 
@@ -39,6 +40,7 @@ PRODUCTCAT writePCat(FILE *file, PRODUCTCAT cat, int *num) {
 		product = toProduct(line);
 
 		cat = insertProduct(cat, product);
+		freeProduct(product);
 		n++;
 	}
 
@@ -65,16 +67,16 @@ int checkSales (FILE *file, FATGLOBAL fat, PRODUCTCAT products, CLIENTCAT client
 		
 		if (isSale(s, products, clients)) {
 			addFat(fat, s);	
-			freeSale(s, M_CONTENT);
 		 	suc++;
 		}
+	
+		freeSale(s, M_CONTENT);
 		time += (double) (end - begin) / CLOCKS_PER_SEC;
 	}
 
 	printf("tempo %fs\n", time);
 
 	free(s);
-
 	*sucLn = suc;
 	*failLn = total - suc;
 
