@@ -20,7 +20,7 @@ obj/%.o: src/%.c
 
 tests/obj/%.o: tests/%.c
 	@mkdir -p tests/obj
-	$(CC) $(CFLAGS) -o $@ -c $<
+	$(CC) -ansi -pedantic -g -o $@ -c $<
 
 obj/main.o: src/datacheck.h src/clients.h src/products.h src/generic.h
 obj/datacheck.o: src/datacheck.h src/clients.h src/products.h src/generic.h src/sales.h 
