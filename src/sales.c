@@ -45,11 +45,82 @@ REVENUE addSale(REVENUE r, SALE s) {
 	int branch = s->branch;
 	int mode   = s->mode;
 
-	r->billed[month-1][branch-1][mode] += price*quant;
-	r->quantity[month-1][branch-1][mode] += quant;
+	r->billed[month][branch][mode] += price*quant;
+	r->quantity[month][branch][mode] += quant;
 
 	return r;
 }
+
+double getBranchBilled(REVENUE r, int branch, double *normal, double *promo) {
+	double n, p;
+	int  month;
+
+	n = 0;
+	p = 0;
+
+	for(month = 0; month < MONTHS; month++){
+		n += r->billed[month][branch][MODE_N];
+		p += r->billed[month][branch][MODE_P];
+	}
+
+	*normal = n;
+	*promo = p;
+
+	return n+p;
+}
+
+int getBranchQuant(REVENUE r, int branch, int *normal, int *promo) {
+	int n, p, month;
+
+	n = 0;
+	p = 0;
+
+	for(month = 0; month < MONTHS; month++) {
+		n += r->quantity[month][branch][MODE_N];
+		p += r->quantity[month][branch][MODE_P];
+	}
+
+	*normal = n;
+	*promo = p;
+
+	return n+p;
+}
+
+double getMonthBilled(REVENUE r, int month, double *normal, double *promo) {
+	double n, p;
+	int branch;
+
+	n = 0;
+	p = 0;
+
+	for(branch = 0; branch < BRANCHES; branch++) {
+		n += r->billed[month][branch][MODE_N];
+		p += r->billed[month][branch][MODE_P];
+	}
+
+	*normal = n;
+	*promo = p;
+
+	return n+p;		
+}
+
+int getMonthQuant(REVENUE r, int month, int *normal, int *promo) {
+	int n, p, branch;
+
+	n = 0;
+	p = 0;
+
+	for(branch = 0; branch < BRANCHES; branch++) {
+		n += r->quantity[month][branch][MODE_N];
+		p += r->quantity[month][branch][MODE_P];
+	}
+
+	*normal = n;
+	*promo = p;
+
+	return n+p;
+}
+
 
 /** 
  * Adiciona uma nova faturação e uma nova quantidade à REVENUE
@@ -126,8 +197,6 @@ void freeRevenue(REVENUE r) {
 	free(r);
 }
 
-
-
 /**
  * Verifica se uma SALE é válida.
  * @param sale SALE a verificar
@@ -138,6 +207,10 @@ void freeRevenue(REVENUE r) {
 bool isSale(SALE sale, PRODUCTCAT prodCat, CLIENTCAT clientCat) {
 	return (lookUpProduct(prodCat, sale->prod) && 
 		 lookUpClient(clientCat, sale->client));
+}
+
+bool isEmptyRev (REVENUE r) {
+	return (r == NULL);
 }
 
 /**
@@ -197,7 +270,7 @@ SALE readSale(SALE s, char *line) {
 	token = strtok(NULL, " ");
 	branch = atoi(token);
 
-	return updateSale(s, p, c, price, quant, month, branch, mode);	
+	return updateSale(s, p, c, price, quant, month-1, branch-1, mode);	
 }
 /**
  * Liberta o espaço ocupado pela SALE s
