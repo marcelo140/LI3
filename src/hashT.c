@@ -58,9 +58,11 @@ HASHTABLE insertHashT(HASHTABLE ht, void *back, SALE s) {
 	int key;
 	PRODUCT p;
 	HASH hash;
+	char * pstr;
 
 	p = getProduct(s);
-	hash = createHash(ht, fromProduct(p));
+	pstr = fromProduct(p);
+	hash = createHash(ht, pstr);
 	key = hash->key;
 
 	if (CONTENT(key).hash != NULL && strcmp(CONTENT(key).hash->seed, hash->seed)) 
@@ -73,7 +75,8 @@ HASHTABLE insertHashT(HASHTABLE ht, void *back, SALE s) {
 	}
 	CONTENT(key).revenue = addSale(CONTENT(key).revenue, s);
 		
-
+	
+	free(pstr);
 	freeHash(hash);
 	
 	return ht;
@@ -86,10 +89,13 @@ HASHTABLE insertHashT(HASHTABLE ht, void *back, SALE s) {
 void freeHashTable(HASHTABLE ht) {
 	int i;
 	
+	
 	freeRevenue(ht->content->revenue);
 	
-	for (i=0; i < ht->capacity; i++)
-		if (CONTENT(i).hash) freeHash(CONTENT(i).hash);
+	for (i=0; i < ht->capacity; i++) {
+		freeHash(CONTENT(i).hash);
+		freeRevenue (CONTENT(i).revenue);
+	}
 
 	free(ht->content);
 	free(ht);
@@ -169,7 +175,8 @@ HASH createHash(HASHTABLE ht, char *seed) {
 	int i;
 	
 	new->seed= malloc(MAX_STR_SIZE);
-	strcpy (new->seed, seed);
+	strncpy (new->seed, seed, MAX_STR_SIZE);
+	new->key = 0;
 
 	/* Este algoritmo de criação de hashes deve ser melhorado */
 	for (i=0; seed[i] != '\0' && i < MAX_STR_SIZE; i++) {
@@ -186,8 +193,10 @@ HASH createHash(HASHTABLE ht, char *seed) {
  * @param hash HASH a libertar
  */
 void freeHash(HASH hash) {
-	free(hash->seed);
-	free(hash);
+	if (hash) {
+		free(hash->seed);
+		free(hash);
+	}
 }
 
 static int quadraticProbing(HASHTABLE ht, int key) {

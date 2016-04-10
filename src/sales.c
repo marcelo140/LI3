@@ -123,7 +123,7 @@ int getQuantity(REVENUE r, int month, int branch, int MODE) {
  * @param r REVENUE a libertar
  */
 void freeRevenue(REVENUE r) {
-	free(r);
+	if (r) free(r);
 }
 
 
