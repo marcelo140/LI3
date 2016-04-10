@@ -23,6 +23,8 @@ struct hash {
 	int key;
 };
 
+static int quadraticProbing(HASHTABLE ht, int key);
+
 /**
  * Inicia uma HASHTABLE nova
  * @return Nova HASHTABLE
@@ -52,23 +54,16 @@ HASHTABLE initHashTable() {
  * @return HASHTABLE atualizada
  */
 HASHTABLE insertHashT(HASHTABLE ht, void *back, SALE s) {
-	int i, key, pos;
+	int key;
 	PRODUCT p;
 	HASH hash;
 
 	p = getProduct(s);
 	hash = createHash(ht, fromProduct(p));
-	freeProduct(p);
 	key = hash->key;
 
-	if (CONTENT(key).hash != NULL && !strcmp(CONTENT(key).hash->seed, hash->seed)) {
-		pos = key+1 % ht->capacity; 
-		for (i=1; pos != key || i > ht->capacity; i++) {
-
-			if (CONTENT(pos).hash == NULL) key = pos;
-			else pos = (key + i*i) % ht->capacity; 
-		}
-	}
+	if (CONTENT(key).hash != NULL && !strcmp(CONTENT(key).hash->seed, hash->seed)) 
+		key = quadraticProbing(ht, key);
 
 	/* Se já existe, apenas atualiza */
 	if (strcmp(CONTENT(key).hash->seed, hash->seed)) {
@@ -78,6 +73,9 @@ HASHTABLE insertHashT(HASHTABLE ht, void *back, SALE s) {
 	CONTENT(key).revenue = addSale(CONTENT(key).revenue, s);
 		
 
+	freeProduct(p);
+	freeHash(hash);
+	
 	return ht;
 }
 
@@ -99,6 +97,10 @@ void freeHashTable(HASHTABLE ht) {
  * @return o endereço pai do elemento
  */
 void* getParent(HASHTABLE ht, HASH hash) {
+
+	if ( strcmp(CONTENT(hash->key).hash->seed, hash->seed)) 
+		hash->key = quadraticProbing(ht, hash->key);
+   	
 	return CONTENT(hash->key).back;
 }
 
@@ -112,6 +114,10 @@ void* getParent(HASHTABLE ht, HASH hash) {
  * @return Total faturado do elemento no dado mes e modo
  */
 double getHashBilled(HASHTABLE ht, HASH hash, int month, int branch, int MODE) {
+	
+	if ( strcmp(CONTENT(hash->key).hash->seed, hash->seed)) 
+		hash->key = quadraticProbing(ht, hash->key);
+   	
 	return getBilled(CONTENT(hash->key).revenue, month, branch, MODE);
 }
 
@@ -125,6 +131,10 @@ double getHashBilled(HASHTABLE ht, HASH hash, int month, int branch, int MODE) {
  * @return Quantidade total comprada de um dado elemento num dado mês e modo
  */
 int getHashQuantity(HASHTABLE ht, HASH hash, int month, int branch, int MODE) {
+	
+	if ( strcmp(CONTENT(hash->key).hash->seed, hash->seed)) 
+		hash->key = quadraticProbing(ht, hash->key);
+   	
 	return getQuantity(CONTENT(hash->key).revenue, month, branch, MODE);
 }
 
@@ -135,6 +145,10 @@ int getHashQuantity(HASHTABLE ht, HASH hash, int month, int branch, int MODE) {
  * @return REVENUE do elemento
  */
 REVENUE getHashRevenue (HASHTABLE ht, HASH hash) {
+
+	if ( strcmp(CONTENT(hash->key).hash->seed, hash->seed)) 
+		hash->key = quadraticProbing(ht, hash->key);
+   	
 	return CONTENT(hash->key).revenue;
 }
 
@@ -169,4 +183,15 @@ HASH createHash(HASHTABLE ht, char *seed) {
 void freeHash(HASH hash) {
 	free(hash->seed);
 	free(hash);
+}
+
+static int quadraticProbing(HASHTABLE ht, int key) {
+	int i, pos = key + 1;
+
+	for (i=1; pos != key || i > ht->capacity; i++) {
+		if (CONTENT(pos).hash == NULL) key = pos;
+		else pos = (key + i*i) % ht->capacity; 
+	}
+	
+	return pos;
 }
