@@ -4,7 +4,7 @@
 #include "generic.h"
 
 typedef struct catalog *CATALOG;
-typedef struct dataSet *DATASET;
+typedef struct dataSet *KEYSET;
 
 CATALOG initCatalog (int n,
 					 void* (*init)   (), 
@@ -30,11 +30,11 @@ void freeCatalog     (CATALOG c);
 bool lookUpCatalog (CATALOG c, int i, char *hash);
 int  countCatElems (CATALOG c, int i);
 
-DATASET initDataSet (int n);
-DATASET fillDataSet (CATALOG cat, DATASET ds, int i);
+KEYSET initKeySet (int n);
+KEYSET fillKeySet (CATALOG cat, KEYSET ds, int i);
 
-char *getDataSet    (DATASET ds, int pos);
-int  getDataSetSize (DATASET ds); 
-void freeDataSet    (DATASET set);
+char *getKeySet    (KEYSET ds, int pos);
+int  getKeySetSize (KEYSET ds); 
+void freeKeySet    (KEYSET set);
 
 #endif

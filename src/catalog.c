@@ -122,10 +122,11 @@ int countCatElems(CATALOG c, int i){
  * @return void
  */
 void freeCatalog(CATALOG c){
-	int i;
+	int i, size;
 
 	if (c){
-		for (i=0; i < c->size; i++) 
+		size = c->size;
+		for (i=0; i < size; i++) 
 			freeAVL(c->root[i]);
 
 		free(c->root);
@@ -133,27 +134,27 @@ void freeCatalog(CATALOG c){
 	}
 }
 
-DATASET initDataSet(int n) {
-	DATASET ds = malloc(sizeof(struct dataSet));
+KEYSET initKeySet(int n) {
+	KEYSET ds = malloc(sizeof(struct dataSet));
 	ds->set = initHashSet(n);
 
 	return ds;
 }
 
-DATASET fillDataSet(CATALOG cat, DATASET ds, int i) {
+KEYSET fillKeySet(CATALOG cat, KEYSET ds, int i) {
 	ds->set = fillHashSet(ds->set, cat->root[i]);
 	return ds;
 }
 
-char *getDataSet(DATASET ds, int pos) {
+char *getKeySet(KEYSET ds, int pos) {
 	return getHashSetPos(ds->set, pos);
 }
 
-int getDataSetSize(DATASET ds) {
+int getKeySetSize(KEYSET ds) {
 	return getHashSetSize(ds->set);
 }
 
-void freeDataSet(DATASET ds) {
+void freeKeySet(KEYSET ds) {
 	freeHashSet(ds->set);
 	free(ds);
 }
