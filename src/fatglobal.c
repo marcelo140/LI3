@@ -35,5 +35,6 @@ FATGLOBAL addFat(FATGLOBAL fat, SALE s) {
 
 	fat->cat = updateCatalog(fat->cat, prod[0] - 'A', prod, s);
 
+	free(prod);
 	return fat;
 }

@@ -19,9 +19,10 @@ struct dataSet {
  */
 CATALOG initCatalog(int n, void* (*init)(), void* (*join)(void*, void *), bool (*equals)(void*, void*), void* (*clone)(void*), void (*free)(void *)) {
 
-	CATALOG c = malloc(sizeof (*c));
+	CATALOG c;
 	int i;
-	
+
+	c = malloc(sizeof (*c));	
 	c->root = malloc(sizeof(*c->root) * n);
 	c->size = n;
 
@@ -71,11 +72,12 @@ void *replaceCatalog(CATALOG c, int i, char *hash, void *cntt) {
 
 CATALOG cloneCat(CATALOG cat, void* (*init)(), void* (*join) (void*, void *), bool (*equals)(void*, void*), void* (*clone)(void*), void (*free)(void *)) {
 	
-	CATALOG c = malloc(sizeof(*c));
+	CATALOG c;
 	int i;
 
-	c->size = cat->size;
+	c = malloc(sizeof(*c));
 	c->root = malloc(sizeof(*c->root) * cat->size);
+	c->size = cat->size;
 
 	for (i = 0; i < cat->size; i++)
 		c->root[i] = cloneAVL(cat->root[i], init, join, equals, clone, free);
@@ -123,7 +125,10 @@ void freeCatalog(CATALOG c){
 	int i;
 
 	if (c){
-		for (i=0; i < c->size; i++) freeAVL(c->root[i]);
+		for (i=0; i < c->size; i++) 
+			freeAVL(c->root[i]);
+
+		free(c->root);
 		free(c);
 	}
 }

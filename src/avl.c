@@ -297,13 +297,14 @@ void freeAVL(AVL tree) {
 
 static void freeNode(NODE node, void (*freeContent)(void*)) {
 	if (!node) {
-		free(node->hash);
-	
-		if (freeContent)
-			freeContent(node->hash);
-
 		freeNode(node->left, freeContent);
 		freeNode(node->right, freeContent);
+	
+		free(node->hash);
+
+		if (freeContent)
+			freeContent(node->content);
+
 		free(node);
 	}
 }
