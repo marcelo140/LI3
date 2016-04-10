@@ -7,8 +7,8 @@
 
 #define SALE_SIZE 7
 
-#define N 0
-#define P 1
+#define MODE_N 0
+#define MODE_P 1
 
 #define M_CONTENT 0
 #define M_TOTAL 1

@@ -27,7 +27,7 @@ int test_Cat() {
 static int test_insertCatalog() {
 
 	int testes_passou = 0;
-	CATALOG c = initCatalog(10, NULL, NULL, NULL, NULL);
+	CATALOG c = initCatalog(10, NULL, NULL, NULL, NULL, NULL);
 
 	c = insertCatalog(c, 0, "Cientista", NULL);
 	c = insertCatalog(c, 0, "Escolhido", NULL);
@@ -47,7 +47,7 @@ static int test_insertCatalog() {
 static int test_replaceCatalog() {
 	
 	int testes_passou = 0;
-	CATALOG c = initCatalog(10, NULL, NULL, NULL, NULL);
+	CATALOG c = initCatalog(10,NULL,  NULL, NULL, NULL, NULL);
 	char *cont1 = "Olá", *cont2 = "Disquete", *cont3 = "Maria Amélia";
 
 	c = insertCatalog(c, 0, "Cientista", NULL);
