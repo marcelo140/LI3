@@ -31,6 +31,12 @@ struct hashSet {
 	char **set;
 };
 
+struct dataSet {
+	int size;
+	int pos;
+	void **set;
+};
+
 static NODE newNode(char *hash, void *content, NODE left, NODE right);
 static NODE rotateRight(NODE node);
 static NODE rotateLeft(NODE node);
@@ -43,6 +49,8 @@ static bool equalsNode(NODE a, NODE b, bool (*equals)(void*, void*));
 static void freeNode(NODE node, void (*freeContent)(void *));
 static HASHSET fillHashSetaux(HASHSET hs, NODE n);
 static HASHSET insertHashSet(HASHSET hs, char *hash); 
+static DATASET fillDataSetaux(DATASET ds, NODE n);
+static DATASET insertDataSet(DATASET ds, void *data);
 
 /**
  * Inicia uma nova AVL.
@@ -53,7 +61,7 @@ AVL initAVL(void* (*init) (), void* (*join)(void*, void*), bool (*equals)(void*,
 
 	AVL tree = malloc (sizeof (struct avl));
 
-	tree->head= NULL;
+	tree->head = NULL;
 	tree->size = 0;
 
 	tree->init = init;
@@ -289,14 +297,14 @@ bool lookUpAVL(AVL tree, char *hash) {
  * @param p AVL a libertar
  */
 void freeAVL(AVL tree) {
-	if (!tree){
+	if (tree){
 		freeNode(tree->head, tree->free);
 		free(tree);
 	}	
 }
 
 static void freeNode(NODE node, void (*freeContent)(void*)) {
-	if (!node) {
+	if (node) {
 		freeNode(node->left, freeContent);
 		freeNode(node->right, freeContent);
 	
@@ -600,4 +608,56 @@ static NODE insertNode(NODE node, NODE new, int *update) {
 		node = insertLeft(node, new, update);
 
 	return node;
+}
+
+DATASET initDataSet(int n) {
+
+	DATASET new = malloc(sizeof(*new));
+
+	new->size = n;
+	new->pos = 0;
+	new->set = malloc(sizeof(void *) * n);
+
+	return new;
+}
+
+static DATASET insertDataSet(DATASET ds, void *data) {
+	
+	if (ds->pos == ds->size) {
+		ds->size *= 2;
+		ds->set = realloc(ds->set, ds->size * sizeof(void *));
+	}
+	
+	ds->set[ds->pos] = data;
+	ds->pos++;
+
+	return ds;
+}
+
+
+DATASET fillDataSet(DATASET ds, AVL tree) {
+	
+	if (tree) 
+		ds = fillDataSetaux(ds, tree->head);
+
+	return ds;
+}
+
+void* getDataSetPos(DATASET ds, int pos) {
+	return ds->set[pos];
+}
+
+int getDataSetSize(DATASET ds) { 
+	return ds->pos;
+}
+
+static DATASET fillDataSetaux(DATASET ds, NODE n) {
+
+	if (n) {
+		ds = fillDataSetaux(ds, n->left);
+		ds = insertDataSet(ds, n->hash);
+		ds = fillDataSetaux(ds, n->right);
+	}
+
+	return ds;
 }

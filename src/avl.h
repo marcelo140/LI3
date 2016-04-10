@@ -5,6 +5,7 @@
 
 typedef struct avl *AVL;
 typedef struct hashSet *HASHSET;
+typedef struct dataSet *DATASET;
 
 AVL initAVL  (void* (*init)   (),
               void* (*join)   (void*, void*), 
@@ -39,5 +40,12 @@ HASHSET diffHSets     (HASHSET hs1, HASHSET hs2);
 char *getHashSetPos  (HASHSET hs, int pos);
 int   getHashSetSize (HASHSET hs);
 void  freeHashSet    (HASHSET set);
+
+DATASET initDataSet   (int n);
+DATASET fillDataSet   (DATASET ds, AVL tree);
+
+void *getDataSetPos  (DATASET ds, int pos);
+int   getDataSetSize (DATASET ds);
+void  freeDataSet    (DATASET set);
 
 #endif
