@@ -1,7 +1,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include "hashT.h"
-#include "revenue.h"
 
 #define MAX_STR_SIZE 10
 #define BASE_CAPACITY 31
@@ -24,6 +23,10 @@ struct hash {
 	int key;
 };
 
+/**
+ * Inicia uma HASHTABLE nova
+ * @return Nova HASHTABLE
+ */
 HASHTABLE initHashTable() {
 	HASHTABLE new = malloc(sizeof (*new));
 	int i;
@@ -40,37 +43,39 @@ HASHTABLE initHashTable() {
 	return new;
 }
 
+/**
+ * Insere uma SALE e um apontador para o pai na HASHTABLE
+ * Se já existe, apenas adiciona à REVENUE existente
+ * @param ht HASHTABLE a atualizar
+ * @param back Apontador para o pai  
+ * @param s SALE a atualizar
+ * @return HASHTABLE atualizada
+ */
 HASHTABLE insertHashT(HASHTABLE ht, void *back, SALE s) {
-	int quantity, billed, month, mode, i, key, pos;
+	int i, key, pos;
 	PRODUCT p;
 	HASH hash;
-
-	quantity = getQuant(s);
-	billed = getPrice(s) * quantity;
-	month = getMonth(s);
-	mode = getMode(s);	
 
 	p = getProduct(s);
 	hash = createHash(ht, fromProduct(p));
 	freeProduct(p);
 	key = hash->key;
 
-	if (ht->content[key].hash != NULL && !strcmp(CONTENT(key).hash->seed, hash->seed)) {
+	if (CONTENT(key).hash != NULL && !strcmp(CONTENT(key).hash->seed, hash->seed)) {
 		pos = key+1 % ht->capacity; 
 		for (i=1; pos != key || i > ht->capacity; i++) {
 
-			if (ht->content[pos].hash == NULL) key = pos;
+			if (CONTENT(pos).hash == NULL) key = pos;
 			else pos = (key + i*i) % ht->capacity; 
 		}
 	}
 
 	/* Se já existe, apenas atualiza */
 	if (strcmp(CONTENT(key).hash->seed, hash->seed)) {
-		ht->content[key].back = back;
-		ht->content[key].hash = hash;
+		CONTENT(key).back = back;
+		CONTENT(key).hash = hash;
 	}
-	CONTENT(key).revenue = updateRevenue(CONTENT(key).revenue,
-		   									month, mode, billed, quantity);
+	CONTENT(key).revenue = addSale(CONTENT(key).revenue, s);
 		
 
 	return ht;
@@ -94,7 +99,7 @@ void freeHashTable(HASHTABLE ht) {
  * @return o endereço pai do elemento
  */
 void* getParent(HASHTABLE ht, HASH hash) {
-	return ht->content[hash->key].back;
+	return CONTENT(hash->key).back;
 }
 
 /**
@@ -102,11 +107,12 @@ void* getParent(HASHTABLE ht, HASH hash) {
  * @param ht HASHTABLE a consultar
  * @param hash HASH do elemento
  * @param month Mês a consultar
+ * @param branch Filial a consultar
  * @param MODE MODE_N caso seja normal, MODE_P caso seja promoção
  * @return Total faturado do elemento no dado mes e modo
  */
-double getHashBilled(HASHTABLE ht, HASH hash, int month, int MODE) {
-	return getBilled(CONTENT(hash->key).revenue, month, MODE);
+double getHashBilled(HASHTABLE ht, HASH hash, int month, int branch, int MODE) {
+	return getBilled(CONTENT(hash->key).revenue, month, branch, MODE);
 }
 
 /**
@@ -114,12 +120,24 @@ double getHashBilled(HASHTABLE ht, HASH hash, int month, int MODE) {
  * @param ht HASHTABLE a consultar
  * @param hash HASH do elemento
  * @param month Mês a consultar
+ * @param branch Filial a consultar
  * @param MODE MODE_N caso seja normal, MODE_P caso seja promoção
  * @return Quantidade total comprada de um dado elemento num dado mês e modo
  */
-int getHashQuantity(HASHTABLE ht, HASH hash, int month, int MODE) {
-	return getQuantity(CONTENT(hash->key).revenue, month, MODE);
+int getHashQuantity(HASHTABLE ht, HASH hash, int month, int branch, int MODE) {
+	return getQuantity(CONTENT(hash->key).revenue, month, branch, MODE);
 }
+
+/**
+ * Devolve toda a REVENUE de um dado elemento
+ * @param ht HASHTABLE a consultar
+ * @param hash HASH do elemnto
+ * @return REVENUE do elemento
+ */
+REVENUE getHashRevenue (HASHTABLE ht, HASH hash) {
+	return CONTENT(hash->key).revenue;
+}
+
 
 /**
  * Cria uma HASH de uma string para uma dada HASHTABLE
