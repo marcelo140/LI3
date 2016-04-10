@@ -64,7 +64,7 @@ int checkSales (FILE *file, FATGLOBAL fat, PRODUCTCAT products, CLIENTCAT client
 		total++;
 		
 		if (isSale(s, products, clients)) {
-/*			addFat(fat, s);	 */
+			addFat(fat, s);	
 			freeSale(s, M_CONTENT);
 		 	suc++;
 		}

@@ -6,14 +6,21 @@
 typedef struct avl *AVL;
 typedef struct hashSet *HASHSET;
 
-AVL initAVL  (void* (*join)   (void*, void*), 
+AVL initAVL  (void* (*init)   (),
+              void* (*join)   (void*, void*), 
               bool  (*equals) (void*, void*), 
               void* (*clone)  (void*), 
               void  (*free)   (void *));
 
+AVL cloneAVL  (AVL tree,
+               void* (*init)   (),
+               void* (*join)   (void*, void*),
+               bool  (*equals) (void*, void*), 
+               void* (*clone)  (void*), 
+               void  (*free)   (void *));
+
 AVL insertAVL  (AVL tree, char *hash, void *content);
 AVL updateAVL  (AVL tree, char *hash, void *content);
-AVL cloneAVL   (AVL tree);
 
 bool lookUpAVL  (AVL tree, char *hash);
 bool equalsAVL  (AVL tree, AVL b);

@@ -6,38 +6,34 @@
 #define CATALOG_SIZE 26
 
 struct faturacao {
-	CATALOG l;
+	CATALOG cat;
 };
-
-/**
- * Inicia uma Faturação Global
- * @return Nova Faturação Global
- */
-FATGLOBAL initFat() {
-	FATGLOBAL fat = malloc(sizeof (*fat));
-	fat->l = initCatalog(CATALOG_SIZE, NULL, NULL, NULL, NULL);
-
-	return fat;
-}
 
 /**
  * Preenche a Faturação Global com o catálog de Produtos
  * @param p Catálogo de Produtos
  * @return Faturação Global preenchida
  */
-FATGLOBAL fillFat(PRODUCTCAT p) {
-	FATGLOBAL new = initFat();
-	new->l = cloneCatalog(prodToCat(p)); 
+FATGLOBAL initFat(PRODUCTCAT p) {
+	FATGLOBAL new = malloc(sizeof (*new));
+	new->cat = cloneCat(prodToCat(p), (void* (*)()) initRevenue,
+                        (void* (*) (void*,void*)) addSale,
+                        NULL, NULL,
+                        (void (*) (void*))freeRevenue);
 
 	return new;
 }
 
 /**
- * Verifica se uma Faturação Global está vazia
- * @param f Faturação Global a verificar
- * @return true caso esteja vazia, false caso contrário
+ * Adiciona uma venda à faturação global
+ * @param fat Faturação
+ * @param s Venda a ser adicionada
+ * @return Faturação com a nova venda
  */
-bool isEmptyFat(FATGLOBAL f) {
-	return (f==NULL);
-}
+FATGLOBAL addFat(FATGLOBAL fat, SALE s) {
+	char *prod = fromProduct(getProduct(s));
 
+	fat->cat = updateCatalog(fat->cat, prod[0] - 'A', prod, s);
+
+	return fat;
+}
