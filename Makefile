@@ -32,6 +32,7 @@ obj/products.o: src/products.h src/catalog.h src/generic.h
 obj/sales.o: src/sales.h src/clients.h src/products.h src/generic.h
 obj/interpreter.o: src/interpreter.h src/clients.h src/products.h
 obj/fatglobal.o: src/sales.h src/fatglobal.h src/products.h src/catalog.h
+obj/hashT.o: src/hashT.h src/sales.h
 
 tests/obj/main.o: tests/avlTest.h tests/catalogTest.h 
 tests/obj/catalogTest.o: tests/catalogTest.h obj/catalog.o
