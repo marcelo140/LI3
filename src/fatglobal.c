@@ -38,3 +38,8 @@ FATGLOBAL addFat(FATGLOBAL fat, SALE s) {
 	free(prod);
 	return fat;
 }
+
+void freeFat(FATGLOBAL fat) {
+	freeCatalog(fat->cat);
+	free(fat);
+}

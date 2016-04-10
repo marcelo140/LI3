@@ -11,7 +11,9 @@
 
 typedef struct faturacao *FATGLOBAL;
 
-FATGLOBAL initFat(PRODUCTCAT p);
-FATGLOBAL addFat(FATGLOBAL fat, SALE s);
+FATGLOBAL initFat (PRODUCTCAT p);
+FATGLOBAL addFat  (FATGLOBAL fat, SALE s);
+
+void freeFat(FATGLOBAL fat);
 
 #endif

@@ -69,6 +69,7 @@ int main() {
 
 	freeClientCat(clientCat);
 	freeProductCat(productCat);
+	freeFat(fat);
 
 	fclose(clients);
 	fclose(products);
