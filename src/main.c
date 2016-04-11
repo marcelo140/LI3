@@ -67,6 +67,12 @@ int main() {
 
 	putchar('\n');
 
+	begin = clock();
+	notSold(fat, BRANCHES);
+	end = clock();
+	time = (double) (end - begin) / CLOCKS_PER_SEC;
+	printf("tempo: %fs\n", time);
+
 	freeClientCat(clientCat);
 	freeProductCat(productCat);
 	freeFat(fat);
