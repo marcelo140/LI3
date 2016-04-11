@@ -85,7 +85,8 @@ AVL insertAVL(AVL tree, char *hash, void *content) {
 	NODE new = newNode(hash, content, NULL, NULL);
 
 	tree->head = insertNode(tree->head, new, &update);
-	tree->size++;
+	if (update) tree->size++;
+	else freeNode(new, tree->free);
 
 	return tree;
 }
