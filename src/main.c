@@ -68,7 +68,7 @@ int main() {
 	putchar('\n');
 
 	begin = clock();
-	notSold(fat, BRANCHES);
+	notSold(fat, TOTAL);
 	end = clock();
 	time = (double) (end - begin) / CLOCKS_PER_SEC;
 	printf("tempo: %fs\n", time);

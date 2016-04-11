@@ -39,6 +39,7 @@ static NODE balanceLeft(NODE node);
 static NODE insertRight(NODE node, NODE new, int *update);
 static NODE insertLeft(NODE node, NODE new, int *update);
 static NODE insertNode(NODE node, NODE new, int *update);
+static NODE cloneNode(NODE n, void* (*clone)(void *));
 static bool equalsNode(NODE a, NODE b, bool (*equals)(void*, void*));
 static void freeNode(NODE node, void (*freeContent)(void *));
 static DATASET fillDataSetaux(DATASET ds, NODE n);
@@ -155,6 +156,7 @@ void *replaceAVL(AVL tree, char *hash, void *content) {
  * @param cloneCntt Função auxiliar para clonar o conteúdo.
  * @return Nova AVL
  */
+/**
 AVL cloneAVL(AVL tree, void* (*init)(), void* (*join) (void*, void*),
              bool (*equals)(void*, void*), void* (*clone)(void*), void (*free)  (void *)){
 
@@ -181,6 +183,36 @@ AVL cloneAVL(AVL tree, void* (*init)(), void* (*join) (void*, void*),
 
 	freeQueue(q);
 	return new; 
+}
+*/
+AVL cloneAVL(AVL tree, void* (*init)(), void* (*join) (void*, void*),
+             bool (*equals)(void*, void*), void* (*clone)(void*), void (*free)  (void *)){
+
+	AVL new = initAVL(init, join, equals, clone, free);
+	new->size = tree->size;
+	new->head = cloneNode(tree->head, tree->clone);
+
+	return new;
+}
+
+NODE cloneNode(NODE n, void* (*clone)(void *)) {
+
+	if (n) {
+		NODE new;
+	
+		new = malloc(sizeof(*new));
+		new->hash = malloc(sizeof(char) * HASH_SIZE);
+	
+		strncpy(new->hash, n->hash, HASH_SIZE);
+		new->bal = n->bal;
+		new->content = (clone) ? clone(n->content) : NULL;
+		new->left = cloneNode(n->left, clone);
+		new->right = cloneNode(n->right, clone);
+	
+		return new;
+	}
+
+	return NULL;
 }
 
 /**
