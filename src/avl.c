@@ -44,6 +44,7 @@ static bool equalsNode(NODE a, NODE b, bool (*equals)(void*, void*));
 static void freeNode(NODE node, void (*freeContent)(void *));
 static DATASET fillDataSetaux(DATASET ds, NODE n);
 static DATASET insertDataSet (DATASET ds, NODE n);
+static DATASET addDataSetAux(DATASET ds, NODE node);
 /**
  * Inicia uma nova AVL.
  * @return Nova AVL
@@ -612,6 +613,22 @@ DATASET fillDataSet(DATASET ds, AVL tree) {
 	
 	if (tree) 
 		ds = fillDataSetaux(ds, tree->head);
+
+	return ds;
+}
+
+DATASET addDataSet(DATASET ds, AVL tree) {
+	ds = addDataSetAux(ds, tree->head);
+	return ds;	
+}
+
+DATASET addDataSetAux(DATASET ds, NODE node) {
+
+	if (node) {
+		ds = addDataSetAux(ds, node->left);
+		ds = insertDataSet(ds, node);
+		ds = addDataSetAux(ds, node->right);
+	}
 
 	return ds;
 }

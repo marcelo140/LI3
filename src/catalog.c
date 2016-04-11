@@ -157,21 +157,13 @@ CATSET fillCatset(CATALOG cat, CATSET cs, int i) {
 }
 
 CATSET allCatset(CATALOG cat, CATSET cs) {
-	DATASET tmp;
-	int i, size;
+	int i;
 
 	if (cat->size == 0)
 		return NULL;
 
-	tmp = initDataSet(cat->size);	
-	size = cat->size;
-	cs->set = fillDataSet(cs->set, cat->root[0]);
-
-	for(i = 1; i < size; i++) {
-		tmp = fillDataSet(tmp, cat->root[i]);
-		cs->set = joinDataSet(cs->set, tmp);
-		tmp = clearDataSet(tmp);
-	}
+	for(i = 0; i < cat->size; i++)
+		cs->set = addDataSet(cs->set, cat->root[i]);
 	
 	return cs;	
 }
