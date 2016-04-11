@@ -59,15 +59,21 @@ void present(PRINTSET ps) {
 		else o = 1;
 
 		if (nav == 'n') {
-			cpage = (cpage == totalPages) ? cpage : cpage+o;
+			if (cpage + o > totalPages) cpage = totalPages;
+			else if (cpage + o <= 0) cpage = 0;
+			else cpage = (cpage == totalPages) ? cpage : cpage+o;
 		} else if (nav == 'b') {
-			cpage = (cpage == 1) ? cpage : cpage-o;
+			if (cpage + o > totalPages) cpage = totalPages;
+			else if (cpage - o <= 0) cpage = 0;
+			else cpage = (cpage == 1) ? cpage : cpage-o;
 		} else if (nav == 'g') {
-			
+			if (o > totalPages)	o = totalPages;
+			else if (o <= 0) o = 1;
+			cpage = o;			
 		}else if (nav == 'h') {
-			printf("b<num> Retrocede <num> páginas.\n"); 
-			printf("n<num> Avança <num> páginas.\n"); 
-			printf("g<num> Salta para a página número <num>.\n");
+			printf("b<num>  Retrocede <num> páginas.\n"); 
+			printf("n<num>  Avança <num> páginas.\n"); 
+			printf("g<num>  Salta para a página número <num>.\n");
 			printf("<enter> Utiliza o último comando.\n");
 			getchar();
 		}
