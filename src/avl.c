@@ -626,6 +626,8 @@ DATASET joinDataSet(DATASET ds1, DATASET ds2) {
 	}
 	
 	memcpy(&ds1->set[ds1->pos], ds2->set, ds2->pos * sizeof(NODE));
+	ds1->pos += ds2->pos;
+
 	return ds1;
 }
 
