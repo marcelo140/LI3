@@ -67,7 +67,7 @@ int main() {
 
 	putchar('\n');
 
-	interpreter();
+	interpreter(fat);
 
 	freeClientCat(clientCat);
 	freeProductCat(productCat);
