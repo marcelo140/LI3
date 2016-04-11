@@ -42,9 +42,9 @@ static NODE insertNode(NODE node, NODE new, int *update);
 static NODE cloneNode(NODE n, void* (*clone)(void *));
 static bool equalsNode(NODE a, NODE b, bool (*equals)(void*, void*));
 static void freeNode(NODE node, void (*freeContent)(void *));
-static DATASET fillDataSetaux(DATASET ds, NODE n);
 static DATASET insertDataSet (DATASET ds, NODE n);
 static DATASET addDataSetAux(DATASET ds, NODE node);
+
 /**
  * Inicia uma nova AVL.
  * @return Nova AVL
@@ -604,19 +604,6 @@ static DATASET insertDataSet(DATASET ds, NODE data) {
 	return ds;
 }
 
-DATASET clearDataSet(DATASET ds) {
-	ds->pos = 0;
-	return ds;
-}
-
-DATASET fillDataSet(DATASET ds, AVL tree) {
-	
-	if (tree) 
-		ds = fillDataSetaux(ds, tree->head);
-
-	return ds;
-}
-
 DATASET addDataSet(DATASET ds, AVL tree) {
 	ds = addDataSetAux(ds, tree->head);
 	return ds;	
@@ -631,21 +618,6 @@ DATASET addDataSetAux(DATASET ds, NODE node) {
 	}
 
 	return ds;
-}
-
-DATASET joinDataSet(DATASET ds1, DATASET ds2) {
-
-	if (ds1->size < ds1->pos + ds2->pos){
-		while(ds1->size < ds1->pos + ds2->pos)
-			ds1->size *= 2;
-
-		ds1->set = realloc(ds1->set, ds1->size);
-	}
-	
-	memcpy(&ds1->set[ds1->pos], ds2->set, ds2->pos * sizeof(NODE));
-	ds1->pos += ds2->pos;
-
-	return ds1;
 }
 
 void* getDataPos(DATASET ds, int pos) {
@@ -676,15 +648,4 @@ DATASET datacpy (DATASET dest, DATASET src, int i) {
 void freeDataSet(DATASET ds) {
 	free(ds->set);
 	free(ds);
-}
-
-static DATASET fillDataSetaux(DATASET ds, NODE n) {
-
-	if (n) {
-		ds = fillDataSetaux(ds, n->left);
-		ds = insertDataSet(ds, n);
-		ds = fillDataSetaux(ds, n->right);
-	}
-
-	return ds;
 }
