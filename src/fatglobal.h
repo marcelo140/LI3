@@ -17,8 +17,8 @@ FATGLOBAL initFat (PRODUCTCAT p);
 FATGLOBAL addFat  (FATGLOBAL fat, SALE s);
 
 FATDATA monthRevenue(FATGLOBAL fat, char *product, int month, int mode);
-int monthRange(FATGLOBAL fat, int min, int max, int *quantT, double *billedT);
 CATSET* notSold(FATGLOBAL fat, int mode);
+void monthRange(FATGLOBAL fat, int min, int max, int *quantT, double *billedT);
 
 double getBilledFat(FATDATA data, int branch, double *billedN, double *billedP);
 int getQuantFat(FATDATA data, int branch, int *billedN, int *billedP);

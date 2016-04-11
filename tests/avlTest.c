@@ -9,7 +9,6 @@
 #define LOOK_UP_NUM 3
 #define EQUALS_NUM 4
 #define REPLACE_NUM 4
-#define FILL_DATA_SET_NUM 7
 #define ADD_DATA_SET_NUM 6
 #define DATA_COPY_NUM 3
 
@@ -18,7 +17,6 @@ static int test_isEmpty();
 static int test_lookUp();
 static int test_equals();
 static int test_replace();
-static int test_filldataset();
 static int test_addDataSet();
 static int test_datacpy();
 
@@ -45,10 +43,6 @@ int test_AVL() {
 	passed_tests += res;
 	printf("replace:    %d/%d\n", res, REPLACE_NUM);
 
-	res = test_filldataset();
-	passed_tests += res;
-	printf("fill:       %d/%d\n", res, FILL_DATA_SET_NUM);
-	
 	res = test_addDataSet();
 	passed_tests += res;
 	printf("addData:    %d/%d\n", res, ADD_DATA_SET_NUM);
@@ -195,63 +189,6 @@ static int test_replace() {
 	freeAVL(tree);
 	return passed_tests;
 }
-
-int test_filldataset() {
-	DATASET set = initDataSet(5);
-	AVL tree = initAVL(NULL, NULL, NULL, NULL, NULL);
-	int i, passed_tests = 0;
-
-	tree = insertAVL(tree, "140", "escolhido");
-	tree = insertAVL(tree, "122", "candace");
-	tree = insertAVL(tree, "009", "cientista");	
-	tree = insertAVL(tree, "003", "lord");
-	tree = insertAVL(tree, "004", "ryu");
-	tree = insertAVL(tree, "008", "squirtle");
-	tree = insertAVL(tree, "011", "gajo");
-	tree = insertAVL(tree, "016", "gajo2");
-	tree = insertAVL(tree, "017", "eletro");
-
-	if (getDataSetSize(set) == 0)
-		passed_tests++;
-	else
-		return passed_tests;
-
-	set = fillDataSet(set, tree);
-	
-	if (getDataSetSize(set) == 9)
-		passed_tests++;
-	else
-		return passed_tests;
-
-	if (!strcmp(getHashPos(set, 2), "008"))
-		passed_tests++;
-	else
-		return passed_tests;
-
-	if (!strcmp(getHashPos(set, 8), "140"))
-		passed_tests++;
-	else
-		return passed_tests;
-
-	if (!strcmp(getDataPos(set, 1), "ryu"))
-		passed_tests++;
-	else
-		return passed_tests;
-
-	if (!strcmp(getDataPos(set, 6), "eletro"))
-		passed_tests++;
-	else
-		return passed_tests;
-
-	for(i = 1; i > 8; i++)
-		if (strcmp(getHashPos(set, i), getHashPos(set, i-1)) < 0)
-			return passed_tests;
-
-	passed_tests++;
-
-	return passed_tests;
-}
-
 
 static int test_addDataSet(){
 	AVL tree1, tree2, tree3;

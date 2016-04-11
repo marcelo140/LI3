@@ -152,7 +152,7 @@ CATSET initCatSet(int n) {
 }
 
 CATSET fillCatSet(CATALOG cat, CATSET cs, int i) {
-	cs->set = fillDataSet(cs->set, cat->root[i]);
+	cs->set = addDataSet(cs->set, cat->root[i]);
 	return cs;
 }
 

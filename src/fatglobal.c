@@ -75,7 +75,7 @@ FATDATA monthRevenue(FATGLOBAL fat, char *product, int month, int mode) {
 	return f;
 }
 
-int monthRange(FATGLOBAL fat, int min, int max, int* quantT, double* billedT) {
+void monthRange(FATGLOBAL fat, int min, int max, int* quantT, double* billedT) {
 	CATSET cs;
 	REVENUE r;
 	double billed;
@@ -101,8 +101,6 @@ int monthRange(FATGLOBAL fat, int min, int max, int* quantT, double* billedT) {
 
 	*quantT = quant;
 	*billedT = billed;
-
-	return max-month;	
 }
 
 CATSET* notSold(FATGLOBAL fat, int mode) {
@@ -149,14 +147,9 @@ static CATSET* notSoldBranch(CATSET cs) {
 	for(i = 0; i < size; i++){
 		rev = getContPos(cs, i);
 
-		if (isEmptyRev(rev)){
-			for(branch = 0; branch < BRANCHES; branch++)
+		for(branch = 0; branch < BRANCHES; branch++)
+			if (getBranchQuant(rev, branch, NULL, NULL))
 				contcpy(res[branch], cs, i);
-		}else{
-			for(branch = 0; branch < BRANCHES; branch++)
-				if (getBranchQuant(rev, branch, NULL, NULL))
-					contcpy(res[branch], cs, i);
-		}
 	}
 
 	return res;
