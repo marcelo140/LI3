@@ -4,5 +4,6 @@
 #include "products.h"
 
 void present(PRODUCTSET ps);
+int interpreter(); 
 
 #endif
