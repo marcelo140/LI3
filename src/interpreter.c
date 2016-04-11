@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <ctype.h>
 #include "interpreter.h"
 #include "clients.h"
 #include "products.h"
@@ -63,10 +64,9 @@ void presentOld(PRODUCTSET ps) {
 	}
 }
 
-void present(PRODUCTSET ps) {
+void presentList(CATSET cs) {
 	char *str, nav, onav;
-	int i, cpage = 1, totalPages, cont=0, total = getPSetSize(ps) ;
-	PRODUCT p;
+	int i, cpage = 1, totalPages, cont=0, total = getCatSetSize(cs) ;
 
 	nav = '\n';
 	onav = '\n';
@@ -81,14 +81,11 @@ void present(PRODUCTSET ps) {
 		printf(":::::::::::: PÁGINA %d de %d ::::::::::::\n", cpage, totalPages);
 
 		for (i=0; i < LINES_NUM && cont < total; cont++, i++) {
-			p = getPSetData(ps, cpage * LINES_NUM + i);
-
-			str = fromProduct(p);
+			str = getKeyPos(cs, cpage * LINES_NUM + i);
 
 			printf("\t\t%s\n", str);
 
- 	/*		freeProduct(p); */
-			free(str);
+/*			free(str); */
 		}
 		printf("\nb: Anterior\tn: Seguinte\tq: Sair\th: Ajuda\n\t>> ");
 
@@ -107,7 +104,7 @@ void present(PRODUCTSET ps) {
 }
 
 /*Devolve numero de comandos executados */
-int interpreter() {
+int interpreter(FATGLOBAL fat) {
 
 	char answ[BUFF_SIZE];
 	int qnum;
@@ -154,7 +151,7 @@ int interpreter() {
 				 break;
 		case 3 : query3();
 			 	 break;
-		case 4 : query4();
+		case 4 : query4(fat);
 				 break;
 		case 5 : query5();
 		 		 break;
@@ -172,7 +169,7 @@ int interpreter() {
 		 		  break;
 		case 12 : query12();
 				  break;
-		default : return interpreter();
+		default : return interpreter(fat);
 
 
 	}
@@ -181,7 +178,7 @@ int interpreter() {
 }
 
 static void query1() {
-
+			
 }
 
 static void query2() {
@@ -192,8 +189,25 @@ static void query3() {
 
 }
 
-static void query4() {
+/* Produtos não Vendidos */
+static void query4(FATGLOBAL fat) {
 
+	char answ;
+	int mode;
+	CATSET *cs;
+
+	do {
+		printf("\nApresentar por: \n");
+		printf(" 1• Filial\n");
+		printf(" 2• Total\n");
+		printf(": ");
+		answ = getchar();
+	} while (answ != '1' && answ != '2');
+
+	mode = (answ == '1') ? BRANCHES : TOTAL;
+
+	cs = notSold(fat, mode);
+	presentList(cs[0]);	
 }
 
 static void query5() {
