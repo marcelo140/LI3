@@ -9,7 +9,7 @@ struct catalog{
 };
 
 struct dataSet {
-	HASHSET set;
+	DATASET set;
 };
 
 /**
@@ -136,25 +136,25 @@ void freeCatalog(CATALOG c){
 
 KEYSET initKeySet(int n) {
 	KEYSET ds = malloc(sizeof(struct dataSet));
-	ds->set = initHashSet(n);
+	ds->set = initDataSet(n);
 
 	return ds;
 }
 
 KEYSET fillKeySet(CATALOG cat, KEYSET ds, int i) {
-	ds->set = fillHashSet(ds->set, cat->root[i]);
+	ds->set = fillDataSet(ds->set, cat->root[i]);
 	return ds;
 }
 
 char *getKeySet(KEYSET ds, int pos) {
-	return getHashSetPos(ds->set, pos);
+	return getHashPos(ds->set, pos);
 }
 
 int getKeySetSize(KEYSET ds) {
-	return getHashSetSize(ds->set);
+	return getDataSetSize(ds->set);
 }
 
 void freeKeySet(KEYSET ds) {
-	freeHashSet(ds->set);
+	freeDataSet(ds->set);
 	free(ds);
 }

@@ -3,8 +3,7 @@
 
 #include "generic.h"
 
-typedef struct avl *AVL;
-typedef struct hashSet *HASHSET;
+typedef struct avl     *AVL;
 typedef struct dataSet *DATASET;
 
 AVL initAVL  (void* (*init)   (),
@@ -32,19 +31,17 @@ void* getAVLcontent (AVL tree, char *hash);
 int   countNodes    (AVL tree);
 void  freeAVL       (AVL n);
 
-HASHSET initHashSet   (int n);
-HASHSET fillHashSet   (HASHSET hs, AVL tree);
-HASHSET unionHSets    (HASHSET hs1, HASHSET hs2);
-HASHSET diffHSets     (HASHSET hs1, HASHSET hs2);
-
-char *getHashSetPos  (HASHSET hs, int pos);
-int   getHashSetSize (HASHSET hs);
-void  freeHashSet    (HASHSET set);
+/*
+DATASET unionHSets    (DATASET hs1, DATASET hs2);
+DATASET diffHSets     (DATASET hs1, DATASET hs2);
+*/
 
 DATASET initDataSet   (int n);
 DATASET fillDataSet   (DATASET ds, AVL tree);
+DATASET datacpy       (DATASET dest, DATASET src, int pos);
+void*   getDataPos    (DATASET ds, int pos);
+char*   getHashPos    (DATASET ds, int pos);
 
-void *getDataSetPos  (DATASET ds, int pos);
 int   getDataSetSize (DATASET ds);
 void  freeDataSet    (DATASET set);
 
