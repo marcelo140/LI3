@@ -31,33 +31,46 @@ static void query12();
 static void presentCatSet (CATSET cs, int page, int total, int *cont);
 
 void present(PRINTSET ps) {
-	char nav, onav;
-	int cpage = 1, totalPages, cont=0, total = ps.size;
+	char nav, onav, option[BUFF_SIZE];
+	int cpage = 1, totalPages, cont=0, o, total = ps.size;
 
 	nav = '\n';
 	onav = '\n';
 
 	totalPages = (total / LINES_NUM) + (total % LINES_NUM != 0);
 
+	putchar('\n');
 	while (cpage <= totalPages) {
 
 		system("clear");
 		putchar('\n');
 
-		printf(":::::::::::: PÁGINA %d de %d ::::::::::::\n", cpage, totalPages);
+		printf(":::::::::::: PÁGINA %d de %d ::::::::::::\n\n", cpage, totalPages);
 		presentCatSet(ps.set, cpage, total, &cont);
-		printf("\nb: Anterior\tn: Seguinte\tq: Sair\th: Ajuda\n\t>> ");
+		printf("\nb: Anterior\tn: Seguinte\th: Ajuda\ng: Ir para página\tq: Sair\n\t>> ");
 
 		onav = nav;
 		nav = getchar();
 
 		if (nav == '\n') nav = onav;
-		else while(getchar() != '\n');
+		else fgets(option, BUFF_SIZE, stdin);
 
-		if (nav == 'n')
-			cpage = (cpage == totalPages) ? cpage : cpage+1;
-		else if (nav == 'b')
-			cpage = (cpage == 1) ? cpage : cpage-1;
+		if (option[0] != '\n') o = atoi(option);
+		else o = 1;
+
+		if (nav == 'n') {
+			cpage = (cpage == totalPages) ? cpage : cpage+o;
+		} else if (nav == 'b') {
+			cpage = (cpage == 1) ? cpage : cpage-o;
+		} else if (nav == 'g') {
+			
+		}else if (nav == 'h') {
+			printf("b<num> Retrocede <num> páginas.\n"); 
+			printf("n<num> Avança <num> páginas.\n"); 
+			printf("g<num> Salta para a página número <num>.\n");
+			printf("<enter> Utiliza o último comando.\n");
+			getchar();
+		}
 		else if (nav == 'q')
 			break;
 	}
@@ -93,20 +106,20 @@ int interpreter(FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat) {
 	printf("          \\_____|\\___|_|  \\___| \\/ \\___|_| |_|\\__,_|\\__,_|___/  \n\n");
 	printf("  :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n");
 	printf("                                                         \n");
-	printf("      1• Leitura                                         \n");
-	printf("      2• Listar Produtos                                 \n");
-	printf("      3• Receita do Produto por Mês                      \n");
-	printf("      4• Produtos Não Comprados                          \n");
-	printf("      5• Gastos de um Cliente                            \n");
-	printf("      6• Vendas de Meses                                 \n");
-	printf("      7• Clientes Que Compraram em Todas as Filiais      \n");
-	printf("      8• Clientes Que Compraram Produto em Filial        \n");
-	printf("      9• Produto Mais Compardo por Cliente em Mês        \n");
-	printf("     10• Produtos Mais Vendidos em Todo o Ano            \n");
-	printf("     11• Três Produtos em que o Cliente mais gastou      \n");
-	printf("     12• Clientes sem Compras & Produtos não Vendidos    \n");
+	printf("      1 • Leitura                                         \n");
+	printf("      2 • Listar Produtos                                 \n");
+	printf("      3 • Receita do Produto por Mês                      \n");
+	printf("      4 • Produtos Não Comprados                          \n");
+	printf("      5 • Gastos de um Cliente                            \n");
+	printf("      6 • Vendas de Meses                                 \n");
+	printf("      7 • Clientes Que Compraram em Todas as Filiais      \n");
+	printf("      8 • Clientes Que Compraram Produto em Filial        \n");
+	printf("      9 • Produto Mais Compardo por Cliente em Mês        \n");
+	printf("     10 • Produtos Mais Vendidos em Todo o Ano            \n");
+	printf("     11 • Três Produtos em que o Cliente mais gastou      \n");
+	printf("     12 • Clientes sem Compras & Produtos não Vendidos    \n");
 	printf("                                                         \n");
-	printf("      q• Sair                                            \n");
+	printf("      q • Sair                                            \n");
 	printf("                                                         \n");
 	printf("  :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n");
 

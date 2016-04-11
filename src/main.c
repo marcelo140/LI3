@@ -67,7 +67,7 @@ int main() {
 
 	putchar('\n');
 
-	interpreter(fat);
+	interpreter(fat, productCat, clientCat);
 
 	begin = clock();
 	notSold(fat, TOTAL);
