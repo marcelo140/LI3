@@ -586,7 +586,7 @@ DATASET initDataSet(int n) {
 
 	new->size = n;
 	new->pos = 0;
-	new->set = malloc(sizeof(void *) * n);
+	new->set = malloc(sizeof(NODE) * n);
 
 	return new;
 }

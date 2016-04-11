@@ -102,7 +102,7 @@ static CATSET* notSoldTotal(CATSET cs) {
 	size = getCatsetSize(cs);
 	res = malloc(sizeof(*res));
 	
-	res[0] = initCatset(5000);
+	res[0] = initCatset(1000);
 
 	for(i = 0; i < size; i++) {
 		rev = getContPos(cs, i);

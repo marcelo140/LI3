@@ -9,14 +9,18 @@
 #define LOOK_UP_NUM 3
 #define EQUALS_NUM 4
 #define REPLACE_NUM 4
-#define SETS_NUM 7
+#define FILL_DATA_SET_NUM 7
+#define ADD_DATA_SET_NUM 6
+#define DATA_COPY_NUM 3
 
 static int test_countNodes();
 static int test_isEmpty();
 static int test_lookUp();
 static int test_equals();
 static int test_replace();
-static int test_sets();
+static int test_filldataset();
+static int test_addDataSet();
+static int test_datacpy();
 
 int test_AVL() {
 	int res, passed_tests = 0;
@@ -27,23 +31,32 @@ int test_AVL() {
 
 	res = test_isEmpty();
 	passed_tests += res;
-	printf("isEmpty: %d/%d\n", res, IS_EMPTY_NUM);
+	printf("isEmpty:    %d/%d\n", res, IS_EMPTY_NUM);
 
 	res = test_lookUp();
 	passed_tests += res;
-	printf("lookUp: %d/%d\n", res, LOOK_UP_NUM);
+	printf("lookUp:     %d/%d\n", res, LOOK_UP_NUM);
 
 	res = test_equals();
 	passed_tests += res;
-	printf("equals: %d/%d\n", res, EQUALS_NUM);
+	printf("equals:     %d/%d\n", res, EQUALS_NUM);
 
 	res = test_replace();
 	passed_tests += res;
-	printf("replace: %d/%d\n", res, REPLACE_NUM);
+	printf("replace:    %d/%d\n", res, REPLACE_NUM);
 
-	res = test_sets();
+	res = test_filldataset();
 	passed_tests += res;
-	printf("sets: %d/%d\n", res, SETS_NUM);
+	printf("fill:       %d/%d\n", res, FILL_DATA_SET_NUM);
+	
+	res = test_addDataSet();
+	passed_tests += res;
+	printf("addData:    %d/%d\n", res, ADD_DATA_SET_NUM);
+
+	res = test_datacpy();
+	passed_tests += res;
+	printf("datacopy:   %d/%d\n", res, DATA_COPY_NUM);
+
 	return passed_tests;
 }
 
@@ -183,62 +196,155 @@ static int test_replace() {
 	return passed_tests;
 }
 
-int test_sets() {
-	AVL tree1, tree2;
-	HASHSET set1, set2, set3;
-	int passed_tests = 0;
+int test_filldataset() {
+	DATASET set = initDataSet(5);
+	AVL tree = initAVL(NULL, NULL, NULL, NULL, NULL);
+	int i, passed_tests = 0;
+
+	tree = insertAVL(tree, "140", "escolhido");
+	tree = insertAVL(tree, "122", "candace");
+	tree = insertAVL(tree, "009", "cientista");	
+	tree = insertAVL(tree, "003", "lord");
+	tree = insertAVL(tree, "004", "ryu");
+	tree = insertAVL(tree, "008", "squirtle");
+	tree = insertAVL(tree, "011", "gajo");
+	tree = insertAVL(tree, "016", "gajo2");
+	tree = insertAVL(tree, "017", "eletro");
+
+	if (getDataSetSize(set) == 0)
+		passed_tests++;
+	else
+		return passed_tests;
+
+	set = fillDataSet(set, tree);
+	
+	if (getDataSetSize(set) == 9)
+		passed_tests++;
+	else
+		return passed_tests;
+
+	if (!strcmp(getHashPos(set, 2), "008"))
+		passed_tests++;
+	else
+		return passed_tests;
+
+	if (!strcmp(getHashPos(set, 8), "140"))
+		passed_tests++;
+	else
+		return passed_tests;
+
+	if (!strcmp(getDataPos(set, 1), "ryu"))
+		passed_tests++;
+	else
+		return passed_tests;
+
+	if (!strcmp(getDataPos(set, 6), "eletro"))
+		passed_tests++;
+	else
+		return passed_tests;
+
+	for(i = 1; i > 8; i++)
+		if (strcmp(getHashPos(set, i), getHashPos(set, i-1)) < 0)
+			return passed_tests;
+
+	passed_tests++;
+
+	return passed_tests;
+}
+
+
+static int test_addDataSet(){
+	AVL tree1, tree2, tree3;
+	DATASET set;
+	int i, passed_tests = 0;
 
 	tree1 = initAVL(NULL, NULL, NULL, NULL, NULL);
 	tree2 = initAVL(NULL, NULL, NULL, NULL, NULL);
-	set1 = initHashSet(10);
-	set2 = initHashSet(10);
-
-	tree1 = insertAVL(tree1, "05", NULL);
-	tree1 = insertAVL(tree1, "08", NULL);
-	tree1 = insertAVL(tree1, "09", NULL);
-	tree1 = insertAVL(tree1, "13", NULL);
-	tree1 = insertAVL(tree1, "16", NULL);
-	tree1 = insertAVL(tree1, "28", NULL);
-
-	tree2 = insertAVL(tree2, "08", NULL);
-	tree2 = insertAVL(tree2, "29", NULL);
-	tree2 = insertAVL(tree2, "09", NULL);
-	tree2 = insertAVL(tree2, "16", NULL);
-
-	set1 = fillHashSet(set1, tree1);
-	set2 = fillHashSet(set2, tree2);
+	tree3 = initAVL(NULL, NULL, NULL, NULL, NULL);
+	set = initDataSet(5);
 	
-	if (getHashSetSize(set1) == 6)
+	tree1 = insertAVL(tree1, "19", "tyty");
+	tree1 = insertAVL(tree1, "30", "paquitos");
+	tree1 = insertAVL(tree1, "31", "trintaEum");
+
+	tree2 = insertAVL(tree2, "32", "broken");
+	tree2 = insertAVL(tree2, "33", "gaijo");
+	tree2 = insertAVL(tree2, "35", "nemcomento");
+
+	tree3 = insertAVL(tree3, "36", "nikita");
+	tree3 = insertAVL(tree3, "37", "shaman");
+	tree3 = insertAVL(tree3, "38", "shimbch");
+
+	set = addDataSet(set, tree1);
+	set = addDataSet(set, tree2);
+	set = addDataSet(set, tree3);
+
+	if (getDataSetSize(set) == 9)
 		passed_tests++;
+	else
+		return passed_tests;
 
-	if (getHashSetSize(set2) == 4)
+	if (!strcmp(getHashPos(set, 2), "31"))
 		passed_tests++;
+	else
+		return passed_tests;
 
-	set3 = diffHSets(set1, set2);
-
-	if (getHashSetSize(set3) == 4)
+	if (!strcmp(getHashPos(set, 5), "35"))
 		passed_tests++;
+	else
+		return passed_tests;
 
-	if (!strcmp(getHashSetPos(set3, 1), "13"))
+	if (!strcmp(getDataPos(set, 6), "nikita"))
 		passed_tests++;
+	else
+		return passed_tests;
 
-	freeHashSet(set3);
-	set3 = unionHSets(set1, set2);
-
-	if (getHashSetSize(set3) == 7)
+	if (!strcmp(getDataPos(set, 8), "shimbch"))
 		passed_tests++;
+	else
+		return passed_tests;
 
-	if (!strcmp(getHashSetPos(set3, 3), "13"))
-		passed_tests++;
+	for(i = 1; i > 8; i++)
+		if (strcmp(getHashPos(set, i), getHashPos(set, i-1)) < 0)
+			return passed_tests;
 
-	if (!strcmp(getHashSetPos(set3, 5), "28"))
-		passed_tests++;
+	passed_tests++;
 
-	freeAVL(tree1);
-	freeAVL(tree2);
-	freeHashSet(set1);
-	freeHashSet(set2);
-	freeHashSet(set3);
+	return passed_tests;
+}
+
+int test_datacpy() {
+	int passed_tests = 0;
+	DATASET set1, set2;
+	AVL tree;
+
+	tree = initAVL(NULL, NULL, NULL, NULL, NULL);
+	set1 = initDataSet(3);
+	set2 = initDataSet(2);
+
+	tree = insertAVL(tree, "140", "eu");
+	tree = insertAVL(tree, "009", "ele");
+	tree = insertAVL(tree, "122", "ela");
 	
+	set1 = addDataSet(set1, tree);
+	set2 = datacpy(set2, set1, 1);
+	set2 = datacpy(set2, set1, 0);
+	set2 = datacpy(set2, set1, 2);
+
+	if (!strcmp(getHashPos(set2, 1), "009"))
+		passed_tests++;
+	else
+		return passed_tests;
+
+	if (!strcmp(getDataPos(set2, 0), "ela"))
+		passed_tests++;
+	else
+		return passed_tests;
+	
+	if (!strcmp(getHashPos(set2, 2), "140"))
+		passed_tests++;
+	else
+		return passed_tests;
+		
 	return passed_tests;
 }

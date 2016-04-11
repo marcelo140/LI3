@@ -11,12 +11,8 @@ int main () {
 	printHeader("TESTING AVL");	
 	test_AVL();
 
-	putchar('\n');
-
 	printHeader("TESTING CATALOG");
 	test_Cat();
-
-	putchar('\n');
 
 	printHeader("TESTING HEAP");
 	test_heap();
@@ -28,5 +24,6 @@ int main () {
 }
 
 void printHeader(const char *str){
+	putchar('\n');
 	printf("##### %s ########################\n", str);
 }
