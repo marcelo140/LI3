@@ -11,7 +11,7 @@ struct faturacao {
 
 struct fatdata {
 	double* billed[2];
-	int*    quant[2];    
+	int*    quant[2];
 	int     size;
 };
 
@@ -40,7 +40,7 @@ FATDATA initFatdata(int size) {
 
 	new->billed[0] = malloc(size * sizeof(double *));
 	new->billed[1] = malloc(size * sizeof(double *));
-	
+
 	new->quant[0]  = malloc(size * sizeof(int *));
 	new->quant[1]  = malloc(size * sizeof(int *));
 
@@ -98,15 +98,15 @@ static CATSET* notSoldTotal(CATSET cs) {
 	CATSET* res;
 	REVENUE rev;
 	int i, size;
-	
+
 	size = getCatSetSize(cs);
 	res = malloc(sizeof(*res));
-	
-	res[0] = initCatSet(5000);
+
+	res[0] = initCatset(1000);
 
 	for(i = 0; i < size; i++) {
 		rev = getContPos(cs, i);
-		
+
 		if (isEmptyRev(rev))
 			contcpy(res[0], cs, i);
 	}
@@ -118,7 +118,7 @@ static CATSET* notSoldBranch(CATSET cs) {
 	CATSET* res;
 	REVENUE rev;
 	int i, branch, size;
-	
+
 	size = getCatSetSize(cs);
 	res = malloc(sizeof(*res) * BRANCHES);
 
@@ -127,7 +127,7 @@ static CATSET* notSoldBranch(CATSET cs) {
 
 	for(i = 0; i < size; i++){
 		rev = getContPos(cs, i);
-		
+
 		if (isEmptyRev(rev)){
 			for(branch = 0; branch < BRANCHES; branch++)
 				contcpy(res[branch], cs, i);

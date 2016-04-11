@@ -15,7 +15,6 @@ typedef struct fatdata   *FATDATA;
 
 FATGLOBAL initFat (PRODUCTCAT p);
 FATGLOBAL addFat  (FATGLOBAL fat, SALE s);
-
 FATDATA monthRevenue(FATGLOBAL fat, char *product, int month, int mode);
 CATSET* notSold(FATGLOBAL fat, int mode);
 

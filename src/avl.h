@@ -38,8 +38,9 @@ DATASET diffHSets     (DATASET hs1, DATASET hs2);
 
 DATASET initDataSet   (int n);
 DATASET fillDataSet   (DATASET ds, AVL tree);
-DATASET joinDataSet   (DATASET ds1, DATASET ds2);
-DATASET datacpy       (DATASET dest, DATASET src, int pos);
+DATASET addDataSet    (DATASET ds, AVL tree);
+DATASET joinDataSet   (DATASET dest, DATASET source);
+DATASET datacpy       (DATASET dest, DATASET source, int pos);
 DATASET clearDataSet  (DATASET ds);
 void*   getDataPos    (DATASET ds, int pos);
 char*   getHashPos    (DATASET ds, int pos);

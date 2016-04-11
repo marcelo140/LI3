@@ -22,7 +22,7 @@ CATALOG initCatalog(int n, void* (*init)(), void* (*join)(void*, void *), bool (
 	CATALOG c;
 	int i;
 
-	c = malloc(sizeof (*c));	
+	c = malloc(sizeof (*c));
 	c->root = malloc(sizeof(*c->root) * n);
 	c->size = n;
 
@@ -44,7 +44,7 @@ CATALOG insertCatalog(CATALOG c, int i, char *hash, void *cntt) {
 	AVL p = c->root[i];
 
 	c->root[i] = insertAVL(p, hash, cntt);
-	
+
 	return c;
 }
 
@@ -58,7 +58,7 @@ CATALOG insertCatalog(CATALOG c, int i, char *hash, void *cntt) {
  */
 CATALOG updateCatalog(CATALOG c, int i, char *hash, void *cntt) {
 	AVL p = c->root[i];
-	
+
 	c->root[i] = updateAVL(p, hash, cntt);
 
 	return c;
@@ -66,12 +66,12 @@ CATALOG updateCatalog(CATALOG c, int i, char *hash, void *cntt) {
 
 void *replaceCatalog(CATALOG c, int i, char *hash, void *cntt) {
 	AVL p = c->root[i];
-	
+
 	return replaceAVL(p, hash, cntt);
 }
 
 CATALOG cloneCat(CATALOG cat, void* (*init)(), void* (*join) (void*, void *), bool (*equals)(void*, void*), void* (*clone)(void*), void (*free)(void *)) {
-	
+
 	CATALOG c;
 	int i;
 
@@ -81,7 +81,7 @@ CATALOG cloneCat(CATALOG cat, void* (*init)(), void* (*join) (void*, void *), bo
 
 	for (i = 0; i < cat->size; i++)
 		c->root[i] = cloneAVL(cat->root[i], init, join, equals, clone, free);
-	
+
 	return c;
 }
 
@@ -94,8 +94,8 @@ CATALOG cloneCat(CATALOG cat, void* (*init)(), void* (*join) (void*, void *), bo
  */
 void* getCatContent(CATALOG c, int i, char *hash) {
 	AVL p = c->root[i];
-	
-	return getAVLcontent(p, hash); 
+
+	return getAVLcontent(p, hash);
 }
 
 /**
@@ -136,7 +136,7 @@ void freeCatalog(CATALOG c){
 
 	if (c){
 		size = c->size;
-		for (i=0; i < size; i++) 
+		for (i=0; i < size; i++)
 			freeAVL(c->root[i]);
 
 		free(c->root);
@@ -156,24 +156,16 @@ CATSET fillCatSet(CATALOG cat, CATSET cs, int i) {
 	return cs;
 }
 
-CATSET allCatSet(CATALOG cat, CATSET cs) {
-	DATASET tmp;
-	int i, size;
+CATSET allCatset(CATALOG cat, CATSET cs) {
+	int i;
 
 	if (cat->size == 0)
 		return NULL;
 
-	tmp = initDataSet(cat->size);	
-	size = cat->size;
-	cs->set = fillDataSet(cs->set, cat->root[0]);
+	for(i = 0; i < cat->size; i++)
+		cs->set = addDataSet(cs->set, cat->root[i]);
 
-	for(i = 1; i < size; i++) {
-		tmp = fillDataSet(tmp, cat->root[i]);
-		cs->set = joinDataSet(cs->set, tmp);
-		tmp = clearDataSet(tmp);
-	}
-	
-	return cs;	
+	return cs;
 }
 
 CATSET contcpy(CATSET dest, CATSET src, int pos) {
