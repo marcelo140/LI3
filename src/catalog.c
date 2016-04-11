@@ -163,7 +163,7 @@ CATSET allCatSet(CATALOG cat, CATSET cs) {
 	if (cat->size == 0)
 		return NULL;
 
-	tmp = initDataSet(countAllElems(cat));	
+	tmp = initDataSet(cat->size);	
 	size = cat->size;
 	cs->set = fillDataSet(cs->set, cat->root[0]);
 
