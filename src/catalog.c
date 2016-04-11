@@ -156,7 +156,7 @@ CATSET fillCatSet(CATALOG cat, CATSET cs, int i) {
 	return cs;
 }
 
-CATSET allCatset(CATALOG cat, CATSET cs) {
+CATSET allCatSet(CATALOG cat, CATSET cs) {
 	int i;
 
 	if (cat->size == 0)
