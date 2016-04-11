@@ -16,7 +16,7 @@ struct client{
 };
 
 struct clientSet {
-	KEYSET set;
+	CATSET set;
 };
 
 /** 
@@ -130,7 +130,7 @@ bool isClient(char *str) {
  */
 CLIENTSET initCset(int n) {
 	CLIENTSET new = malloc (sizeof (*new));
-	new->set = initKeySet(n);
+	new->set = initCatset(n);
 
 	return new;
 }
@@ -142,7 +142,7 @@ CLIENTSET initCset(int n) {
  * @return Set preenchido
  */
 CLIENTSET fillCset(CLIENTCAT catProd, CLIENTSET cs, char index) {
-	cs->set = fillKeySet(catProd->cat, cs->set, index - 'A');
+	cs->set = fillCatset(catProd->cat, cs->set, index - 'A');
 
 	return cs;
 }
@@ -153,16 +153,16 @@ CLIENTSET fillCset(CLIENTCAT catProd, CLIENTSET cs, char index) {
  * @return Cliente
  */
 CLIENT getCsetData(CLIENTSET cs, int pos) {
-	char *str = getKeySet(cs->set, pos);
+	char *str = getKeyPos(cs->set, pos);
 	
 	return toClient(str);
 }
 
 int csetSize(CLIENTSET cs) {
-	return getKeySetSize(cs->set);
+	return getCatsetSize(cs->set);
 }
 
 void freeCSet(CLIENTSET cs) {
-	freeKeySet(cs->set);
+	freeCatset(cs->set);
 	free(cs);	
 }

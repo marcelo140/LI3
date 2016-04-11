@@ -6,7 +6,7 @@
 
 typedef struct product *PRODUCT;
 typedef struct prodcat *PRODUCTCAT;
-typedef struct productSet *PRODUCTSET;
+typedef struct prodset *PRODUCTSET;
 
 PRODUCTCAT initProductCat(void);
 PRODUCTCAT insertProduct(PRODUCTCAT catalog, PRODUCT product);

@@ -13,8 +13,8 @@ struct prodcat {
 	CATALOG cat;
 };
 
-struct productSet {
-	KEYSET set;	
+struct prodset {
+	CATSET set;	
 }; 
 
 /** 
@@ -145,7 +145,7 @@ bool isProduct (char *str){
  */
 PRODUCTSET initPSet(int n) {
 	PRODUCTSET new = malloc (sizeof (*new));
-	new->set = initKeySet(n);
+	new->set = initCatset(n);
 
 	return new;
 }
@@ -157,22 +157,22 @@ PRODUCTSET initPSet(int n) {
  * @return Set com a informação pretendida
  */
 PRODUCTSET fillPSet(PRODUCTCAT prodCat, PRODUCTSET ps, char index) {
-	ps->set = fillKeySet(prodCat->cat, ps->set, index - 'A');
+	ps->set = fillCatset(prodCat->cat, ps->set, index - 'A');
 
 	return ps;
 }
 
 PRODUCT getPSetData(PRODUCTSET ps, int pos) {
-	char *str = getKeySet(ps->set, pos);
+	char *str = getKeyPos(ps->set, pos);
 
 	return toProduct(str);
 }
 
 int getPSetSize(PRODUCTSET ps) {
-	return getKeySetSize(ps->set);
+	return getCatsetSize(ps->set);
 }
 
 void freePSet(PRODUCTSET ps) {
-	freeKeySet(ps->set);
+	freeCatset(ps->set);
 	free(ps);
 }
