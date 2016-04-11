@@ -10,9 +10,8 @@ struct faturacao {
 };
 
 struct fatdata {
-	double* billed[2];
-	int*    quant[2];
-	int     size;
+	double billed[BRANCHES][NP];
+	int    quant[BRANCHES][NP];
 };
 
 static CATSET* notSoldBranch(CATSET cs);
@@ -33,16 +32,8 @@ FATGLOBAL initFat(PRODUCTCAT p) {
 	return new;
 }
 
-FATDATA initFatdata(int size) {
+FATDATA initFatdata() {
 	FATDATA new = malloc(sizeof(*new));
-
-	new->size = size;
-
-	new->billed[0] = malloc(size * sizeof(double *));
-	new->billed[1] = malloc(size * sizeof(double *));
-
-	new->quant[0]  = malloc(size * sizeof(int *));
-	new->quant[1]  = malloc(size * sizeof(int *));
 
 	return new;
 }
@@ -68,20 +59,50 @@ FATDATA monthRevenue(FATGLOBAL fat, char *product, int month, int mode) {
 	double billedN, billedP;
 	int i, quantN, quantP;
 
-	f = initFatdata(mode);
+	f = initFatdata();
 	r = getCatContent(fat->cat, product[0]-'A', product);
 
 	for(i = 0; i < mode; i++){
 		getMonthQuant(r, month, &quantN, &quantP);
 		getMonthBilled(r, month, &billedN, &billedP);
 
-		f->quant[0][i]  = quantN;
-		f->quant[1][i]  = quantP;
-		f->billed[0][i] = billedN;
-		f->billed[1][i] = billedP;
+		f->quant[i][MODE_N]  = quantN;
+		f->quant[i][MODE_P]  = quantP;
+		f->billed[i][MODE_N] = billedN;
+		f->billed[i][MODE_P] = billedP;
 	}
 
 	return f;
+}
+
+int monthRange(FATGLOBAL fat, int min, int max, int* quantT, double* billedT) {
+	CATSET cs;
+	REVENUE r;
+	double billed;
+	int i, quant, month, size;
+
+	size = countAllElems(fat->cat);
+	billed = 0;
+	quant = 0;
+
+	cs = initCatSet(size);
+	cs = allCatSet(fat->cat, cs);
+
+	for(i = 0; i < size; i++) {
+		r = getContPos(cs, i);
+		
+		if (!isEmptyRev(r)){
+			for(month = min; month <= max; month++){
+				quant += getMonthQuant(r, month, NULL, NULL);
+				billed += getMonthBilled(r, month, NULL, NULL);
+			}
+		}
+	}
+
+	*quantT = quant;
+	*billedT = billed;
+
+	return max-month;	
 }
 
 CATSET* notSold(FATGLOBAL fat, int mode) {
@@ -123,7 +144,7 @@ static CATSET* notSoldBranch(CATSET cs) {
 	res = malloc(sizeof(*res) * BRANCHES);
 
 	for(branch = 0; branch < BRANCHES; branch++)
-		res[branch] = initCatSet(5000);
+		res[branch] = initCatSet(1000);
 
 	for(i = 0; i < size; i++){
 		rev = getContPos(cs, i);
@@ -139,6 +160,26 @@ static CATSET* notSoldBranch(CATSET cs) {
 	}
 
 	return res;
+}
+
+double getBilledFat(FATDATA data, int branch, double *billedN, double *billedP) {
+	*billedN = data->billed[branch][MODE_N];
+	*billedP = data->billed[branch][MODE_P];
+
+	return *billedN + *billedP;
+}
+
+int getQuantFat(FATDATA data, int branch, int *quantN, int *quantP) {
+	*quantN = data->quant[branch][MODE_N];
+	*quantP = data->quant[branch][MODE_P];
+
+	return *quantN + *quantP;
+}
+
+void freeFatData(FATDATA fd) {
+	free(fd->billed);
+	free(fd->quant);
+	free(fd);
 }
 
 void freeFat(FATGLOBAL fat) {
