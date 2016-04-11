@@ -63,8 +63,8 @@ double getBranchBilled(REVENUE r, int branch, double *normal, double *promo) {
 		p += r->billed[month][branch][MODE_P];
 	}
 
-	*normal = n;
-	*promo = p;
+	if (promo) *promo = p;
+	if (normal) *normal = n;
 
 	return n+p;
 }
@@ -80,8 +80,8 @@ int getBranchQuant(REVENUE r, int branch, int *normal, int *promo) {
 		p += r->quantity[month][branch][MODE_P];
 	}
 
-	*normal = n;
-	*promo = p;
+	if (promo) *promo = p;
+	if (normal) *normal = n;
 
 	return n+p;
 }
@@ -98,8 +98,8 @@ double getMonthBilled(REVENUE r, int month, double *normal, double *promo) {
 		p += r->billed[month][branch][MODE_P];
 	}
 
-	*normal = n;
-	*promo = p;
+	if (promo) *promo = p;
+	if (normal) *normal = n;
 
 	return n+p;		
 }
@@ -115,8 +115,8 @@ int getMonthQuant(REVENUE r, int month, int *normal, int *promo) {
 		p += r->quantity[month][branch][MODE_P];
 	}
 
-	*normal = n;
-	*promo = p;
+	if (promo) *promo = p;
+	if (normal) *normal = n;
 
 	return n+p;
 }

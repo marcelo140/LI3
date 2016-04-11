@@ -27,7 +27,7 @@ int main() {
 	if (!(clients && products && sales)){
 		fprintf(stderr,"Ficheiros de entrada não encontrados");
 		return -1;
-	}	
+	}
 	clientCat = initClientCat();
 	productCat = initProductCat();
 
@@ -47,7 +47,7 @@ int main() {
 	printf("Produtos analisados: %d (%fs)\n", suc, time);
 
 	putchar('\n');
-	
+
 	begin = clock();
 	fat = initFat(productCat);
 	end = clock();
@@ -68,6 +68,12 @@ int main() {
 	putchar('\n');
 
 	interpreter(fat);
+
+	begin = clock();
+	notSold(fat, BRANCHES);
+	end = clock();
+	time = (double) (end - begin) / CLOCKS_PER_SEC;
+	printf("tempo: %fs\n", time);
 
 	freeClientCat(clientCat);
 	freeProductCat(productCat);
