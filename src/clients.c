@@ -130,7 +130,7 @@ bool isClient(char *str) {
  */
 CLIENTSET initCset(int n) {
 	CLIENTSET new = malloc (sizeof (*new));
-	new->set = initCatset(n);
+	new->set = initCatSet(n);
 
 	return new;
 }
@@ -142,7 +142,7 @@ CLIENTSET initCset(int n) {
  * @return Set preenchido
  */
 CLIENTSET fillCset(CLIENTCAT catProd, CLIENTSET cs, char index) {
-	cs->set = fillCatset(catProd->cat, cs->set, index - 'A');
+	cs->set = fillCatSet(catProd->cat, cs->set, index - 'A');
 
 	return cs;
 }
@@ -159,10 +159,10 @@ CLIENT getCsetData(CLIENTSET cs, int pos) {
 }
 
 int csetSize(CLIENTSET cs) {
-	return getCatsetSize(cs->set);
+	return getCatSetSize(cs->set);
 }
 
 void freeCSet(CLIENTSET cs) {
-	freeCatset(cs->set);
+	freeCatSet(cs->set);
 	free(cs);	
 }

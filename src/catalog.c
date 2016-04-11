@@ -144,19 +144,19 @@ void freeCatalog(CATALOG c){
 	}
 }
 
-CATSET initCatset(int n) {
+CATSET initCatSet(int n) {
 	CATSET cs = malloc(sizeof(struct catset));
 	cs->set = initDataSet(n);
 
 	return cs;
 }
 
-CATSET fillCatset(CATALOG cat, CATSET cs, int i) {
+CATSET fillCatSet(CATALOG cat, CATSET cs, int i) {
 	cs->set = fillDataSet(cs->set, cat->root[i]);
 	return cs;
 }
 
-CATSET allCatset(CATALOG cat, CATSET cs) {
+CATSET allCatSet(CATALOG cat, CATSET cs) {
 	DATASET tmp;
 	int i, size;
 
@@ -189,11 +189,11 @@ void *getContPos(CATSET cs, int pos) {
 	return getDataPos(cs->set, pos);
 }
 
-int getCatsetSize(CATSET cs) {
+int getCatSetSize(CATSET cs) {
 	return getDataSetSize(cs->set);
 }
 
-void freeCatset(CATSET cs) {
+void freeCatSet(CATSET cs) {
 	freeDataSet(cs->set);
 	free(cs);
 }

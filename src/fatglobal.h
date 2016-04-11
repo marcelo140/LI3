@@ -6,6 +6,7 @@
 #include "generic.h"
 
 #define MONTHS 12
+#define TOTAL 1
 #define BRANCHES 3
 #define NP 2
 

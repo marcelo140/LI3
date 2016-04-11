@@ -85,8 +85,8 @@ FATDATA monthRevenue(FATGLOBAL fat, char *product, int month, int mode) {
 }
 
 CATSET* notSold(FATGLOBAL fat, int mode) {
-	CATSET cs = initCatset(countAllElems(fat->cat));
-	cs = allCatset(fat->cat, cs);
+	CATSET cs = initCatSet(countAllElems(fat->cat));
+	cs = allCatSet(fat->cat, cs);
 
 	if (mode == BRANCHES)
 		return notSoldBranch(cs);
@@ -99,7 +99,7 @@ static CATSET* notSoldTotal(CATSET cs) {
 	REVENUE rev;
 	int i, size;
 	
-	size = getCatsetSize(cs);
+	size = getCatSetSize(cs);
 	res = malloc(sizeof(*res));
 	
 	for(i = 0; i < size; i++) {
@@ -117,7 +117,7 @@ static CATSET* notSoldBranch(CATSET cs) {
 	REVENUE rev;
 	int i, branch, size;
 	
-	size = getCatsetSize(cs);
+	size = getCatSetSize(cs);
 	res = malloc(sizeof(*res) * BRANCHES);
 
 	for(i = 0; i < size; i++){

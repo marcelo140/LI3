@@ -145,7 +145,7 @@ bool isProduct (char *str){
  */
 PRODUCTSET initPSet(int n) {
 	PRODUCTSET new = malloc (sizeof (*new));
-	new->set = initCatset(n);
+	new->set = initCatSet(n);
 
 	return new;
 }
@@ -157,7 +157,7 @@ PRODUCTSET initPSet(int n) {
  * @return Set com a informação pretendida
  */
 PRODUCTSET fillPSet(PRODUCTCAT prodCat, PRODUCTSET ps, char index) {
-	ps->set = fillCatset(prodCat->cat, ps->set, index - 'A');
+	ps->set = fillCatSet(prodCat->cat, ps->set, index - 'A');
 
 	return ps;
 }
@@ -169,10 +169,10 @@ PRODUCT getPSetData(PRODUCTSET ps, int pos) {
 }
 
 int getPSetSize(PRODUCTSET ps) {
-	return getCatsetSize(ps->set);
+	return getCatSetSize(ps->set);
 }
 
 void freePSet(PRODUCTSET ps) {
-	freeCatset(ps->set);
+	freeCatSet(ps->set);
 	free(ps);
 }
