@@ -25,16 +25,10 @@ struct avl {
 	void  (*free)   (void *content);
 };
 
-struct hashSet {
-	int size;
-	int sp;
-	char **set;
-};
-
 struct dataSet {
 	int size;
 	int pos;
-	void **set;
+	NODE *set;
 };
 
 static NODE newNode(char *hash, void *content, NODE left, NODE right);
@@ -47,11 +41,8 @@ static NODE insertLeft(NODE node, NODE new, int *update);
 static NODE insertNode(NODE node, NODE new, int *update);
 static bool equalsNode(NODE a, NODE b, bool (*equals)(void*, void*));
 static void freeNode(NODE node, void (*freeContent)(void *));
-static HASHSET fillHashSetaux(HASHSET hs, NODE n);
-static HASHSET insertHashSet(HASHSET hs, char *hash); 
 static DATASET fillDataSetaux(DATASET ds, NODE n);
-static DATASET insertDataSet(DATASET ds, void *data);
-
+static DATASET insertDataSet (DATASET ds, NODE n);
 /**
  * Inicia uma nova AVL.
  * @return Nova AVL
@@ -317,59 +308,9 @@ static void freeNode(NODE node, void (*freeContent)(void*)) {
 	}
 }
 
-HASHSET initHashSet(int n) {
-
-	HASHSET new = malloc(sizeof(*new));
-
-	new->size = n;
-	new->sp = 0;
-	new->set = malloc(sizeof(char *) * n);
-
-	return new;
-}
-
-static HASHSET insertHashSet(HASHSET hs, char *hash) {
-	
-	if (hs->sp == hs->size) {
-		hs->size *= 2;
-		hs->set = realloc(hs->set, hs->size * sizeof(char *));
-	}
-	
-	hs->set[hs->sp] = hash;
-	hs->sp++;
-
-	return hs;
-}
-
-
-HASHSET fillHashSet(HASHSET hs, AVL tree) {
-	
-	if (tree) hs = fillHashSetaux(hs, tree->head);
-
-	return hs;
-}
-
-char* getHashSetPos(HASHSET hs, int pos) {
-	return hs->set[pos];
-}
-
-int getHashSetSize(HASHSET hs) {
-	return hs->sp;
-}
-
-static HASHSET fillHashSetaux(HASHSET hs, NODE n) {
-
-	if (n) {
-		hs = fillHashSetaux(hs, n->left);
-		hs = insertHashSet(hs, n->hash);
-		hs = fillHashSetaux(hs, n->right);
-	}
-
-	return hs;
-}
-
-HASHSET unionHSets(HASHSET hs1, HASHSET hs2) {
-	HASHSET new = initHashSet(100);
+/*
+DATASET unionHSets(DATASET hs1, DATASET hs2) {
+	DATASET new = initDataSet(100);
 	int res, s1, s2, s1_max, s2_max;
 	
 	s1 = s2 = 0;
@@ -401,8 +342,8 @@ HASHSET unionHSets(HASHSET hs1, HASHSET hs2) {
 	return new;
 }
 
-HASHSET diffHSets(HASHSET hs1, HASHSET hs2) {
-	HASHSET new = initHashSet(100);
+DATASET diffHSets(DATASET hs1, DATASET hs2) {
+	DATASET new = initDataSet(100);
 	int res, s1, s2, s1_max, s2_max;
 
 	s1 = s2 = 0;
@@ -432,10 +373,7 @@ HASHSET diffHSets(HASHSET hs1, HASHSET hs2) {
 
 	return new;
 }
-
-void freeHashSet(HASHSET hs) {
-	free(hs);
-}
+*/
 
 static NODE newNode(char *hash, void *content, NODE left, NODE right) {
 	NODE new = malloc(sizeof(struct node));
@@ -611,7 +549,6 @@ static NODE insertNode(NODE node, NODE new, int *update) {
 }
 
 DATASET initDataSet(int n) {
-
 	DATASET new = malloc(sizeof(*new));
 
 	new->size = n;
@@ -621,11 +558,11 @@ DATASET initDataSet(int n) {
 	return new;
 }
 
-static DATASET insertDataSet(DATASET ds, void *data) {
+static DATASET insertDataSet(DATASET ds, NODE data) {
 	
 	if (ds->pos == ds->size) {
 		ds->size *= 2;
-		ds->set = realloc(ds->set, ds->size * sizeof(void *));
+		ds->set = realloc(ds->set, ds->size * sizeof(NODE));
 	}
 	
 	ds->set[ds->pos] = data;
@@ -634,6 +571,10 @@ static DATASET insertDataSet(DATASET ds, void *data) {
 	return ds;
 }
 
+DATASET clearDataSet(DATASET ds) {
+	ds->pos = 0;
+	return ds;
+}
 
 DATASET fillDataSet(DATASET ds, AVL tree) {
 	
@@ -643,19 +584,48 @@ DATASET fillDataSet(DATASET ds, AVL tree) {
 	return ds;
 }
 
-void* getDataSetPos(DATASET ds, int pos) {
-	return ds->set[pos];
+DATASET joinDataSet(DATASET ds1, DATASET ds2) {
+
+	if (ds1->size < ds1->pos + ds2->pos){
+		while(ds1->size < ds1->pos + ds2->pos)
+			ds1->size *= 2;
+
+		ds1->set = realloc(ds1->set, ds1->size);
+	}
+	
+	memcpy(&ds1->set[ds1->pos], ds2->set, ds2->pos * sizeof(NODE));
+	return ds1;
+}
+
+void* getDataPos(DATASET ds, int pos) {
+	return ds->set[pos]->content;
+}
+
+char* getHashPos(DATASET ds, int pos) {
+	return ds->set[pos]->hash;
 }
 
 int getDataSetSize(DATASET ds) { 
 	return ds->pos;
 }
 
+DATASET datacpy (DATASET dest, DATASET src, int i) {
+	NODE n = src->set[i];
+	insertDataSet(dest, n);
+
+	return dest;
+}
+
+void freeDataSet(DATASET ds) {
+	free(ds->set);
+	free(ds);
+}
+
 static DATASET fillDataSetaux(DATASET ds, NODE n) {
 
 	if (n) {
 		ds = fillDataSetaux(ds, n->left);
-		ds = insertDataSet(ds, n->hash);
+		ds = insertDataSet(ds, n);
 		ds = fillDataSetaux(ds, n->right);
 	}
 

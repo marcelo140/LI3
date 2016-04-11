@@ -8,8 +8,8 @@ struct catalog{
 	int size;
 };
 
-struct dataSet {
-	HASHSET set;
+struct catset {
+	DATASET set;
 };
 
 /**
@@ -116,6 +116,16 @@ int countCatElems(CATALOG c, int i){
 	return countNodes(c->root[i]);
 }
 
+int countAllElems(CATALOG c) {
+	int i, size;
+
+	size = 0;
+	for(i = 0; i < c->size; i++)
+		size += countNodes(c->root[i]);
+
+	return size;
+}
+
 /**
  * Liberta todo o espaço ocupado pelo catálogo
  * @param c Catálogo a libertar
@@ -134,27 +144,56 @@ void freeCatalog(CATALOG c){
 	}
 }
 
-KEYSET initKeySet(int n) {
-	KEYSET ds = malloc(sizeof(struct dataSet));
-	ds->set = initHashSet(n);
+CATSET initCatset(int n) {
+	CATSET cs = malloc(sizeof(struct catset));
+	cs->set = initDataSet(n);
 
-	return ds;
+	return cs;
 }
 
-KEYSET fillKeySet(CATALOG cat, KEYSET ds, int i) {
-	ds->set = fillHashSet(ds->set, cat->root[i]);
-	return ds;
+CATSET fillCatset(CATALOG cat, CATSET cs, int i) {
+	cs->set = fillDataSet(cs->set, cat->root[i]);
+	return cs;
 }
 
-char *getKeySet(KEYSET ds, int pos) {
-	return getHashSetPos(ds->set, pos);
+CATSET allCatset(CATALOG cat, CATSET cs) {
+	DATASET tmp;
+	int i, size;
+
+	if (cat->size == 0)
+		return NULL;
+
+	tmp = initDataSet(countAllElems(cat));	
+	size = cat->size;
+	cs->set = fillDataSet(cs->set, cat->root[0]);
+
+	for(i = 1; i < size; i++) {
+		tmp = fillDataSet(tmp, cat->root[i]);
+		cs->set = joinDataSet(cs->set, tmp);
+		tmp = clearDataSet(tmp);
+	}
+	
+	return cs;	
 }
 
-int getKeySetSize(KEYSET ds) {
-	return getHashSetSize(ds->set);
+CATSET contcpy(CATSET dest, CATSET src, int pos) {
+	dest->set = datacpy(dest->set, src->set, pos);
+	return dest;
 }
 
-void freeKeySet(KEYSET ds) {
-	freeHashSet(ds->set);
-	free(ds);
+char *getKeyPos(CATSET cs, int pos) {
+	return getHashPos(cs->set, pos);
+}
+
+void *getContPos(CATSET cs, int pos) {
+	return getDataPos(cs->set, pos);
+}
+
+int getCatsetSize(CATSET cs) {
+	return getDataSetSize(cs->set);
+}
+
+void freeCatset(CATSET cs) {
+	freeDataSet(cs->set);
+	free(cs);
 }
