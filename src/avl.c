@@ -571,6 +571,10 @@ static DATASET insertDataSet(DATASET ds, NODE data) {
 	return ds;
 }
 
+DATASET clearDataSet(DATASET ds) {
+	ds->pos = 0;
+	return ds;
+}
 
 DATASET fillDataSet(DATASET ds, AVL tree) {
 	
@@ -578,6 +582,19 @@ DATASET fillDataSet(DATASET ds, AVL tree) {
 		ds = fillDataSetaux(ds, tree->head);
 
 	return ds;
+}
+
+DATASET joinDataSet(DATASET ds1, DATASET ds2) {
+
+	if (ds1->size < ds1->pos + ds2->pos){
+		while(ds1->size < ds1->pos + ds2->pos)
+			ds1->size *= 2;
+
+		ds1->set = realloc(ds1->set, ds1->size);
+	}
+	
+	memcpy(&ds1->set[ds1->pos], ds2->set, ds2->pos * sizeof(NODE));
+	return ds1;
 }
 
 void* getDataPos(DATASET ds, int pos) {
