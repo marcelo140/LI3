@@ -66,7 +66,9 @@ int main() {
 	printf("Vendas incorretas: %d\n", fail);
 
 	putchar('\n');
+
 	getchar();
+
 	interpreter(fat, productCat, clientCat);
 
 	freeClientCat(clientCat);
