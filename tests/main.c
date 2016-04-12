@@ -2,6 +2,7 @@
 
 #include "catalogTest.h"
 #include "avlTest.h"
+#include "salesTest.h"
 #include "heapTest.h"
 #include "hashTTest.h"
 
@@ -17,8 +18,8 @@ int main () {
 	printHeader("TESTING HEAP");
 	test_heap();
 
-	printHeader("TESTING HASHTABLE");
-	test_hashT();
+	printHeader("TESTING SALES");
+	test_sales();
 
 	return 0;
 }
