@@ -55,6 +55,9 @@ double getBranchBilled(REVENUE r, int branch, double *normal, double *promo) {
 	double n, p;
 	int  month;
 
+	if (!r)
+		return 0;
+
 	n = 0;
 	p = 0;
 
@@ -71,6 +74,9 @@ double getBranchBilled(REVENUE r, int branch, double *normal, double *promo) {
 
 int getBranchQuant(REVENUE r, int branch, int *normal, int *promo) {
 	int n, p, month;
+
+	if (!r)
+		return 0;
 
 	n = 0;
 	p = 0;
@@ -90,6 +96,9 @@ double getMonthBilled(REVENUE r, int month, double *normal, double *promo) {
 	double n, p;
 	int branch;
 
+	if (!r)
+		return 0;
+
 	n = 0;
 	p = 0;
 
@@ -106,6 +115,9 @@ double getMonthBilled(REVENUE r, int month, double *normal, double *promo) {
 
 int getMonthQuant(REVENUE r, int month, int *normal, int *promo) {
 	int n, p, branch;
+
+	if (!r)
+		return 0;
 
 	n = 0;
 	p = 0;

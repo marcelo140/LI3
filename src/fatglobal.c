@@ -146,12 +146,13 @@ static CATSET* notSoldBranch(CATSET cs) {
 
 	for(i = 0; i < size; i++){
 		rev = getContPos(cs, i);
-
+		
 		for(branch = 0; branch < BRANCHES; branch++)
 			if (getBranchQuant(rev, branch, NULL, NULL))
 				contcpy(res[branch], cs, i);
+		
 	}
-
+	
 	return res;
 }
 
