@@ -176,8 +176,6 @@ int interpreter(FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat) {
 		default : return interpreter(fat, pcat, ccat);
 	}
 
-	getchar();
-
 	return interpreter(fat, pcat, ccat) + 1;
 }
 
@@ -239,10 +237,14 @@ static void query3(FATGLOBAL fat) {
 	for (i=0; i < mode; i++) {
 		getBilledFat (fd, i, &billedN, &billedP);
 		getQuantFat  (fd, i, &quantN, &quantP);
-		if (mode == BRANCHES) printf("\tFILIAL %d\n", i+1);
+		if (mode == BRANCHES) printf(" ::::::::::: FILIAL %d ::::::::::::::::::\n", i+1);
 		printf("Nº Vendas N: %d\tTotal Faturado N: %f\n", quantN, billedN);
 		printf("Nº Vendas P: %d\tTotal Faturado P: %f\n", quantP, billedP);
+		putchar('\n');
 	}
+	
+	while( getchar() != '\n');
+	getchar();
 }
 
 /* Produtos não Vendidos */
