@@ -102,6 +102,7 @@ static void presentCatSet (CATSET* cs,int branches, int page, int total, int* co
 			if (branches == 1) printf("\t\t");
 			str = getKeyPos(cs[j], (page -1) * LINES_NUM + i);
 			if (str) printf(" %s\t\t", str);
+			else printf("\t\t");
 		}
 		putchar('\n');
 		/*	free(str); */
@@ -215,12 +216,13 @@ static void query3(FATGLOBAL fat) {
 		printf("Mês (1-12): ");
 		fgets(buff, BUFF_SIZE, stdin);
 		month = atoi(buff);
+		if (buff[0] == 'q') return;
 	} while (month <= 0 || month > 12);
 
-	putchar('\n');
 
 	printf("Produto: ");
 	fgets(buff, BUFF_SIZE, stdin);
+	if (buff[0] == 'q') return;
 	buff[PRODUCT_SIZE] = '\0';
 	
 	do {
@@ -229,6 +231,7 @@ static void query3(FATGLOBAL fat) {
 		printf(" 2• Total\n");
 		printf(" : ");
 		answ = getchar();
+		if (answ == 'q') return;
 	} while (answ != '1' && answ != '2');
 	
 	mode = (answ == '1') ? BRANCHES : TOTAL;
@@ -239,9 +242,9 @@ static void query3(FATGLOBAL fat) {
 	for (i=0; i < mode; i++) {
 		getBilledFat (fd, i, &billedN, &billedP);
 		getQuantFat  (fd, i, &quantN, &quantP);
-		if (mode == BRANCHES) printf(" ::::::::::: FILIAL %d ::::::::::::::::::\n", i+1);
-		printf("Nº Vendas N: %d\tTotal Faturado N: %f\n", quantN, billedN);
-		printf("Nº Vendas P: %d\tTotal Faturado P: %f\n", quantP, billedP);
+		if (mode == BRANCHES) printf(" ::::::::::::::::::::: FILIAL %d :::::::::::::::::::::\n", i+1);
+		printf("Nº Vendas N: %d\t\tTotal Faturado N: %.2f\n", quantN, billedN);
+		printf("Nº Vendas P: %d\t\tTotal Faturado P: %.2f\n", quantP, billedP);
 		putchar('\n');
 	}
 	
