@@ -20,118 +20,20 @@ typedef struct {
 } PRINTSET;
 
 static void query1();
-static void query2();
-static void query3();
-static void query4();
+static void query2(PRODUCTCAT pcat);
+static void query3(FATGLOBAL fat);
+static void query4(FATGLOBAL fat);
 static void query5();
-static void query6();
+static void query6(FATGLOBAL fat);
 static void query7();
 static void query8();
 static void query9();
 static void query10();
 static void query11();
 static void query12();
+static void presentList(PRINTSET ps);
 static void presentCatSet (CATSET* cs,int branches, int page, int total, int* cont);
 static void presentPSet (PRODUCTSET ps, int page, int total, int* cont);
-
-void presentList(PRINTSET ps) {
-	char nav, onav, option[BUFF_SIZE];
-	int cpage = 1, totalPages, cont=0, o, total = ps.size;
-
-	nav = '\n';
-	onav = '\n';
-
-	totalPages = (total / LINES_NUM) + (total % LINES_NUM != 0);
-
-	while (cpage <= totalPages) {
-
-		system("clear");
-		putchar('\n');
-
-		printf(":::::::::::: PÁGINA %d de %d ::::::::::::\n\n", cpage, totalPages);
-
-		if (ps.type == TYPE_CATSET) presentCatSet(ps.set, ps.setNums, cpage, total, &cont);
-		else if (ps.type == TYPE_PSET) presentPSet(ps.set, cpage, total, &cont);
-		
-		
-		printf(":::::::::::::::::::::::::::::::::::::::::\n");
-		printf("\n b: Anterior\tn: Seguinte\th: Ajuda\n g: Ir para página\tq: Sair\n\t>> ");
-
-		onav = nav;
-		nav = getchar();
-
-		if (nav == '\n') nav = onav;
-		else fgets(option, BUFF_SIZE, stdin);
-
-		if (option[0] != '\n') o = atoi(option);
-		else o = 1;
-
-		if (nav == 'n') {
-			if (cpage + o > totalPages) cpage = totalPages;
-			else if (cpage + o <= 0) cpage = 0;
-			else cpage = (cpage == totalPages) ? cpage : cpage+o;
-		} else if (nav == 'b') {
-			if (cpage - o > totalPages) cpage = totalPages;
-			else if (cpage + o <= 0) cpage = 0;
-			else cpage = (cpage == 1) ? cpage : cpage-o;
-		} else if (nav == 'g') {
-			if (o > totalPages)	o = totalPages;
-			else if (o <= 0) o = 1;
-			cpage = o;			
-		}else if (nav == 'h') {
-			printf("\tb<num>  Retrocede <num> páginas.\n"); 
-			printf("\tn<num>  Avança <num> páginas.\n"); 
-			printf("\tg<num>  Salta para a página número <num>.\n");
-			printf("\t<enter> Utiliza o último comando.\n");
-			getchar();
-		}
-		else if (nav == 'q')
-			break;
-	}
-}
-
-static void presentPSet (PRODUCTSET ps, int page, int total, int* cont) {
-	int i;
-	char *str;
-	PRODUCT p;
-	*cont = (page-1) * LINES_NUM;
-
-	for (i=0; i < LINES_NUM && *cont < total; *cont += 1, i++) {
-		
-		p = getPSetData(ps, (page -1) * LINES_NUM + i);
-		str = fromProduct(p);
-		
-		printf("\t\t%s\n", str);
-		free(str);
-		freeProduct(p);
-	}
-}
-
-
-static void presentCatSet (CATSET* cs,int branches, int page, int total, int* cont) {
-	int i, j;
-	char *str;
-	*cont = (page-1) * LINES_NUM;
-
-	if (branches > 1) {
-		for (i=0; i < branches; i++) 
-			printf(" FILIAL %d\t", i+1);
-		putchar('\n');
-		putchar('\n');
-	}
-
-	for (i=0; i < LINES_NUM && *cont < total; *cont += 1, i++) {
-		
-		for (j=0; j < branches; j++) {
-			if (branches == 1) printf("\t\t");
-			str = getKeyPos(cs[j], (page -1) * LINES_NUM + i);
-			if (str) printf(" %s\t\t", str);
-			else printf("\t\t");
-		}
-		putchar('\n');
-		/*	free(str); */
-	}
-}
 
 /*Devolve numero de comandos executados */
 int interpreter(FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat) {
@@ -205,6 +107,105 @@ int interpreter(FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat) {
 	return interpreter(fat, pcat, ccat) + 1;
 }
 
+static void presentList(PRINTSET ps) {
+	char nav, onav, option[BUFF_SIZE];
+	int cpage = 1, totalPages, cont=0, o, total = ps.size;
+
+	nav = '\n';
+	onav = '\n';
+
+	totalPages = (total / LINES_NUM) + (total % LINES_NUM != 0);
+
+	while (cpage <= totalPages) {
+
+		system("clear");
+		putchar('\n');
+
+		printf(":::::::::::: PÁGINA %d de %d ::::::::::::\n\n", cpage, totalPages);
+
+		if (ps.type == TYPE_CATSET) presentCatSet(ps.set, ps.setNums, cpage, total, &cont);
+		else if (ps.type == TYPE_PSET) presentPSet(ps.set, cpage, total, &cont);
+
+
+		printf(":::::::::::::::::::::::::::::::::::::::::\n");
+		printf("\n b: Anterior\tn: Seguinte\th: Ajuda\n g: Ir para página\tq: Sair\n\t>> ");
+
+		onav = nav;
+		nav = getchar();
+
+		if (nav == '\n') nav = onav;
+		else fgets(option, BUFF_SIZE, stdin);
+
+		if (option[0] != '\n') o = atoi(option);
+		else o = 1;
+
+		if (nav == 'n') {
+			if (cpage + o > totalPages) cpage = totalPages;
+			else if (cpage + o <= 0) cpage = 0;
+			else cpage = (cpage == totalPages) ? cpage : cpage+o;
+		} else if (nav == 'b') {
+			if (cpage - o > totalPages) cpage = totalPages;
+			else if (cpage + o <= 0) cpage = 0;
+			else cpage = (cpage == 1) ? cpage : cpage-o;
+		} else if (nav == 'g') {
+			if (o > totalPages)	o = totalPages;
+			else if (o <= 0) o = 1;
+			cpage = o;
+		}else if (nav == 'h') {
+			printf("\tb<num>  Retrocede <num> páginas.\n");
+			printf("\tn<num>  Avança <num> páginas.\n");
+			printf("\tg<num>  Salta para a página número <num>.\n");
+			printf("\t<enter> Utiliza o último comando.\n");
+			getchar();
+		}
+		else if (nav == 'q')
+			break;
+	}
+}
+
+static void presentPSet (PRODUCTSET ps, int page, int total, int* cont) {
+	int i;
+	char *str;
+	PRODUCT p;
+	*cont = (page-1) * LINES_NUM;
+
+	for (i=0; i < LINES_NUM && *cont < total; *cont += 1, i++) {
+
+		p = getPSetData(ps, (page -1) * LINES_NUM + i);
+		str = fromProduct(p);
+
+		printf("\t\t%s\n", str);
+		free(str);
+		freeProduct(p);
+	}
+}
+
+static void presentCatSet (CATSET* cs,int branches, int page, int total, int* cont) {
+	int i, j;
+	char *str;
+	*cont = (page-1) * LINES_NUM;
+
+	if (branches > 1) {
+		for (i=0; i < branches; i++)
+			printf(" FILIAL %d\t", i+1);
+		putchar('\n');
+		putchar('\n');
+	}
+
+	for (i=0; i < LINES_NUM && *cont < total; *cont += 1, i++) {
+
+		for (j=0; j < branches; j++) {
+			if (branches == 1) printf("\t\t");
+			str = getKeyPos(cs[j], (page -1) * LINES_NUM + i);
+			if (str) printf(" %s\t\t", str);
+			else printf("\t\t");
+		}
+		putchar('\n');
+		/*	free(str); */
+	}
+}
+
+
 static void query1() {
 
 }
@@ -212,7 +213,7 @@ static void query1() {
 static void query2(PRODUCTCAT pcat) {
 
 	char answ;
-	PRINTSET ps;	
+	PRINTSET ps;
 	PRODUCTSET prodS = initPSet(100);
 
 	do {
@@ -226,10 +227,10 @@ static void query2(PRODUCTCAT pcat) {
 	ps.setNums = 1;
 	ps.type = TYPE_PSET;
 	ps.size = getPSetSize(prodS);
-	ps.set = prodS;	
+	ps.set = prodS;
 
 	presentList(ps);
-	
+
 	freePSet(prodS);
 }
 
@@ -254,7 +255,7 @@ static void query3(FATGLOBAL fat) {
 	fgets(buff, BUFF_SIZE, stdin);
 	if (buff[0] == 'q') return;
 	buff[PRODUCT_SIZE] = '\0';
-	
+
 	do {
 		printf("\nApresentar por: \n");
 		printf(" 1• Filial\n");
@@ -263,9 +264,9 @@ static void query3(FATGLOBAL fat) {
 		answ = getchar();
 		if (answ == 'q') return;
 	} while (answ != '1' && answ != '2');
-	
+
 	mode = (answ == '1') ? BRANCHES : TOTAL;
-	
+
 	fd = monthRevenue(fat, buff, month-1, mode);
 
 	putchar('\n');
@@ -277,7 +278,7 @@ static void query3(FATGLOBAL fat) {
 		printf("Nº Vendas P: %d\t\tTotal Faturado P: %.2f\n", quantP, billedP);
 		putchar('\n');
 	}
-	
+
 	while( getchar() != '\n');
 	getchar();
 }
@@ -305,18 +306,18 @@ static void query4(FATGLOBAL fat) {
 
 	max = getCatSetSize(cs[0]);
 
-	if (mode != 1) 
+	if (mode != 1)
 		for (i=0; i < BRANCHES; i++) {
 			tmp = getCatSetSize(cs[i]);
 			max = (tmp > max) ? tmp : max;
 		}
-	 
+
 	ps.set = cs;
-	ps.size = max; 
+	ps.size = max;
 	ps.type = TYPE_CATSET;
 	ps.setNums = mode;
 
-	presentList(ps);	
+	presentList(ps);
 }
 
 static void query5() {
@@ -337,7 +338,7 @@ static void query6(FATGLOBAL fat) {
 		if (buff[0] == 'q') return;
 		inicio = atoi (buff);
 	} while (inicio < 1 || inicio > 12);
-	
+
 	do {
 		printf("  Fim: ");
 		fgets(buff, BUFF_SIZE, stdin);
