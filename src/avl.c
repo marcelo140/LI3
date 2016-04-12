@@ -649,10 +649,16 @@ DATASET joinDataSet(DATASET ds1, DATASET ds2) {
 }
 
 void* getDataPos(DATASET ds, int pos) {
+	if (pos < 0 || pos >= ds->pos)
+		return NULL;
+
 	return ds->set[pos]->content;
 }
 
 char* getHashPos(DATASET ds, int pos) {
+	if (pos < 0 || pos >= ds->pos)
+		return NULL;
+
 	return ds->set[pos]->hash;
 }
 
