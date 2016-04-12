@@ -7,6 +7,7 @@
 
 #define TYPE_CATSET 0
 
+#define PRODUCT_SIZE 6
 #define LINES_NUM 20
 #define BUFF_SIZE 255
 
@@ -220,7 +221,8 @@ static void query3(FATGLOBAL fat) {
 
 	printf("Produto: ");
 	fgets(buff, BUFF_SIZE, stdin);
-
+	buff[PRODUCT_SIZE] = '\0';
+	
 	do {
 		printf("\nApresentar por: \n");
 		printf(" 1• Filial\n");
