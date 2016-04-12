@@ -62,7 +62,7 @@ FATDATA monthRevenue(FATGLOBAL fat, char *product, int month, int mode) {
 	f = initFatdata();
 	r = getCatContent(fat->cat, product[0]-'A', product);
 
-	for(i = 0; i < mode; i++){
+	for(i = 0; i < BRANCHES; i++){
 		getMonthQuant(r, month, &quantN, &quantP);
 		getMonthBilled(r, month, &billedN, &billedP);
 
@@ -70,6 +70,14 @@ FATDATA monthRevenue(FATGLOBAL fat, char *product, int month, int mode) {
 		f->quant[i][MODE_P]  = quantP;
 		f->billed[i][MODE_N] = billedN;
 		f->billed[i][MODE_P] = billedP;
+	}
+
+	if (mode == TOTAL) {
+		for (i = 1; i < BRANCHES; i++)
+			f->quant[0][MODE_N]  += quantN;
+			f->quant[0][MODE_P]  += quantP;
+			f->billed[0][MODE_N] += billedN;
+			f->billed[0][MODE_P] += billedP;
 	}
 
 	return f;
