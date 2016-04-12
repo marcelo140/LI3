@@ -31,7 +31,7 @@ static void query11();
 static void query12();
 static void presentCatSet (CATSET* cs,int branches, int page, int total, int* cont);
 
-void present(PRINTSET ps) {
+void presentList(PRINTSET ps) {
 	char nav, onav, option[BUFF_SIZE];
 	int cpage = 1, totalPages, cont=0, o, total = ps.size;
 
@@ -153,7 +153,7 @@ int interpreter(FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat) {
 				 break;
 		case 2 : query2(pcat);
 				 break;
-		case 3 : query3();
+		case 3 : query3(fat);
 			 	 break;
 		case 4 : query4(fat);
 				 break;
@@ -176,7 +176,9 @@ int interpreter(FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat) {
 		default : return interpreter(fat, pcat, ccat);
 	}
 
-	return 1;
+	getchar();
+
+	return interpreter(fat, pcat, ccat) + 1;
 }
 
 static void query1() {
@@ -201,8 +203,46 @@ static void query2() {
 */
 }
 
-static void query3() {
+static void query3(FATGLOBAL fat) {
 
+	char answ, buff[BUFF_SIZE];
+	int i, month, mode, quantN, quantP;
+	double billedN, billedP;
+	FATDATA fd;
+
+ 	putchar('\n');
+
+	do {
+		printf("Mês (1-12): ");
+		fgets(buff, BUFF_SIZE, stdin);
+		month = atoi(buff);
+	} while (month <= 0 || month > 12);
+
+	putchar('\n');
+
+	printf("Produto: ");
+	fgets(buff, BUFF_SIZE, stdin);
+
+	do {
+		printf("\nApresentar por: \n");
+		printf(" 1• Filial\n");
+		printf(" 2• Total\n");
+		printf(" : ");
+		answ = getchar();
+	} while (answ != '1' && answ != '2');
+	
+	mode = (answ == '1') ? BRANCHES : TOTAL;
+	
+	fd = monthRevenue(fat, buff, month-1, mode);
+
+	putchar('\n');
+	for (i=0; i < mode; i++) {
+		getBilledFat (fd, i, &billedN, &billedP);
+		getQuantFat  (fd, i, &quantN, &quantP);
+		if (mode == BRANCHES) printf("\tFILIAL %d\n", i+1);
+		printf("Nº Vendas N: %d\tTotal Faturado N: %f\n", quantN, billedN);
+		printf("Nº Vendas P: %d\tTotal Faturado P: %f\n", quantP, billedP);
+	}
 }
 
 /* Produtos não Vendidos */
@@ -239,8 +279,7 @@ static void query4(FATGLOBAL fat) {
 	ps.type = TYPE_CATSET;
 	ps.setNums = mode;
 
-	present(ps);
-	
+	presentList(ps);	
 }
 
 static void query5() {
