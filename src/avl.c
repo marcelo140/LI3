@@ -106,7 +106,7 @@ AVL updateAVL(AVL tree, char *hash, void *content) {
 		else if (res < 0)
 			p = p->left;
 		else {
-			if (!p->content)
+			if (!p->content && tree->init)
 				p->content = tree->init();
 
 			p->content = tree->join(p->content, content); 

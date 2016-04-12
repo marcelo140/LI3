@@ -4,6 +4,9 @@
 #include "products.h"
 
 #define MAX_BUFF 10
+#define CATALOG_SIZE 26
+
+#define INDEX(p) (p->str[0] - 'A')
 
 struct product{
 	char *str;
@@ -23,7 +26,7 @@ struct prodset {
  */
 PRODUCTCAT initProductCat(){
 	PRODUCTCAT prodCat = malloc(sizeof(struct prodcat));
-	prodCat->cat = initCatalog(26, NULL, NULL, NULL, NULL, NULL);
+	prodCat->cat = initCatalog(CATALOG_SIZE, NULL, NULL, NULL, NULL, NULL);
 
 	return prodCat;
 }
@@ -35,7 +38,7 @@ PRODUCTCAT initProductCat(){
  * @return Catálogo de Produtos com o novo produto inserido.
  */
 PRODUCTCAT insertProduct(PRODUCTCAT prodCat, PRODUCT product) {
-	prodCat->cat = insertCatalog(prodCat->cat, product->str[0] - 'A', product->str, NULL);
+	prodCat->cat = insertCatalog(prodCat->cat, INDEX(product), product->str, NULL);
 	return prodCat;
 }
 
@@ -46,7 +49,7 @@ PRODUCTCAT insertProduct(PRODUCTCAT prodCat, PRODUCT product) {
  * @return true se encontrou, false caso contrário
  */
 bool lookUpProduct(PRODUCTCAT prodCat, PRODUCT product) {
-	return lookUpCatalog(prodCat->cat, product->str[0] - 'A', product->str);
+	return lookUpCatalog(prodCat->cat, INDEX(product), product->str);
 }
 
 /** 
