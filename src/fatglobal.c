@@ -24,10 +24,10 @@ static CATSET* notSoldTotal(CATSET cs);
  */
 FATGLOBAL initFat(PRODUCTCAT p) {
 	FATGLOBAL new = malloc(sizeof (*new));
-	new->cat = cloneCat(prodToCat(p), (void* (*)()) initRevenue,
-                        (void* (*) (void*,void*)) addSale,
-                        NULL, NULL,
-                        (void (*) (void*))freeRevenue);
+	new->cat = cloneCat(prodToCat(p), (void* (*)())            initRevenue,
+                                      (void* (*)(void*,void*)) addSale,
+                                      NULL, NULL,
+                                      (void (*) (void*))       freeRevenue);
 
 	return new;
 }
@@ -57,27 +57,26 @@ FATDATA monthRevenue(FATGLOBAL fat, char *product, int month, int mode) {
 	FATDATA f;
 	REVENUE r;
 	double billedN, billedP;
-	int i, quantN, quantP;
+	int branch, quantN, quantP;
 
 	f = initFatdata();
 	r = getCatContent(fat->cat, product[0]-'A', product);
 
-	for(i = 0; i < BRANCHES; i++){
+	if (mode == TOTAL) {
 		getMonthQuant(r, month, &quantN, &quantP);
 		getMonthBilled(r, month, &billedN, &billedP);
 
-		f->quant[i][MODE_N]  = quantN;
-		f->quant[i][MODE_P]  = quantP;
-		f->billed[i][MODE_N] = billedN;
-		f->billed[i][MODE_P] = billedP;
-	}
-
-	if (mode == TOTAL) {
-		for (i = 1; i < BRANCHES; i++)
-			f->quant[0][MODE_N]  += quantN;
-			f->quant[0][MODE_P]  += quantP;
-			f->billed[0][MODE_N] += billedN;
-			f->billed[0][MODE_P] += billedP;
+		f->quant[0][MODE_N]  = quantN;
+		f->quant[0][MODE_P]  = quantP;
+		f->billed[0][MODE_N] = billedN;
+		f->billed[0][MODE_P] = billedP;
+	}else{
+		for(branch = 0; branch < BRANCHES; branch++) {
+			f->quant[branch][MODE_N] = getQuantity(r, month, branch, MODE_N);
+			f->quant[branch][MODE_N] = getQuantity(r, month, branch, MODE_P);
+			f->billed[branch][MODE_N] = getBilled(r, month, branch, MODE_N);
+			f->billed[branch][MODE_N] = getBilled(r, month, branch, MODE_P);
+		}	
 	}
 
 	return f;
@@ -156,7 +155,7 @@ static CATSET* notSoldBranch(CATSET cs) {
 		rev = getContPos(cs, i);
 		
 		for(branch = 0; branch < BRANCHES; branch++)
-			if (getBranchQuant(rev, branch, NULL, NULL))
+			if (!getBranchQuant(rev, branch, NULL, NULL))
 				contcpy(res[branch], cs, i);
 		
 	}

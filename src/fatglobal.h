@@ -21,7 +21,7 @@ CATSET* notSold(FATGLOBAL fat, int mode);
 void monthRange(FATGLOBAL fat, int min, int max, int *quantT, double *billedT);
 
 double getBilledFat(FATDATA data, int branch, double *billedN, double *billedP);
-int getQuantFat(FATDATA data, int branch, int *billedN, int *billedP);
+int getQuantFat(FATDATA data, int branch, int *quantN, int *quantP);
 
 void freeFat(FATGLOBAL fat);
 void freeFatData(FATDATA fd);
