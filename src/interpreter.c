@@ -12,6 +12,7 @@
 
 typedef struct {
 	void * set;
+	int setNums;
 	int size;
 	int type;
 } PRINTSET;
@@ -28,7 +29,7 @@ static void query9();
 static void query10();
 static void query11();
 static void query12();
-static void presentCatSet (CATSET cs, int page, int total, int *cont);
+static void presentCatSet (CATSET* cs,int branches, int page, int total, int* cont);
 
 void present(PRINTSET ps) {
 	char nav, onav, option[BUFF_SIZE];
@@ -46,7 +47,7 @@ void present(PRINTSET ps) {
 		putchar('\n');
 
 		printf(":::::::::::: PÁGINA %d de %d ::::::::::::\n\n", cpage, totalPages);
-		presentCatSet(ps.set, cpage, total, &cont);
+		presentCatSet(ps.set, ps.setNums, cpage, total, &cont);
 		printf("\nb: Anterior\tn: Seguinte\th: Ajuda\ng: Ir para página\tq: Sair\n\t>> ");
 
 		onav = nav;
@@ -82,16 +83,25 @@ void present(PRINTSET ps) {
 	}
 }
 
-static void presentCatSet (CATSET cs, int page, int total, int* cont) {
-	int i;
+static void presentCatSet (CATSET* cs,int branches, int page, int total, int* cont) {
+	int i, j;
 	char *str;
 	*cont = (page-1) * LINES_NUM;
 
+	if (branches > 1) {
+		for (i=0; i < branches; i++) 
+			printf("FILIAL %d\t", i+1);
+		putchar('\n');
+		putchar('\n');
+	}
+
 	for (i=0; i < LINES_NUM && *cont < total; *cont += 1, i++) {
-		str = getKeyPos(cs, (page -1) * LINES_NUM + i);
-
-		printf("\t\t%s\n", str);
-
+		
+		for (j=0; j < branches; j++) {
+			str = getKeyPos(cs[j], (page -1) * LINES_NUM + i);
+			if (str) printf("%s\t\t", str);
+		}
+		putchar('\n');
 		/*	free(str); */
 	}
 }
@@ -198,7 +208,7 @@ static void query3() {
 static void query4(FATGLOBAL fat) {
 
 	char answ;
-	int mode;
+	int mode, max, tmp, i;
 	CATSET *cs;
 	PRINTSET ps;
 
@@ -215,9 +225,18 @@ static void query4(FATGLOBAL fat) {
 	cs = notSold(fat, mode);
 	printf("%d\n", mode);
 
-	ps.set = cs[0];
-	ps.size = getCatSetSize(cs[0]);
+	max = getCatSetSize(cs[0]);
+
+	if (mode != 1) 
+		for (i=0; i < BRANCHES; i++) {
+			tmp = getCatSetSize(cs[i]);
+			max = (tmp > max) ? tmp : max;
+		}
+	 
+	ps.set = cs;
+	ps.size = max; 
 	ps.type = TYPE_CATSET;
+	ps.setNums = mode;
 
 	present(ps);
 	
