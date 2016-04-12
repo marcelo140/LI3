@@ -4,7 +4,7 @@
 
 #define BASE_SIZE 100
 
-#define RIGHT(i) (2*i)+2 
+#define RIGHT(i) (2*i)+2
 #define LEFT(i) (2*i)+1
 #define PARENT(i) (i-1)/2
 
@@ -51,7 +51,7 @@ HEAP insertHeap(HEAP h, void *key, void *content) {
 	bubbleUp(h, h->size);
 	h->size++;
 
-	return h;	
+	return h;
 }
 
 void *removeHeap(HEAP h, void **content) {
@@ -67,12 +67,32 @@ void *removeHeap(HEAP h, void **content) {
 	return node->key;
 }
 
+/**
+ * Atualiza um elemento de uma Heap
+ * @param h Heap
+ * @param key Chave do elemento a atualizar
+ * @param content Conteúdo novo
+ * @return Heap atualizada
+ */
+HEAP upateHeap(HEAP h, void *key, void *content) {
+
+		int i;
+
+		for (i=0; i < h->size ; i++)
+		   	if (COMPARE(LIST[i]->key, key) == 0) break;
+
+		if (i != h->size) 
+			LIST[i]->content = content;
+
+		return h;
+}
+
 static void bubbleUp(HEAP h, int pos) {
 
 	while(pos && COMPARE(LIST[pos]->key, LIST[PARENT(pos)]->key) < 0) {
 		swap(h, pos, PARENT(pos));
 		pos = PARENT(pos);
-	}	
+	}
 }
 
 static void bubbleDown(HEAP h, int pos) {
@@ -104,7 +124,7 @@ int getHeapSize(HEAP h) {
 static void swap(HEAP h, int pos1, int pos2) {
 	HEAPNODE tmp;
 
-	tmp = LIST[pos1];	
+	tmp = LIST[pos1];
 	LIST[pos1] = LIST[pos2];
 	LIST[pos2] = tmp;
 }
