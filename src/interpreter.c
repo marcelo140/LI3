@@ -161,7 +161,7 @@ int interpreter(FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat) {
 				 break;
 		case 5 : query5();
 		 		 break;
-		case 6 : query6();
+		case 6 : query6(fat);
 		  		 break;
 		case 7 : query7();
 				 break;
@@ -293,8 +293,38 @@ static void query5() {
 
 }
 
-static void query6() {
+static void query6(FATGLOBAL fat) {
 
+	char buff[BUFF_SIZE];
+	int inicio, fim, quant;
+	double billed;
+
+	printf("  Intervalo de Meses:\n");
+
+	do {
+		printf("  Início: ");
+		fgets(buff, BUFF_SIZE, stdin);
+		if (buff[0] == 'q') return;
+		inicio = atoi (buff);
+	} while (inicio < 1 || inicio > 12);
+	
+	do {
+		printf("  Fim: ");
+		fgets(buff, BUFF_SIZE, stdin);
+		if (buff[0] == 'q') return;
+		fim = atoi(buff);
+	} while (fim < inicio || fim > 12);
+
+	monthRange(fat, inicio-1, fim-1, &quant, &billed);
+
+	putchar('\n');
+
+	printf(" :::::::::::::::::::::::::\n");
+	printf(" Quantidade vendida:  %d\n", quant);
+	printf(" Total Faturado:      %f\n", billed);
+	putchar('\n');
+
+	getchar();
 }
 
 static void query7() {

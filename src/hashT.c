@@ -55,7 +55,7 @@ HASHTABLE initHashTable() {
  * @return HASHTABLE atualizada
  */
 HASHTABLE insertHashT(HASHTABLE ht, void *back, SALE s) {
-	int key;
+	int key, nkey;
 	PRODUCT p;
 	HASH hash;
 	char * pstr;
@@ -64,17 +64,27 @@ HASHTABLE insertHashT(HASHTABLE ht, void *back, SALE s) {
 	pstr = fromProduct(p);
 	hash = createHash(ht, pstr);
 	key = hash->key;
+	nkey = key;
 
 	if (CONTENT(key).hash != NULL && strcmp(CONTENT(key).hash->seed, hash->seed)) 
-		key = quadraticProbing(ht, key);
+		nkey = quadraticProbing(ht, key);
 
-	/* Se já existe, apenas atualiza */
-	if (CONTENT(key).hash == NULL || strcmp(CONTENT(key).hash->seed, hash->seed)) {
-		CONTENT(key).back = back;
-		CONTENT(key).hash = copyHash(hash);
-	}
-	CONTENT(key).revenue = addSale(CONTENT(key).revenue, s);
+	if (nkey != -1) {
 		
+
+		/* Se já existe, apenas atualiza */
+		if (CONTENT(key).hash == NULL || strcmp(CONTENT(key).hash->seed, hash->seed)) {
+			CONTENT(key).back = back;
+			CONTENT(key).hash = copyHash(hash);
+		}
+		CONTENT(key).revenue = addSale(CONTENT(key).revenue, s);
+			
+	} else {
+/*		ht = resize(ht); 
+ *		Fuck it, vamos ter uma queue!
+ *		*/ 
+		ht = insertHashT(ht, back, s);
+	}
 	
 	free(pstr);
 	freeHash(hash);
@@ -199,6 +209,7 @@ void freeHash(HASH hash) {
 	}
 }
 
+
 static int quadraticProbing(HASHTABLE ht, int key) {
 	int i, pos = key + 1;
 
@@ -206,7 +217,9 @@ static int quadraticProbing(HASHTABLE ht, int key) {
 		if (CONTENT(pos).hash == NULL || CONTENT(pos).hash->key == key) key = pos;
 		else pos = (key + i*i) % ht->capacity; 
 	}
-	
+
+	if (i >= ht->capacity ) return -1;
+
 	return pos;
 }
 
