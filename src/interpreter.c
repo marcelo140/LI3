@@ -40,7 +40,6 @@ void present(PRINTSET ps) {
 
 	totalPages = (total / LINES_NUM) + (total % LINES_NUM != 0);
 
-	putchar('\n');
 	while (cpage <= totalPages) {
 
 		system("clear");
@@ -48,7 +47,8 @@ void present(PRINTSET ps) {
 
 		printf(":::::::::::: PÁGINA %d de %d ::::::::::::\n\n", cpage, totalPages);
 		presentCatSet(ps.set, ps.setNums, cpage, total, &cont);
-		printf("\nb: Anterior\tn: Seguinte\th: Ajuda\ng: Ir para página\tq: Sair\n\t>> ");
+		printf(":::::::::::::::::::::::::::::::::::::::::\n");
+		printf("\n b: Anterior\tn: Seguinte\th: Ajuda\n g: Ir para página\tq: Sair\n\t>> ");
 
 		onav = nav;
 		nav = getchar();
@@ -64,18 +64,18 @@ void present(PRINTSET ps) {
 			else if (cpage + o <= 0) cpage = 0;
 			else cpage = (cpage == totalPages) ? cpage : cpage+o;
 		} else if (nav == 'b') {
-			if (cpage + o > totalPages) cpage = totalPages;
-			else if (cpage - o <= 0) cpage = 0;
+			if (cpage - o > totalPages) cpage = totalPages;
+			else if (cpage + o <= 0) cpage = 0;
 			else cpage = (cpage == 1) ? cpage : cpage-o;
 		} else if (nav == 'g') {
 			if (o > totalPages)	o = totalPages;
 			else if (o <= 0) o = 1;
 			cpage = o;			
 		}else if (nav == 'h') {
-			printf("b<num>  Retrocede <num> páginas.\n"); 
-			printf("n<num>  Avança <num> páginas.\n"); 
-			printf("g<num>  Salta para a página número <num>.\n");
-			printf("<enter> Utiliza o último comando.\n");
+			printf("\tb<num>  Retrocede <num> páginas.\n"); 
+			printf("\tn<num>  Avança <num> páginas.\n"); 
+			printf("\tg<num>  Salta para a página número <num>.\n");
+			printf("\t<enter> Utiliza o último comando.\n");
 			getchar();
 		}
 		else if (nav == 'q')
@@ -90,7 +90,7 @@ static void presentCatSet (CATSET* cs,int branches, int page, int total, int* co
 
 	if (branches > 1) {
 		for (i=0; i < branches; i++) 
-			printf("FILIAL %d\t", i+1);
+			printf(" FILIAL %d\t", i+1);
 		putchar('\n');
 		putchar('\n');
 	}
@@ -98,8 +98,9 @@ static void presentCatSet (CATSET* cs,int branches, int page, int total, int* co
 	for (i=0; i < LINES_NUM && *cont < total; *cont += 1, i++) {
 		
 		for (j=0; j < branches; j++) {
+			if (branches == 1) printf("\t\t");
 			str = getKeyPos(cs[j], (page -1) * LINES_NUM + i);
-			if (str) printf("%s\t\t", str);
+			if (str) printf(" %s\t\t", str);
 		}
 		putchar('\n');
 		/*	free(str); */
