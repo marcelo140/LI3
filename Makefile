@@ -10,7 +10,7 @@ tester: gereVendas
 	$(MAKE) -C tests/
 
 debug: CFLAGS := -g
-debug: clean gereVendas
+debug: clear gereVendas
 
 obj/%.o: src/%.c
 	@mkdir -p obj
