@@ -6,6 +6,7 @@
 #include "products.h"
 
 #define TYPE_CATSET 0
+#define TYPE_PSET 1
 
 #define PRODUCT_SIZE 6
 #define LINES_NUM 20
@@ -31,6 +32,7 @@ static void query10();
 static void query11();
 static void query12();
 static void presentCatSet (CATSET* cs,int branches, int page, int total, int* cont);
+static void presentPSet (PRODUCTSET ps, int page, int total, int* cont);
 
 void presentList(PRINTSET ps) {
 	char nav, onav, option[BUFF_SIZE];
@@ -47,7 +49,11 @@ void presentList(PRINTSET ps) {
 		putchar('\n');
 
 		printf(":::::::::::: PÁGINA %d de %d ::::::::::::\n\n", cpage, totalPages);
-		presentCatSet(ps.set, ps.setNums, cpage, total, &cont);
+
+		if (ps.type == TYPE_CATSET) presentCatSet(ps.set, ps.setNums, cpage, total, &cont);
+		else if (ps.type == TYPE_PSET) presentPSet(ps.set, cpage, total, &cont);
+		
+		
 		printf(":::::::::::::::::::::::::::::::::::::::::\n");
 		printf("\n b: Anterior\tn: Seguinte\th: Ajuda\n g: Ir para página\tq: Sair\n\t>> ");
 
@@ -83,6 +89,24 @@ void presentList(PRINTSET ps) {
 			break;
 	}
 }
+
+static void presentPSet (PRODUCTSET ps, int page, int total, int* cont) {
+	int i;
+	char *str;
+	PRODUCT p;
+	*cont = (page-1) * LINES_NUM;
+
+	for (i=0; i < LINES_NUM && *cont < total; *cont += 1, i++) {
+		
+		p = getPSetData(ps, (page -1) * LINES_NUM + i);
+		str = fromProduct(p);
+		
+		printf("\t\t%s\n", str);
+		free(str);
+		freeProduct(p);
+	}
+}
+
 
 static void presentCatSet (CATSET* cs,int branches, int page, int total, int* cont) {
 	int i, j;
@@ -185,22 +209,28 @@ static void query1() {
 
 }
 
-static void query2() {
-/*
+static void query2(PRODUCTCAT pcat) {
+
 	char answ;
-	CATSET *cs;
+	PRINTSET ps;	
+	PRODUCTSET prodS = initPSet(100);
 
 	do {
 		printf("\nLetra: ");
 		answ = getchar();
-	} while (answ < 'A' && answ > '2');
+		if (answ == 'q') return;
+	} while (answ < 'A' && answ > 'z');
 
-	mode = (answ == '1') ? BRANCHES : TOTAL;
+	prodS = fillPSet(pcat, prodS, answ);
 
-	cs = notSold(fat, mode);
+	ps.setNums = 1;
+	ps.type = TYPE_PSET;
+	ps.size = getPSetSize(prodS);
+	ps.set = prodS;	
 
-	present(cs[0]);
-*/
+	presentList(ps);
+	
+	freePSet(prodS);
 }
 
 static void query3(FATGLOBAL fat) {

@@ -67,6 +67,8 @@ int main() {
 
 	putchar('\n');
 
+	getchar();
+
 	interpreter(fat, productCat, clientCat);
 
 	begin = clock();
