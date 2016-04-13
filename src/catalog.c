@@ -37,13 +37,11 @@ CATALOG initCatalog(int n, void* (*init)(), void* (*join)(void*, void *), bool (
  * @param c Catálogo
  * @param i Índice onde inserir
  * @param s String a inserir
- * @param cntt Conteúdo do catálogo
+ * @param content Conteúdo do catálogo
  * @return Catálogo novo
  */
-CATALOG insertCatalog(CATALOG c, int i, char *hash, void *cntt) {
-	AVL p = c->root[i];
-
-	c->root[i] = insertAVL(p, hash, cntt);
+CATALOG insertCatalog(CATALOG c, int i, char *hash, void *content) {
+	c->root[i] = insertAVL(c->root[i], hash, content);
 
 	return c;
 }
@@ -144,19 +142,19 @@ void freeCatalog(CATALOG c){
 	}
 }
 
-CATSET initCatSet(int n) {
+CATSET initCatalogSet(int n) {
 	CATSET cs = malloc(sizeof(struct catset));
 	cs->set = initDataSet(n);
 
 	return cs;
 }
 
-CATSET fillCatSet(CATALOG cat, CATSET cs, int i) {
+CATSET fillCatalogSet(CATALOG cat, CATSET cs, int i) {
 	cs->set = addDataSet(cs->set, cat->root[i]);
 	return cs;
 }
 
-CATSET allCatSet(CATALOG cat, CATSET cs) {
+CATSET allCatalogSet(CATALOG cat, CATSET cs) {
 	int i;
 
 	if (cat->size == 0)
@@ -166,6 +164,16 @@ CATSET allCatSet(CATALOG cat, CATSET cs) {
 		cs->set = addDataSet(cs->set, cat->root[i]);
 
 	return cs;
+}
+
+CATSET unionCatalogDataSets(CATSET dest, CATSET source) {
+	dest->set = unionDataSets(dest->set, source->set);
+	return dest;
+}
+
+CATSET diffCatalogDataSets(CATSET dest, CATSET source) {
+	dest->set = diffDataSets(dest->set, source->set);
+	return dest;
 }
 
 CATSET contcpy(CATSET dest, CATSET src, int pos) {
@@ -181,11 +189,11 @@ void *getContPos(CATSET cs, int pos) {
 	return getDataPos(cs->set, pos);
 }
 
-int getCatSetSize(CATSET cs) {
+int getCatalogSetSize(CATSET cs) {
 	return getDataSetSize(cs->set);
 }
 
-void freeCatSet(CATSET cs) {
+void freeCatalogSet(CATSET cs) {
 	freeDataSet(cs->set);
 	free(cs);
 }

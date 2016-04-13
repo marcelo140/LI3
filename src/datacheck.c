@@ -7,78 +7,80 @@
 
 #define BUFF_SIZE 35
 
-CLIENTCAT writeCCat(FILE *file, CLIENTCAT cat, int *num) {
-	int n;
+int loadClients(FILE *file, CLIENTCAT cat) {
+
 	char buf[BUFF_SIZE], *line;
 	CLIENT client;
+	int success;
 
-	n = 0;
+	client = newClient();
+	success = 0;
 
 	while(fgets(buf, BUFF_SIZE, file)) {
 		line = strtok (buf, "\n\r");
-		client = toClient(line);
+		client = writeClient(client, line);
 
 		cat = insertClient(cat, client);
-		freeClient(client);
-		n++;
+		success++;
 	}
 
-	*num = n;
+	freeClient(client);
 
-	return cat;
+	return success;
 }
 
-PRODUCTCAT writePCat(FILE *file, PRODUCTCAT cat, int *num) {
-	int n;
+int loadProducts(FILE *file, PRODUCTCAT cat) {
+
 	char buf[BUFF_SIZE], *line;
 	PRODUCT product;
+	int success;
 
-	n = 0;
+	product = newProduct();
+	success = 0;
 
 	while(fgets(buf, BUFF_SIZE, file)) {
 		line = strtok (buf, "\n\r");
-		product = toProduct(line);
+		product = writeProduct(product, line);
 
 		cat = insertProduct(cat, product);
-		freeProduct(product);
-		n++;
+		success++;
 	}
 
-	*num = n;
+	freeProduct(product);
 
-	return cat;
+	return success;
 }
 
-int checkSales (FILE *file, FATGLOBAL fat, PRODUCTCAT products, CLIENTCAT clients, int *sucLn, int *failLn) {
-	SALE s = initSale();
-	char buf[BUFF_SIZE], *line;
-	int suc, total;
-	time_t begin, end;
-	double time = 0;
+int loadSales(FILE *file, FATGLOBAL fat, PRODUCTCAT products, 
+              CLIENTCAT clients, int *failed) {
 
-	suc = total = 0;
+	char buffer[BUFF_SIZE], *line;
+	PRODUCT prod;
+	CLIENT c;
+	SALE s;
+	int success, total;
 
-	while(fgets(buf, BUFF_SIZE, file)) {
-		line = strtok (buf, "\n\r");
-		begin = clock();
-		s = readSale(s, line);
-		end = clock();
+	prod = newProduct();
+	c = newClient();
+	s = initSale();
+	success = total = 0;
+
+	while(fgets(buffer, BUFF_SIZE, file)) {
+		line = strtok (buffer, "\n\r");
+		s = readSale(s, prod, c, line);
 		total++;
 		
 		if (isSale(s, products, clients)) {
 			addFat(fat, s);	
-		 	suc++;
+		 	success++;
 		}
-	
-		freeSale(s, M_CONTENT);
-		time += (double) (end - begin) / CLOCKS_PER_SEC;
 	}
 
-	printf("tempo %fs\n", time);
+	freeSale(s);
+	freeProduct(prod);
+	freeClient(c);
 
-	free(s);
-	*sucLn = suc;
-	*failLn = total - suc;
+	*failed = total - success;
 
-	return 0;
+	return success;
 }

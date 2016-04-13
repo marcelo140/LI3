@@ -341,72 +341,86 @@ static void freeNode(NODE node, void (*freeContent)(void*)) {
 	}
 }
 
-/*
-DATASET unionHSets(DATASET hs1, DATASET hs2) {
+
+DATASET unionDataSets(DATASET dest, DATASET source) {
 	DATASET new = initDataSet(100);
-	int res, s1, s2, s1_max, s2_max;
+	int res, sourceSize, destSize, maxSourceSize, maxDestSize;
 	
-	s1 = s2 = 0;
-	s1_max = hs1->sp;
-	s2_max = hs2->sp;
+	sourceSize = destSize = 0;
+	maxSourceSize = source->pos;
+	maxDestSize = dest->pos;
 
-	while(s1 < s1_max && s2 < s2_max){
-		res = strcmp(hs1->set[s1], hs2->set[s2]);
+	while(sourceSize < maxSourceSize && destSize < maxDestSize){
+		res = strcmp(dest->set[destSize]->hash, source->set[sourceSize]->hash);
 
 		if (res < 0) {
-			new = insertHashSet(new, hs1->set[s1]);
-			s1++;
+			new = insertDataSet(new, dest->set[destSize]);
+			destSize++;
 		}else if (res > 0){
-			new = insertHashSet(new, hs2->set[s2]);
-			s2++;
+			new = insertDataSet(new, source->set[sourceSize]);
+			sourceSize++;
 		}else{
-			new = insertHashSet(new, hs2->set[s2]);
-			s1++;
-			s2++;
+			new = insertDataSet(new, dest->set[destSize]);
+			sourceSize++;	
+			destSize++;
 		}
 	}
 
-	for(; s1 < s1_max; s1++)
-		new = insertHashSet(new, hs1->set[s1]);
+	for(; destSize < maxDestSize; destSize++)
+		new = insertDataSet(new, dest->set[destSize]);
 
-	for(; s2 < s2_max; s2++)
-		new = insertHashSet(new, hs2->set[s2]);
+	for(; sourceSize < maxSourceSize; sourceSize++)
+		new = insertDataSet(new, source->set[sourceSize]);
 
-	return new;
+	free(dest->set);
+	
+	dest->set = new->set;
+	dest->pos = new->pos;
+	dest->size = new->size;
+	free(new);
+	
+	return dest;
 }
 
-DATASET diffHSets(DATASET hs1, DATASET hs2) {
+
+DATASET diffDataSets(DATASET dest, DATASET source) {
 	DATASET new = initDataSet(100);
-	int res, s1, s2, s1_max, s2_max;
+	int res, destSize, sourceSize, maxDestSize, maxSourceSize;
 
-	s1 = s2 = 0;
-	s1_max = hs1->sp;
-	s2_max = hs2->sp;
+	destSize = sourceSize = 0;
+	maxDestSize = dest->pos;
+	maxSourceSize = source->pos;
 
-	while(s1 < s1_max && s2 < s2_max){
-		res = strcmp(hs1->set[s1], hs2->set[s2]);
+	while(destSize < maxDestSize && sourceSize < maxSourceSize){
+		res = strcmp(dest->set[destSize]->hash, source->set[sourceSize]->hash);
 
 		if (res < 0) {
-			new = insertHashSet(new, hs1->set[s1]);
-			s1++;
+			new = insertDataSet(new, dest->set[destSize]);
+			destSize++;
 		}else if (res > 0){
-			new = insertHashSet(new, hs2->set[s2]);
-			s2++;
+			new = insertDataSet(new, source->set[sourceSize]);
+			sourceSize++;
 		}else{
-			s1++;
-			s2++;
+			destSize++;
+			sourceSize++;
 		}
 	}
 
-	for(; s1 < s1_max; s1++)
-		new = insertHashSet(new, hs1->set[s1]);
+	for(; destSize < maxDestSize; destSize++)
+		new = insertDataSet(new, dest->set[destSize]);
 
-	for(; s2 < s2_max; s2++)
-		new = insertHashSet(new, hs2->set[s2]);
+	for(; sourceSize < maxSourceSize; sourceSize++)
+		new = insertDataSet(new, source->set[sourceSize]);
+	
+	free(dest->set);
+	
+	dest->set = new->set;
+	dest->pos = new->pos;
+	dest->size = new->size;
+	free(new);
 
 	return new;
 }
-*/
 
 static NODE newNode(char *hash, void *content, NODE left, NODE right) {
 	NODE new = malloc(sizeof(struct node));

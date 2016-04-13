@@ -254,15 +254,13 @@ SALE updateSale(SALE s, PRODUCT p, CLIENT c, double price, int quant, int month,
  * @param line Linha a ser lida
  * @return Sale resultante
  */
-SALE readSale(SALE s, char *line) {
-	PRODUCT p;
-	CLIENT c;
+SALE readSale(SALE s, PRODUCT p, CLIENT c, char *line) {
 	char *token;
 	double price;
 	int quant, month, branch, mode;
 
 	token = strtok(line, " ");
-	p = toProduct(token);
+	p = writeProduct(p, token);
 	
 	token = strtok(NULL, " ");
 	price = atof(token);
@@ -274,7 +272,7 @@ SALE readSale(SALE s, char *line) {
 	mode = strcmp(token, "N") ? 1 : 0;
 
 	token = strtok(NULL, " ");
-	c = toClient(token);
+	c = writeClient(c, token);
 
 	token = strtok(NULL, " ");
 	month = atoi(token);
@@ -287,14 +285,9 @@ SALE readSale(SALE s, char *line) {
 /**
  * Liberta o espaço ocupado pela SALE s
  * @param s SALE a libertar
- * @param mode Especifica se toda a estrutura deve ser libertada ou apenas o seu conteúdo
  */
-void freeSale(SALE s, int mode) {
-	freeProduct(s->prod);
-	freeClient(s->client);
-
-	if (mode == M_TOTAL)
-		free(s);
+void freeSale(SALE s) {
+	free(s);
 }
 
 PRODUCT getProduct(SALE s) {

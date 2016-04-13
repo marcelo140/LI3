@@ -1,5 +1,5 @@
-#ifndef __AVL_H__
-#define __AVL_H__
+#ifndef __AVL__
+#define __AVL__
 
 #include "generic.h"
 
@@ -7,8 +7,8 @@ typedef struct avl     *AVL;
 typedef struct dataSet *DATASET;
 
 AVL initAVL  (void* (*init)   (),
-              void* (*join)   (void*, void*), 
-              bool  (*equals) (void*, void*), 
+              void* (*add)    (void*, void*), 
+              bool  (*compare)(void*, void*), 
               void* (*clone)  (void*), 
               void  (*free)   (void *));
 
@@ -31,10 +31,8 @@ void* getAVLcontent (AVL tree, char *hash);
 int   countNodes    (AVL tree);
 void  freeAVL       (AVL n);
 
-/*
-DATASET unionHSets    (DATASET hs1, DATASET hs2);
-DATASET diffHSets     (DATASET hs1, DATASET hs2);
-*/
+DATASET unionDataSets (DATASET dest, DATASET src);
+DATASET diffDataSets  (DATASET dest, DATASET src);
 
 DATASET initDataSet   (int n);
 DATASET addDataSet    (DATASET ds, AVL tree);

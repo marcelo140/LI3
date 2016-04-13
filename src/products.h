@@ -1,31 +1,38 @@
-#ifndef __PRODUCTS_H__
-#define __PRODUCTS_H__
+#ifndef __PRODUCTS__
+#define __PRODUCTS__
 
-#include "generic.h"
 #include "catalog.h"
+#include "generic.h"
 
-typedef struct product *PRODUCT;
-typedef struct prodcat *PRODUCTCAT;
-typedef struct prodset *PRODUCTSET;
+#define PRODUCT_LENGTH 7
 
-PRODUCTCAT initProductCat(void);
-PRODUCTCAT insertProduct(PRODUCTCAT catalog, PRODUCT product);
-bool lookUpProduct(PRODUCTCAT catalog, PRODUCT product);
-void freeProductCat(PRODUCTCAT catalog);
-int countProducts(PRODUCTCAT prodCat, char index);
+typedef struct product         *PRODUCT;
+typedef struct product_catalog *PRODUCTCAT;
+typedef struct product_set     *PRODUCTSET;
 
-bool isProduct(char *str);
-char* fromProduct(PRODUCT p);
-PRODUCT toProduct(char *s);
-PRODUCT cloneProduct(PRODUCT p);
-void freeProduct(PRODUCT p);
+PRODUCTCAT initProductCat ();
+PRODUCTCAT insertProduct  (PRODUCTCAT catalog, PRODUCT product);
+void       freeProductCat (PRODUCTCAT catalog);
 
-CATALOG prodToCat(PRODUCTCAT prodCat);
+bool lookUpProduct  (PRODUCTCAT catalog, PRODUCT product);
+int  countProducts  (PRODUCTCAT prodCat, char index);
 
-PRODUCTSET initPSet(int n);
-PRODUCTSET fillPSet(PRODUCTCAT cat, PRODUCTSET ps, char index);
-PRODUCT getPSetData(PRODUCTSET ps, int pos);
-int getPSetSize(PRODUCTSET ps);
-void freePSet(PRODUCTSET ps);
+CATALOG prodToCat (PRODUCTCAT prodCat);
+
+PRODUCT newProduct   ();
+PRODUCT toProduct    (char* str);
+PRODUCT writeProduct (PRODUCT p, char* str);
+PRODUCT cloneProduct (PRODUCT p);
+char*   fromProduct  (PRODUCT p, char* dest);
+void    freeProduct  (PRODUCT p);
+
+bool isProduct (char* str);
+
+PRODUCTSET initProductSet (int n);
+PRODUCTSET fillProductSet (PRODUCTCAT cat, PRODUCTSET ps, char index);
+void       freeProductSet (PRODUCTSET ps);
+
+PRODUCT getProductByPos   (PRODUCTSET ps, int pos);
+int     getProductSetSize (PRODUCTSET ps);
 
 #endif

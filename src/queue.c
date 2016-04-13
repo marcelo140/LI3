@@ -11,10 +11,10 @@ struct queue {
 	int size;
 };
 
-QUEUE initQueue() {
+QUEUE initQueue(int n) {
 	QUEUE q = malloc (sizeof(struct queue));
-	q->queue = malloc (sizeof(void *) * QUEUE_BASE_SIZE);
-	q->capacity = QUEUE_BASE_SIZE;
+	q->queue = malloc (sizeof(void *) * n);
+	q->capacity = n;
 	q->start = 0;
 	q->pos = 0;
 	q->size = 0;

@@ -58,10 +58,10 @@ HASHTABLE insertHashT(HASHTABLE ht, void *back, SALE s) {
 	int key, nkey;
 	PRODUCT p;
 	HASH hash;
-	char * pstr;
+	char pstr[10];
 
 	p = getProduct(s);
-	pstr = fromProduct(p);
+	fromProduct(p, pstr);
 	hash = createHash(ht, pstr);
 	key = hash->key;
 	nkey = key;
@@ -86,7 +86,6 @@ HASHTABLE insertHashT(HASHTABLE ht, void *back, SALE s) {
 		ht = insertHashT(ht, back, s);
 	}
 	
-	free(pstr);
 	freeHash(hash);
 	
 	return ht;

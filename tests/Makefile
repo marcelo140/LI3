@@ -14,7 +14,6 @@ obj/main.o: avlTest.h catalogTest.h salesTest.h
 obj/catalogTest.o: catalogTest.h ../src/catalog.h
 obj/avlTest.o: avlTest.h ../src/avl.h 
 obj/salesTest.o: salesTest.h ../src/sales.h
-obj/hashTTest.o: hashTTest.h ../obj/hashT.o
 
 .PHONY: clear
 clear:
