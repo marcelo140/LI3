@@ -382,8 +382,10 @@ int getDataSetSize(DATASET ds) {
 }
 
 void freeDataSet(DATASET ds) {
-	free(ds->set);
-	free(ds);
+	if (ds) {
+		free(ds->set);
+		free(ds);
+	}
 }
 
 static NODE newNode(char *hash, void *content, NODE left, NODE right) {
