@@ -143,9 +143,9 @@ int getMonthQuant(REVENUE r, int month, int *normal, int *promo) {
  * @return REVENUE alterada 
  */
 
-REVENUE updateRevenue(REVENUE r, int month, int branch, int MODE, double billed, int quantity) {
-	r->billed[month-1][branch-1][MODE] += billed;
-	r->quantity[month-1][branch-1][MODE] += quantity;
+REVENUE updateRevenue(REVENUE r, int month, int branch, int MODE, double price, int quantity) {
+	r->billed[month][branch][MODE] += quantity*price;
+	r->quantity[month][branch][MODE] += quantity;
 
 	return r;
 }
