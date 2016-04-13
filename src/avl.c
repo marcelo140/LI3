@@ -78,7 +78,10 @@ AVL insertAVL(AVL tree, char *hash, void *content) {
 	new = newNode(hash, content, NULL, NULL);
 
 	tree->head = insertNode(tree->head, new, &update, &last);
-	(last == new) ? tree->size++ : free(new);
+	if (last == new)
+		tree->size++;
+	else
+		 free(new);
 
 	return tree;
 }
@@ -105,6 +108,8 @@ void *addAVL(AVL tree, char *hash) {
 		return new;
 	}else{
 		free(new);
+		if (!last->content)
+			last->content = tree->init();
 		return last->content;
 	} 
 }
@@ -548,8 +553,11 @@ static NODE insertNode(NODE node, NODE new, int *update, NODE *last) {
 		node = insertRight(node, new, update, last);
 	else if (res < 0)
 		node = insertLeft(node, new, update, last);
+	else {
+		*last = node;
+		return node;
+	}
 
-	*last = node;
 	return node;
 }
 

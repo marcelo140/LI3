@@ -28,7 +28,7 @@ PRODUCTCAT initProductCat(){
 	PRODUCTCAT productCat;
 
 	productCat= malloc(sizeof(*productCat));
-	productCat->cat = initCatalog(CATALOG_SIZE, NULL, NULL, NULL, NULL, NULL);
+	productCat->cat = initCatalog(CATALOG_SIZE, NULL, NULL, NULL, NULL);
 
 	return productCat;
 }

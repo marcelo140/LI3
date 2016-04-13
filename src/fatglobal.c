@@ -24,10 +24,9 @@ static CATSET* notSoldTotal(CATSET cs);
  */
 FATGLOBAL initFat(PRODUCTCAT p) {
 	FATGLOBAL new = malloc(sizeof (*new));
-	new->cat = cloneCat(prodToCat(p), (void* (*)())            initRevenue,
-                                      (void* (*)(void*,void*)) addSale,
+	new->cat = cloneCat(prodToCat(p), (void* (*)()) initRevenue,
                                       NULL, NULL,
-                                      (void (*) (void*))       freeRevenue);
+                                      (void (*) (void*)) freeRevenue);
 
 	return new;
 }
@@ -45,10 +44,12 @@ FATDATA initFatdata() {
  * @return Faturação com a nova venda
  */
 FATGLOBAL addFat(FATGLOBAL fat, SALE s) {
+	REVENUE r;
 	char prod[10];
 
 	fromProduct(getProduct(s), prod);
-	fat->cat = updateCatalog(fat->cat, prod[0] - 'A', prod, s);
+	r = addCatalog(fat->cat, prod[0] - 'A', prod);
+	addSale(r, s);
 
 	return fat;
 }
