@@ -26,12 +26,14 @@ struct heap {
 	struct heapNode **list;
 	int size;
 	int capacity;
+	void* (*init) ();
 	int (*compare)(void *key1, void *key2);
 	void * (*add) (void *oldContent, void *newContent);
 };
 
-HEAP initHeap(int (*compare)(void *key1, void *key2), 
-			 void* (*add) (void *oldContent, void *newContent)) {
+HEAP initHeap(	void* (*init) (),
+				int (*compare)(void *key1, void *key2), 
+			 	void* (*add) (void *oldContent, void *newContent)) {
 	HEAP new = malloc(sizeof(*new));
 	int i;
 
@@ -41,6 +43,7 @@ HEAP initHeap(int (*compare)(void *key1, void *key2),
 
 	new->size = 0;
 	new->capacity = BASE_SIZE;
+	new->init = init;
 	new->compare = compare;
 	new->add = add;
 
@@ -57,7 +60,8 @@ HEAP insertHeap(HEAP h, void *key, void *content) {
 	if (exist) h = updateHeap(h, i, content);
 	else {
 		node->key = key;
-		node->content = content;
+		node->content = h->init();
+		h->add(node->content, content);
 
 		bubbleUp(h, h->size);
 		h->size++;
