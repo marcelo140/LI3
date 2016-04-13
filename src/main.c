@@ -15,7 +15,7 @@ int main() {
 	FATGLOBAL fat;
 	CLIENTCAT clientCat;
 	PRODUCTCAT productCat;
-	int suc, fail;
+	int success, failed;
 
 	double time;
 	time_t end, begin;
@@ -28,23 +28,24 @@ int main() {
 		fprintf(stderr,"Ficheiros de entrada não encontrados");
 		return -1;
 	}
+
 	clientCat = initClientCat();
 	productCat = initProductCat();
 
 	begin = clock();
-	clientCat = writeCCat(clients, clientCat, &suc);
+	success = loadClients(clients, clientCat);
 	end = clock();
 	time = (double) (end - begin) / CLOCKS_PER_SEC;
-	printf("Clientes analisados: %d (%fs)\n", suc, time);
+	printf("Clientes analisados: %d (%fs)\n", success, time);
 
 
 	putchar('\n');
 
 	begin = clock();
-	productCat = writePCat(products, productCat, &suc);
+	success = loadProducts(products, productCat);
 	end = clock();
 	time = (double) (end - begin) / CLOCKS_PER_SEC;
-	printf("Produtos analisados: %d (%fs)\n", suc, time);
+	printf("Produtos analisados: %d (%fs)\n", success, time);
 
 	putchar('\n');
 
@@ -56,14 +57,13 @@ int main() {
 
 	putchar('\n');
 
-
 	begin = clock();
-	checkSales(sales, fat, productCat, clientCat, &suc, &fail);
+	success = loadSales(sales, fat, productCat, clientCat, &failed);
 	end = clock();
 	time = (double) (end - begin) / CLOCKS_PER_SEC;
-	printf("Vendas analisadas: %d (%fs)\n", suc+fail, time);
-	printf("Vendas corretas: %d\n", suc);
-	printf("Vendas incorretas: %d\n", fail);
+	printf("Vendas analisadas: %d (%fs)\n", success+failed, time);
+	printf("Vendas corretas: %d\n", success);
+	printf("Vendas incorretas: %d\n", failed);
 
 	putchar('\n');
 
