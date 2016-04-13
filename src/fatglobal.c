@@ -4,6 +4,9 @@
 #include "fatglobal.h"
 
 #define CATALOG_SIZE 26
+#define BUFFER_SIZE 10
+
+
 
 struct faturacao {
 	CATALOG cat;
@@ -14,8 +17,8 @@ struct fatdata {
 	int    quant[BRANCHES][NP];
 };
 
-static CATSET* notSoldBranch(CATSET cs);
-static CATSET* notSoldTotal(CATSET cs);
+static CATSET* notSoldBranch (CATSET cs);
+static CATSET* notSoldTotal  (CATSET cs);
 
 /**
  * Preenche a Faturação Global com o catálog de Produtos
@@ -24,9 +27,10 @@ static CATSET* notSoldTotal(CATSET cs);
  */
 FATGLOBAL initFat(PRODUCTCAT p) {
 	FATGLOBAL new = malloc(sizeof (*new));
-	new->cat = cloneCat(prodToCat(p), (void* (*)()) initRevenue,
-                                      NULL, NULL,
-                                      (void (*) (void*)) freeRevenue);
+	new->cat = cloneCat(prodToCat(p), (void* (*) ()) initRevenue,
+                                      NULL,
+                                      NULL,
+                                      (void  (*) (void*)) freeRevenue);
 
 	return new;
 }

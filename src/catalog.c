@@ -17,7 +17,10 @@ struct catset {
  * @param n Número de índices do catálogo
  * @return O novo Catálogo
  */
-CATALOG initCatalog(int n, void* (*init)(), bool (*equals)(void*, void*), void* (*clone)(void*), void (*free)(void *)) {
+CATALOG initCatalog(int n, void* (*init)   (), 
+                           bool  (*equals) (void*, void*),
+                           void* (*clone)  (void*),
+                           void  (*free)   (void *)) {
 
 	CATALOG c;
 	int i;
@@ -64,7 +67,10 @@ void *replaceCatalog(CATALOG c, int i, char *hash, void *cntt) {
 	return replaceAVL(p, hash, cntt);
 }
 
-CATALOG cloneCat(CATALOG cat, void* (*init)(), bool (*equals)(void*, void*), void* (*clone)(void*), void (*free)(void *)) {
+CATALOG cloneCat(CATALOG cat, void* (*init)   (),
+                              bool  (*equals) (void*, void*), 
+                              void* (*clone)  (void*), 
+                              void  (*free)   (void*)) {
 
 	CATALOG c;
 	int i;
