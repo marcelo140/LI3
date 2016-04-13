@@ -8,20 +8,19 @@ typedef struct catset *CATSET;
 
 CATALOG initCatalog (int n,
 					 void* (*init)   (), 
-                     void* (*join)   (void*, void *), 
                      bool  (*equals) (void*, void*), 
                      void* (*clone)  (void*), 
                      void  (*free)   (void*));
 
 CATALOG cloneCat    (CATALOG cat,
 					 void* (*init)   (), 
-                     void* (*join)   (void*, void*),
                      bool  (*equals) (void*, void*),
                      void* (*clone)  (void*),
                      void  (*free)   (void*));
 
 CATALOG insertCatalog (CATALOG c, int i, char *hash, void *content);
 CATALOG updateCatalog (CATALOG c, int i, char *hash, void *content);
+void*   addCatalog    (CATALOG c, int index, char *hash);
 
 void *replaceCatalog (CATALOG c, int i, char *hash, void *content);
 void *getCatContent  (CATALOG c, int i, char *hash);

@@ -7,27 +7,25 @@ typedef struct avl     *AVL;
 typedef struct dataSet *DATASET;
 
 AVL initAVL  (void* (*init)   (),
-              void* (*add)    (void*, void*), 
               bool  (*compare)(void*, void*), 
               void* (*clone)  (void*), 
               void  (*free)   (void *));
 
 AVL cloneAVL  (AVL tree,
                void* (*init)   (),
-               void* (*join)   (void*, void*),
                bool  (*equals) (void*, void*), 
                void* (*clone)  (void*), 
                void  (*free)   (void *));
 
-AVL insertAVL  (AVL tree, char *hash, void *content);
-AVL updateAVL  (AVL tree, char *hash, void *content);
+AVL    insertAVL     (AVL tree, char *hash, void *content);
+void*  replaceAVL    (AVL tree, char *hash, void *content);
+void*  getAVLcontent (AVL tree, char *hash);
+void*  addAVL        (AVL tree, char *hash);
 
 bool lookUpAVL  (AVL tree, char *hash);
 bool equalsAVL  (AVL tree, AVL b);
 bool isEmptyAVL (AVL tree);
 
-void* replaceAVL    (AVL tree, char *hash, void *content);
-void* getAVLcontent (AVL tree, char *hash);
 int   countNodes    (AVL tree);
 void  freeAVL       (AVL n);
 
