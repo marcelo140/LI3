@@ -10,10 +10,10 @@ obj/%.o: %.c
 	@mkdir -p obj
 	$(CC) -ansi -pedantic -g -o $@ -c $<
 
-obj/main.o: avlTest.h catalogTest.h 
-obj/catalogTest.o: catalogTest.h ../obj/catalog.o
-obj/avlTest.o: avlTest.h ../obj/avl.o ../obj/queue.o
-obj/revenueTest.o: revenueTest.h ../obj/revenue.o
+obj/main.o: avlTest.h catalogTest.h salesTest.h 
+obj/catalogTest.o: catalogTest.h ../src/catalog.h
+obj/avlTest.o: avlTest.h ../src/avl.h 
+obj/salesTest.o: salesTest.h ../src/sales.h
 obj/hashTTest.o: hashTTest.h ../obj/hashT.o
 
 .PHONY: clear
