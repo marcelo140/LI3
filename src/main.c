@@ -13,6 +13,7 @@
 int main() {
 	FILE *clients, *products, *sales;
 	FATGLOBAL fat;
+	BRANCHSALES branchSales = initBranchSales();
 	CLIENTCAT clientCat;
 	PRODUCTCAT productCat;
 	int success, failed;
@@ -58,7 +59,7 @@ int main() {
 	putchar('\n');
 
 	begin = clock();
-	success = loadSales(sales, fat, productCat, clientCat, &failed);
+	success = loadSales(sales, fat, branchSales, productCat, clientCat, &failed);
 	end = clock();
 	time = (double) (end - begin) / CLOCKS_PER_SEC;
 	printf("Vendas analisadas: %d (%fs)\n", success+failed, time);
@@ -74,6 +75,7 @@ int main() {
 	freeClientCat(clientCat);
 	freeProductCat(productCat);
 	freeFat(fat);
+/*	freeBranchSale(branchSales); */
 
 	fclose(clients);
 	fclose(products);

@@ -6,7 +6,7 @@
 
 typedef struct filial *BRANCHSALES;
 
-BRANCHSALES initBranchSales ();
+BRANCHSALES initBranchSales();
 BRANCHSALES addSaleToBranch (BRANCHSALES bs, SALE s);
 
 void freeBranchSale(BRANCHSALES bs);

@@ -5,11 +5,13 @@
 
 #include "generic.h"
 #include "fatglobal.h"
+#include "vendas_por_filial.h"
 #include "clients.h"
 #include "products.h"
 
 int loadSales    (FILE *file,
-                  FATGLOBAL fat, 
+                  FATGLOBAL fat,
+				  BRANCHSALES bs, 
                   PRODUCTCAT products, 
                   CLIENTCAT clients, 
                   int *failed);

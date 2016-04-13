@@ -16,8 +16,8 @@ obj/%.o: src/%.c
 	@mkdir -p obj
 	$(CC) $(CFLAGS) -o $@ -c $<
 
-obj/main.o: src/datacheck.h src/clients.h src/products.h src/generic.h
-obj/datacheck.o: src/datacheck.h src/fatglobal.h src/clients.h src/products.h src/generic.h src/sales.h 
+obj/main.o: src/datacheck.h  src/clients.h src/products.h src/generic.h
+obj/datacheck.o: src/datacheck.h src/fatglobal.h src/clients.h src/products.h src/generic.h src/sales.h src/vendas_por_filial.h
 obj/catalog.o: src/catalog.h src/avl.h src/generic.h
 obj/avl.o: src/avl.h src/generic.h
 obj/clients.o: src/clients.h src/catalog.h src/generic.h
@@ -25,6 +25,7 @@ obj/products.o: src/products.h src/catalog.h src/generic.h
 obj/sales.o: src/sales.h src/clients.h src/products.h src/generic.h
 obj/interpreter.o: src/interpreter.h src/clients.h src/products.h
 obj/fatglobal.o: src/sales.h src/generic.h src/fatglobal.h src/products.h src/catalog.h
+obj/vendas_por_filial.o: src/sales.h src/generic.h src/products.h src/clients.h src/catalog.h src/heap.h
 
 clearAll: clean
 	-@rm -rf doc
