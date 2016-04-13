@@ -67,13 +67,9 @@ int main() {
 
 	putchar('\n');
 
-	interpreter(fat, productCat, clientCat);
+	getchar();
 
-	begin = clock();
-	notSold(fat, TOTAL);
-	end = clock();
-	time = (double) (end - begin) / CLOCKS_PER_SEC;
-	printf("tempo: %fs\n", time);
+	interpreter(fat, productCat, clientCat);
 
 	freeClientCat(clientCat);
 	freeProductCat(productCat);
