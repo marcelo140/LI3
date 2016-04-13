@@ -24,6 +24,7 @@ PRODUCT toProduct    (char* str);
 PRODUCT writeProduct (PRODUCT p, char* str);
 PRODUCT cloneProduct (PRODUCT p);
 char*   fromProduct  (PRODUCT p, char* dest);
+bool isEmptyProduct(PRODUCT p); 
 void    freeProduct  (PRODUCT p);
 
 bool isProduct (char* str);

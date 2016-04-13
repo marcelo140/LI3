@@ -82,7 +82,15 @@ CATALOG prodToCat(PRODUCTCAT productCat) {
  * @return Retorna um produto não inicializado
  */
 PRODUCT newProduct() {
-	return malloc(sizeof(struct product));
+	PRODUCT new = malloc(sizeof(struct product));
+	
+	new->str[0] = '\0';
+
+	return new;
+}
+
+bool isEmptyProduct(PRODUCT p) {
+	return (p->str[0] == '\0');
 }
 
 /** 
