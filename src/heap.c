@@ -10,10 +10,12 @@
 
 #define COMPARE h->compare
 #define LIST h->list
+#define CONTENT(i) h->list[i]->content
 
 static void bubbleUp(HEAP h, int pos);
 static void bubbleDown(HEAP h, int pos);
 static void swap(HEAP h, int pos1, int pos2);
+static HEAP updateHeap(HEAP h, int pos, void *content);
 
 typedef struct heapNode {
 	void *key;
@@ -25,9 +27,11 @@ struct heap {
 	int size;
 	int capacity;
 	int (*compare)(void *key1, void *key2);
+	void * (*add) (void *oldContent, void *newContent);
 };
 
-HEAP initHeap(int (*compare)(void *key1, void *key2)) {
+HEAP initHeap(int (*compare)(void *key1, void *key2), 
+			 void* (*add) (void *oldContent, void *newContent)) {
 	HEAP new = malloc(sizeof(*new));
 	int i;
 
@@ -38,18 +42,26 @@ HEAP initHeap(int (*compare)(void *key1, void *key2)) {
 	new->size = 0;
 	new->capacity = BASE_SIZE;
 	new->compare = compare;
+	new->add = add;
 
 	return new;
 }
 
 HEAP insertHeap(HEAP h, void *key, void *content) {
 	HEAPNODE node = LIST[h->size];
+	int i, exist = 0;
 
-	node->key = key;
-	node->content = content;
+	for (i=0; !exist && i < h->size; i++)
+		exist = !COMPARE(LIST[i]->key, key);
 
-	bubbleUp(h, h->size);
-	h->size++;
+	if (exist) h = updateHeap(h, i, content);
+	else {
+		node->key = key;
+		node->content = content;
+
+		bubbleUp(h, h->size);
+		h->size++;
+	}
 
 	return h;
 }
@@ -62,27 +74,15 @@ void *removeHeap(HEAP h, void **content) {
 	bubbleDown(h, 0);
 
 	if (content)
-			*content = node->content;
+		*content = node->content;
 
 	return node->key;
 }
 
-/**
- * Atualiza um elemento de uma Heap
- * @param h Heap
- * @param key Chave do elemento a atualizar
- * @param content Conteúdo novo
- * @return Heap atualizada
- */
-HEAP upateHeap(HEAP h, void *key, void *content) {
+static HEAP updateHeap(HEAP h, int pos, void *content) {
 
-		int i;
-
-		for (i=0; i < h->size ; i++)
-		   	if (COMPARE(LIST[i]->key, key) == 0) break;
-
-		if (i != h->size) 
-			LIST[i]->content = content;
+		CONTENT(pos) = h->add(CONTENT(pos), content);
+		bubbleUp(h, pos);
 
 		return h;
 }
