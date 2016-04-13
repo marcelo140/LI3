@@ -183,7 +183,7 @@ void* addAVL(AVL tree, char* hash) {
 	if (last == new){
 		tree->size++;
 		new->content = tree->init();
-		return new;
+		return new->content;
 	}
 
 	if (!last->content)

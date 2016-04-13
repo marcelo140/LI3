@@ -114,7 +114,7 @@ bool lookUpCatalog(CATALOG c, int i, char *s) {
 }
 
 
-int countCatElems(CATALOG c, int i){
+int countPosElems(CATALOG c, int i){
 	return countNodes(c->root[i]);
 }
 

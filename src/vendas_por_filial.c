@@ -110,8 +110,8 @@ static PRODUCTLIST initProductList() {
 	PRODUCTLIST new = malloc (sizeof(*new));
 
 	new->sales = initHeap( (void* (*) ()) initStock,
-							(int (*) (void*, void*)) quantCmp,
-						  	(void* (*) (void*, void*)) addToStock);
+						   (int   (*) (void*, void*)) quantCmp,
+						   (void* (*) (void*, void*)) addToStock);
 	new->quant = 0;
 	new->billed = 0;
 
@@ -190,8 +190,8 @@ static STOCK addToStock(STOCK stk, SALE s) {
 	PRODUCT product = getProduct(s);
 	int mode = getMode(s);
 
-	stk->quantity[mode] = getQuant(s);
-	stk->billed[mode]   = getPrice(s) * stk->quantity[mode];
+	stk->quantity[mode] += getQuant(s);
+	stk->billed[mode]   += getPrice(s) * stk->quantity[mode];
 
 	if (isEmptyProduct(stk->product)) stk->product = cloneProduct(product);
 
