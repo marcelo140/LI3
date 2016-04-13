@@ -1,8 +1,11 @@
 #include <stdlib.h>
+#include <string.h>
 #include "vendas_por_filial.h"
+#include "products.h"
 #include "catalog.h"
 #include "heap.h"
 
+#define ALPHA_NUM 26
 #define NUM_MONTHS 12
 #define NP 2
 
@@ -20,6 +23,11 @@ typedef struct product_list {
 	int quant;
 } *PRODUCTLIST;
 
+typedef struct heap_key {
+	char product[PRODUCT_LENGTH];
+	void* key;
+} *HEAPKEY;
+
 typedef struct stock {
 	PRODUCT product;
 	int quantity[NP];
@@ -27,17 +35,27 @@ typedef struct stock {
 } *STOCK;
 
 static MONTHLIST initMonthList();
+static MONTHLIST addToMonthList(MONTHLIST m, SALE s); 
+static void freeMonthList(MONTHLIST m);
 
 static PRODUCTLIST initProductList(); 
+static PRODUCTLIST addToProductList(PRODUCTLIST pl, SALE s); 
+static void freeProductList(PRODUCTLIST pl); 
 
 static STOCK createStock(SALE s);
-static int quantCmp(int* q1, int* q2); 
+static int quantCmp(HEAPKEY k1, HEAPKEY k2); 
 static STOCK addToStock(STOCK stk, SALE s);
+
+static HEAPKEY createHeapKey(char *product, int* key);
 
 BRANCHSALES initBranchSales () {
 	BRANCHSALES bs = malloc(sizeof(*bs));
 
-/*	bs->clients = initCatalog(26, initMonthList, addToMonthList, NULL, NULL, freeMonthList); */
+	bs->clients = initCatalog( ALPHA_NUM, 
+							   (void* (*) ()) initMonthList, 
+							   (void* (*) (void*, void*)) addToMonthList, 
+							   NULL, NULL, 
+							   (void (*) (void*))freeMonthList); 
 
 	return bs;
 }
@@ -63,12 +81,21 @@ static MONTHLIST addToMonthList(MONTHLIST m, SALE s) {
 	return m;
 }
 
+static void freeMonthList(MONTHLIST m) {
+	int i;
+
+	for (i=0; i < NUM_MONTHS; i++)
+		freeProductList(m->months[i]);
+
+	free(m);
+}
+
 /*  ==========  FUNÇÕES PARA PRODUCTLIST  =========== */
 
 static PRODUCTLIST initProductList() {
 	PRODUCTLIST new = malloc (sizeof(*new));
 
-	new->sales = initHeap(
+	new->sales = initHeap( (void* (*) ()) initHeap,
 							(int (*) (void*, void*)) quantCmp, 
 						  	(void* (*) (void*, void*)) addToStock);
 	new->quant = 0;
@@ -78,12 +105,36 @@ static PRODUCTLIST initProductList() {
 }
 
 static PRODUCTLIST addToProductList(PRODUCTLIST pl, SALE s) {
+	char product[PRODUCT_LENGTH];
 	int quant = getQuant(s);
-	double billed = quant * getPrice(s);
-	
+	int* quantKey = malloc(sizeof(int));
+	PRODUCT prod = getProduct(s);
+	HEAPKEY hk;
+	STOCK stk = createStock(s);
+		
+	*quantKey = quant;
+	fromProduct(prod, product);
+	hk = createHeapKey(product, quantKey);
 
-	pl->sales = insertHeap(pl->sales, s);	
+	pl->sales = insertHeap(pl->sales, hk, stk);
+	
+	return pl;	
 } 
+
+static HEAPKEY createHeapKey(char *product, int* key) {
+	HEAPKEY new = malloc (sizeof(*new));
+	
+	new->key = key;
+	strncpy(new->product, product, PRODUCT_LENGTH);
+
+	return new;
+}
+
+static void freeProductList(PRODUCTLIST pl) {
+	
+	freeHeap(pl->sales);
+	free(pl);
+}
 
 /*  ==========  FUNÇÕES PARA STOCK  =========== */
 
@@ -96,37 +147,33 @@ static STOCK initStock() {
 	new->billed[0] = 0;
 	new->billed[1] = 0;
 
-/*TODO struct para comprar quant e verificar se sao iguais com cmp*/
-	new->product
+	new->product = newProduct();
 
 	return new;
 } 
 
-/* TODO remover isto */
-static STOCK createStock(SALE s) {
-	STOCK new = malloc(sizeof(*new));
-	PRODUCT p = getProduct(s);
-	int mode = getMode(s);
+static int quantCmp(HEAPKEY k1, HEAPKEY k2) {
 
-	new->quantity[mode] = getQuant(s);
-	new->billed[mode]   = getPrice(s) * new->quantity[mode];
-	new->product        = cloneProduct(p);
-	
-	return new;
-}
+	int r, *q1 = k1->key, *q2 = k2->key;
 
-static int quantCmp(int* q1, int* q2) {
+	r = *q1 - *q2;
 
-	return *q1 - *q2;
+	if (r == 0) {
+		/* Só são iguais se o produto for o mesmo */
+		if (strcmp(k1->product, k2->product) != 0) r = -1;
+	}
+
+	return r;
 }
 
 static STOCK addToStock(STOCK stk, SALE s) {
-	PRODUCT p = getProduct(s);
+	PRODUCT product = getProduct(s);
 	int mode = getMode(s);
 
 	stk->quantity[mode] = getQuant(s);
 	stk->billed[mode]   = getPrice(s) * stk->quantity[mode];
-	stk->product        = cloneProduct(p);
 	
+	if (isEmptyProduct(stk->product)) stk->product = cloneProduct(product);
+
 	return stk;
 }
