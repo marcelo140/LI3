@@ -32,8 +32,8 @@ static void query10();
 static void query11();
 static void query12();
 static void presentList(PRINTSET ps);
-static void presentCatSet (CATSET* cs,int branches, int page, int total, int* cont);
-static void presentPSet (PRODUCTSET ps, int page, int total, int* cont);
+static void presentCatalogSet (CATSET* cs,int branches, int page, int total, int* cont);
+static void presentProductSet (PRODUCTSET ps, int page, int total, int* cont);
 
 /*Devolve numero de comandos executados */
 int interpreter(FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat) {
@@ -123,8 +123,8 @@ static void presentList(PRINTSET ps) {
 
 		printf(":::::::::::: PÁGINA %d de %d ::::::::::::\n\n", cpage, totalPages);
 
-		if (ps.type == TYPE_CATSET) presentCatSet(ps.set, ps.setNums, cpage, total, &cont);
-		else if (ps.type == TYPE_PSET) presentPSet(ps.set, cpage, total, &cont);
+		if (ps.type == TYPE_CATSET) presentCatalogSet(ps.set, ps.setNums, cpage, total, &cont);
+		else if (ps.type == TYPE_PSET) presentProductSet(ps.set, cpage, total, &cont);
 
 
 		printf(":::::::::::::::::::::::::::::::::::::::::\n");
@@ -163,24 +163,24 @@ static void presentList(PRINTSET ps) {
 	}
 }
 
-static void presentPSet (PRODUCTSET ps, int page, int total, int* cont) {
+static void presentProductSet (PRODUCTSET ps, int page, int total, int* cont) {
 	int i;
-	char *str;
+	char str[10];
 	PRODUCT p;
 	*cont = (page-1) * LINES_NUM;
 
 	for (i=0; i < LINES_NUM && *cont < total; *cont += 1, i++) {
 
-		p = getPSetData(ps, (page -1) * LINES_NUM + i);
-		str = fromProduct(p);
+		p = getProductByPos(ps, (page -1) * LINES_NUM + i);
+		fromProduct(p, str);
 
 		printf("\t\t%s\n", str);
-		free(str);
+		
 		freeProduct(p);
 	}
 }
 
-static void presentCatSet (CATSET* cs,int branches, int page, int total, int* cont) {
+static void presentCatalogSet (CATSET* cs,int branches, int page, int total, int* cont) {
 	int i, j;
 	char *str;
 	*cont = (page-1) * LINES_NUM;
@@ -214,7 +214,7 @@ static void query2(PRODUCTCAT pcat) {
 
 	char answ;
 	PRINTSET ps;
-	PRODUCTSET prodS = initPSet(100);
+	PRODUCTSET prodS = initProductSet(100);
 
 	do {
 		printf("\nLetra: ");
@@ -222,16 +222,16 @@ static void query2(PRODUCTCAT pcat) {
 		if (answ == 'q') return;
 	} while (answ < 'A' && answ > 'z');
 
-	prodS = fillPSet(pcat, prodS, answ);
+	prodS = fillProductSet(pcat, prodS, answ);
 
 	ps.setNums = 1;
 	ps.type = TYPE_PSET;
-	ps.size = getPSetSize(prodS);
+	ps.size = getProductSetSize(prodS);
 	ps.set = prodS;
 
 	presentList(ps);
 
-	freePSet(prodS);
+	freeProductSet(prodS);
 }
 
 static void query3(FATGLOBAL fat) {
@@ -304,11 +304,11 @@ static void query4(FATGLOBAL fat) {
 	cs = notSold(fat, mode);
 	printf("%d\n", mode);
 
-	max = getCatSetSize(cs[0]);
+	max = getCatalogSetSize(cs[0]);
 
 	if (mode != 1)
 		for (i=0; i < BRANCHES; i++) {
-			tmp = getCatSetSize(cs[i]);
+			tmp = getCatalogSetSize(cs[i]);
 			max = (tmp > max) ? tmp : max;
 		}
 

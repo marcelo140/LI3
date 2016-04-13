@@ -8,12 +8,13 @@
 #include "clients.h"
 #include "products.h"
 
-#define M_PRODUCTS 0
-#define M_CLIENTS 1
+int loadSales    (FILE *file,
+                  FATGLOBAL fat, 
+                  PRODUCTCAT products, 
+                  CLIENTCAT clients, 
+                  int *failed);
 
-PRODUCTCAT writePCat(FILE *file, PRODUCTCAT cat, int *num);
-CLIENTCAT writeCCat(FILE *file, CLIENTCAT cat, int *num);
-
-int checkSales (FILE *file, FATGLOBAL fat, PRODUCTCAT products, CLIENTCAT clients, int *sucLn, int *failLn);
+int loadProducts (FILE *file, PRODUCTCAT cat);
+int loadClients  (FILE *file, CLIENTCAT cat);
 
 #endif
