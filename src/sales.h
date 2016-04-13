@@ -18,7 +18,7 @@ SALE    initSale    ();
 REVENUE initRevenue ();
 
 SALE    updateSale    (SALE s, PRODUCT p, CLIENT c, double price, int quant, int month, int branch, int mode);
-SALE    readSale      (SALE s, char *line);
+SALE    readSale      (SALE s, PRODUCT p, CLIENT c, char *line);
 REVENUE addSale       (REVENUE r, SALE s);
 REVENUE updateRevenue (REVENUE r, int month, int branch, int MODE, double billed, int quantity); 
 REVENUE addBilled     (REVENUE r, int month, int branch, int MODE, double value);
@@ -43,7 +43,7 @@ int     getBranchQuant  (REVENUE r, int branch, int *normal, int *promo);
 int     getMonthQuant   (REVENUE r, int month,  int *normal, int *promo);
 int     getQuantity     (REVENUE r, int month, int branch, int MODE);
 
-void freeSale    (SALE s, int mode);
+void freeSale    (SALE s);
 void freeRevenue (REVENUE r);
 
 #endif

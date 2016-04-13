@@ -1,5 +1,5 @@
-#ifndef __PRODUCTS_H__
-#define __PRODUCTS_H__
+#ifndef __PRODUCTS__
+#define __PRODUCTS__
 
 #include "catalog.h"
 #include "generic.h"

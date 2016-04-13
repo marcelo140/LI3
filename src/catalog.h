@@ -31,14 +31,17 @@ bool lookUpCatalog (CATALOG c, int i, char *hash);
 int  countCatElems (CATALOG c, int i);
 int  countAllElems  (CATALOG c);
 
-CATSET initCatSet (int n);
-CATSET fillCatSet (CATALOG cat, CATSET cs, int i);
-CATSET allCatSet  (CATALOG cat, CATSET cs);
+CATSET initCatalogSet (int n);
+CATSET fillCatalogSet (CATALOG cat, CATSET cs, int i);
+CATSET allCatalogSet  (CATALOG cat, CATSET cs);
 CATSET contcpy    (CATSET dest, CATSET src, int pos);
+
+CATSET unionCatalogDataSets (CATSET dest, CATSET source);
+CATSET diffCatalogDataSets  (CATSET dest, CATSET source);
 
 char *getKeyPos    (CATSET cs, int pos);
 void *getContPos   (CATSET cs, int pos);
-int  getCatSetSize (CATSET cs); 
-void freeCatSet    (CATSET cs);
+int  getCatalogSetSize (CATSET cs); 
+void freeCatalogSet    (CATSET cs);
 
 #endif

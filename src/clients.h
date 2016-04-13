@@ -1,5 +1,5 @@
-#ifndef __CLIENTS_H__
-#define __CLIENTS_H__
+#ifndef __CLIENTS__
+#define __CLIENTS__
 
 #include "generic.h"
 #include "catalog.h"
