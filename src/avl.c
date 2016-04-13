@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
-#include "queue.h"
+
 #include "avl.h"
 
 #define HASH_SIZE 10
@@ -151,41 +151,6 @@ void *replaceAVL(AVL tree, char *hash, void *content) {
 	return oldContent;
 }
 
-/**
- * Devolve um clone de uma dada AVL, copiando o seu conteúdo com uma dada função
- * @param p AVL a clonar
- * @param cloneCntt Função auxiliar para clonar o conteúdo.
- * @return Nova AVL
- */
-/**
-AVL cloneAVL(AVL tree, void* (*init)(), void* (*join) (void*, void*),
-             bool (*equals)(void*, void*), void* (*clone)(void*), void (*free)  (void *)){
-
-	QUEUE q = initQueue();
-	AVL new;
-	NODE n;
-	void* cntt = NULL;
-
-	new = initAVL(init, join, equals, clone, free);
-	n = tree->head;
-
-	q = enqueue(q, n);	
-
-	while((n = dequeue(q))) {
-
-		if (tree->clone) 
-			cntt = tree->clone(n->content);
-
-		new = insertAVL(new, n->hash, cntt);
-		
-		if (n->left)  q = enqueue(q,n->left);
-		if (n->right) q = enqueue(q,n->right);
-	}
-
-	freeQueue(q);
-	return new; 
-}
-*/
 AVL cloneAVL(AVL tree, void* (*init)(), void* (*join) (void*, void*),
              bool (*equals)(void*, void*), void* (*clone)(void*), void (*free)  (void *)){
 

@@ -4,7 +4,7 @@ EXTRA_TESTER_FILES := $(patsubst %Test.c, ../obj/%.o, $(wildcard *Test.c))
 CFLAGS := -g
 
 tester: $(TESTER_FILES) $(EXTRA_TESTER_FILES)
-	$(CC) -g -o ../$@ ../src/queue.c ../src/products.c ../src/clients.c $^
+	$(CC) -g -o ../$@ ../src/products.c ../src/clients.c $^
 
 obj/%.o: %.c
 	@mkdir -p obj
