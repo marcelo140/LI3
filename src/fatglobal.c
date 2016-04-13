@@ -45,11 +45,11 @@ FATDATA initFatdata() {
  * @return Faturação com a nova venda
  */
 FATGLOBAL addFat(FATGLOBAL fat, SALE s) {
-	char *prod = fromProduct(getProduct(s));
+	char prod[10];
 
+	fromProduct(getProduct(s), prod);
 	fat->cat = updateCatalog(fat->cat, prod[0] - 'A', prod, s);
 
-	free(prod);
 	return fat;
 }
 
@@ -92,8 +92,8 @@ void monthRange(FATGLOBAL fat, int min, int max, int* quantT, double* billedT) {
 	billed = 0;
 	quant = 0;
 
-	cs = initCatSet(size);
-	cs = allCatSet(fat->cat, cs);
+	cs = initCatalogSet(size);
+	cs = allCatalogSet(fat->cat, cs);
 
 	for(i = 0; i < size; i++) {
 		r = getContPos(cs, i);
@@ -111,8 +111,8 @@ void monthRange(FATGLOBAL fat, int min, int max, int* quantT, double* billedT) {
 }
 
 CATSET* notSold(FATGLOBAL fat, int mode) {
-	CATSET cs = initCatSet(countAllElems(fat->cat));
-	cs = allCatSet(fat->cat, cs);
+	CATSET cs = initCatalogSet(countAllElems(fat->cat));
+	cs = allCatalogSet(fat->cat, cs);
 
 	if (mode == BRANCHES)
 		return notSoldBranch(cs);
@@ -125,10 +125,10 @@ static CATSET* notSoldTotal(CATSET cs) {
 	REVENUE rev;
 	int i, size;
 
-	size = getCatSetSize(cs);
+	size = getCatalogSetSize(cs);
 	res = malloc(sizeof(*res));
 
-	res[0] = initCatSet(1000);
+	res[0] = initCatalogSet(1000);
 
 	for(i = 0; i < size; i++) {
 		rev = getContPos(cs, i);
@@ -145,11 +145,11 @@ static CATSET* notSoldBranch(CATSET cs) {
 	REVENUE rev;
 	int i, branch, size;
 
-	size = getCatSetSize(cs);
+	size = getCatalogSetSize(cs);
 	res = malloc(sizeof(*res) * BRANCHES);
 
 	for(branch = 0; branch < BRANCHES; branch++)
-		res[branch] = initCatSet(1000);
+		res[branch] = initCatalogSet(1000);
 
 	for(i = 0; i < size; i++){
 		rev = getContPos(cs, i);
