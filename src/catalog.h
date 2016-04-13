@@ -3,8 +3,8 @@
 
 #include "generic.h"
 
-typedef struct catalog *CATALOG;
-typedef struct catset  *CATSET;
+typedef struct catalog      *CATALOG;
+typedef struct catalog_set  *CATSET;
 
 CATALOG initCatalog (int n,
 					 void* (*init)   (), 
@@ -18,17 +18,18 @@ CATALOG cloneCat    (CATALOG cat,
                      void* (*clone)  (void*),
                      void  (*free)   (void*));
 
-CATALOG insertCatalog (CATALOG c, int i, char* hash, void* content);
-CATALOG updateCatalog (CATALOG c, int i, char* hash, void* content);
-void*   addCatalog    (CATALOG c, int index, char *hash);
+CATALOG insertCatalog  (CATALOG c, int i, char* hash, void* content);
+void*   replaceCatalog (CATALOG c, int i, char* hash, void* content);
+void*   getCatContent  (CATALOG c, int i, char* hash);
 
-void* replaceCatalog (CATALOG c, int i, char* hash, void* content);
-void* getCatContent  (CATALOG c, int i, char* hash);
-void  freeCatalog    (CATALOG c);
+void*   addCatalog     (CATALOG c, int index, char *hash);
 
 bool lookUpCatalog (CATALOG c, int i, char* hash);
-int  countCatElems (CATALOG c, int i);
+int  countPosElems (CATALOG c, int i);
 int  countAllElems (CATALOG c);
+
+void freeCatalog (CATALOG c);
+
 
 CATSET initCatalogSet (int n);
 CATSET fillCatalogSet (CATALOG cat, CATSET cs, int i);

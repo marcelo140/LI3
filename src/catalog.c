@@ -8,7 +8,7 @@ struct catalog{
 	int size;
 };
 
-struct catset {
+struct catalog_set {
 	DATASET set;
 };
 
@@ -147,7 +147,7 @@ void freeCatalog(CATALOG c){
 }
 
 CATSET initCatalogSet(int n) {
-	CATSET cs = malloc(sizeof(struct catset));
+	CATSET cs = malloc(sizeof(*cs));
 	cs->set = initDataSet(n);
 
 	return cs;

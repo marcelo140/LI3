@@ -71,7 +71,7 @@ bool lookUpProduct(PRODUCTCAT productCat, PRODUCT product) {
  * @return Número de elementos
  */
 int countProducts(PRODUCTCAT productCat, char index) {
-	return countCatElems(productCat->cat, index);
+	return countPosElems(productCat->cat, index);
 }
 
 CATALOG prodToCat(PRODUCTCAT productCat) {
