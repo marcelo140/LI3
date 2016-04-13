@@ -73,8 +73,10 @@ CATALOG cloneCat(CATALOG cat, void* (*init)(), bool (*equals)(void*, void*), voi
 	c->root = malloc(sizeof(*c->root) * cat->size);
 	c->size = cat->size;
 
-	for (i = 0; i < cat->size; i++)
-		c->root[i] = cloneAVL(cat->root[i], init, equals, clone, free);
+	for (i = 0; i < cat->size; i++){
+		c->root[i] = cloneAVL(cat->root[i]);
+		changeOperations(c->root[i], init, equals, clone, free);
+	}
 
 	return c;
 }

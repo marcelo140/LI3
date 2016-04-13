@@ -8,8 +8,8 @@
 typedef enum balance { LH, EH, RH } Balance;
 
 typedef struct node {
-	char *hash;
-	void *content;
+	char* hash;
+	void* content;
 	struct node *left, *right;
 	Balance bal;
 } *NODE;
@@ -24,23 +24,25 @@ struct avl {
 	void  (*free)   (void *content);
 };
 
-struct dataSet {
+struct data_set {
 	int size;
 	int pos;
-	NODE *set;
+	NODE* set;
 };
 
+static NODE insertNode(NODE node, NODE new, int *update, NODE* last);
 static NODE newNode(char *hash, void *content, NODE left, NODE right);
-static NODE rotateRight(NODE node);
-static NODE rotateLeft(NODE node);
-static NODE balanceRight(NODE node);
-static NODE balanceLeft(NODE node);
 static NODE insertRight(NODE node, NODE new, int *update, NODE *last);
 static NODE insertLeft(NODE node, NODE new, int *update, NODE *last);
-static NODE insertNode(NODE node, NODE new, int *update, NODE* last);
+static NODE balanceRight(NODE node);
+static NODE balanceLeft(NODE node);
+static NODE rotateRight(NODE node);
+static NODE rotateLeft(NODE node);
 static NODE cloneNode(NODE n, void* (*clone)(void *));
+
 static bool equalsNode(NODE a, NODE b, bool (*equals)(void*, void*));
 static void freeNode(NODE node, void (*freeContent)(void *));
+
 static DATASET insertDataSet (DATASET ds, NODE n);
 static DATASET addDataSetAux(DATASET ds, NODE node);
 
@@ -48,13 +50,29 @@ static DATASET addDataSetAux(DATASET ds, NODE node);
  * Inicia uma nova AVL.
  * @return Nova AVL
  */
-AVL initAVL(void* (*init) (), bool (*equals)(void*, void*), 
-            void* (*clone)(void*), void (*free)(void *)){
+AVL initAVL(void* (*init)   (),
+            bool  (*equals) (void*, void*), 
+            void* (*clone)  (void*),
+            void  (*free)   (void *)){
 
-	AVL tree = malloc (sizeof (struct avl));
+	AVL tree = malloc (sizeof (*tree));
 
 	tree->head = NULL;
 	tree->size = 0;
+
+	tree->init = init;
+	tree->equals = equals;
+	tree->clone = clone;
+	tree->free = free;
+
+	return tree;
+}
+
+AVL changeOperations(AVL tree,
+                     void* (*init)   (void*, void*),
+                     bool  (*equals) (void*, void*),
+                     void* (*clone)  (void*),
+                     void  (*free)   (void*)){
 
 	tree->init = init;
 	tree->equals = equals;
@@ -72,47 +90,29 @@ AVL initAVL(void* (*init) (), bool (*equals)(void*, void*),
  * @return AVL com o novo nodo.
  */
 AVL insertAVL(AVL tree, char *hash, void *content) {
-	int update = 0;
 	NODE new, last;
+	int update;
 
 	new = newNode(hash, content, NULL, NULL);
+	update = 0;
 
 	tree->head = insertNode(tree->head, new, &update, &last);
-	if (last == new)
-		tree->size++;
-	else
-		 free(new);
+
+	if (last == new) tree->size++;
+	else free(new);
 
 	return tree;
 }
 
-/**
- * Atualiza o conteúdo de um nodo da AVL caracterizado por uma Hash
- * @param tree AVL
- * @param hsh Hash do nodo
- * @param cntt Conteúdo novo
- * @return AVL com o nodo alterado
- */
+AVL cloneAVL(AVL tree) {
 
-void *addAVL(AVL tree, char *hash) {
-	int update = 0;
-	NODE new, last;
+	AVL new = initAVL(tree->init, tree->equals, tree->clone, tree->free);
+	new->size = tree->size;
+	new->head = cloneNode(tree->head, tree->clone);
 
-	new  = newNode(hash, NULL, NULL, NULL);
-
-	tree->head = insertNode(tree->head, new, &update, &last);
-
-	if (last == new){
-		tree->size++;
-		new->content = tree->init();
-		return new;
-	}else{
-		free(new);
-		if (!last->content)
-			last->content = tree->init();
-		return last->content;
-	} 
+	return new;
 }
+
 
 /**
  * Substitui o conteúdo atual do elemento com a hash indicada com o novo conteúdo, libertando o conteúdo antigo
@@ -121,13 +121,14 @@ void *addAVL(AVL tree, char *hash) {
  * @param content Novo conteúdo do elemento
  * @result Conteúdo antigo do nodo
  */
-void *replaceAVL(AVL tree, char *hash, void *content) {
+void* replaceAVL(AVL tree, char* hash, void* content) {
+	void* oldContent;
 	NODE p;
-	void *oldContent = NULL;
 	int res;
 	bool stop;
 
 	p = tree->head;
+	oldContent = NULL;
 	stop = false;
 
 	while(p && !stop) {
@@ -139,7 +140,6 @@ void *replaceAVL(AVL tree, char *hash, void *content) {
 			p = p->left;
 		else {
 			oldContent = p->content;
-
 			p->content = content;
 			stop = true;
 		}
@@ -148,53 +148,14 @@ void *replaceAVL(AVL tree, char *hash, void *content) {
 	return oldContent;
 }
 
-AVL cloneAVL(AVL tree, void* (*init)(),
-             bool (*equals)(void*, void*), void* (*clone)(void*), void (*free)  (void *)){
-
-	AVL new = initAVL(init, equals, clone, free);
-	new->size = tree->size;
-	new->head = cloneNode(tree->head, tree->clone);
-
-	return new;
-}
-
-NODE cloneNode(NODE n, void* (*clone)(void *)) {
-
-	if (n) {
-		NODE new;
-	
-		new = malloc(sizeof(*new));
-		new->hash = malloc(sizeof(char) * HASH_SIZE);
-	
-		strncpy(new->hash, n->hash, HASH_SIZE);
-		new->bal = n->bal;
-		new->content = (clone) ? clone(n->content) : NULL;
-		new->left = cloneNode(n->left, clone);
-		new->right = cloneNode(n->right, clone);
-	
-		return new;
-	}
-
-	return NULL;
-}
-
-/**
- * Conta o número de elementos presentes na árvore
- * @param tree Árvore
- * @return Número de elementos
- */
-int countNodes(AVL tree) {
-	return tree->size;
-}
-
 /**
  * @param tree Árvore a ser procurada
  * @param hash Hash do element a encontrar
  * @return se existir retorna o conteúdo do elemento, senão NULL
  */
 void *getAVLcontent(AVL tree, char *hash) {
-	int res;
 	NODE p = tree->head;
+	int res;
 	
 	while(p) {
 		res = strcmp(hash, p->hash);
@@ -210,47 +171,26 @@ void *getAVLcontent(AVL tree, char *hash) {
 	return NULL;
 }
 
-/**
- * Verifica se uma dada AVL é vazia ou não.
- * @param tree Árvore a ser verificada
- * @return true caso seja vazia, false caso contrário.
- */
-bool isEmptyAVL(AVL tree) {
-	return (tree->size == 0);
-}
+void* addAVL(AVL tree, char* hash) {
+	NODE new, last;
+	int update;
 
-/**
- * Verifica se duas árvores são iguais
- * @param a Árvore alvo da verificação
- * @param b Árvore alvo da verificação
- * @result true caso sejam iguais, false caso contrário
- */
-bool equalsAVL(AVL a, AVL b) {
-	if (a->equals == b->equals)
-		return equalsNode(a->head, b->head, a->equals);
+	new  = newNode(hash, NULL, NULL, NULL);
+	update = 0;
 
-	return false;
-}
+	tree->head = insertNode(tree->head, new, &update, &last);
 
-bool equalsNode(NODE a, NODE b, bool (*equals)(void*, void*)) {
-	bool sameHash, sameContent = true;
+	if (last == new){
+		tree->size++;
+		new->content = tree->init();
+		return new;
+	}
 
-	if (!a && !b)
-		return true;
+	if (!last->content)
+		last->content = tree->init();
 
-	if (!a || !b)
-		return false;
-
-	sameHash = !strcmp(a->hash, b->hash);
-
-	if (equals)
-		sameContent = equals(a->content, b->content);
-
-	if (sameHash && sameContent)
-		return equalsNode(a->left,  b->left,  equals) && 
-			   equalsNode(a->right, b->right, equals);
-
-	return false;
+	free(new);
+	return last->content;
 }
 
 /**
@@ -278,6 +218,38 @@ bool lookUpAVL(AVL tree, char *hash) {
 }
 
 /**
+ * Verifica se duas árvores são iguais
+ * @param a Árvore alvo da verificação
+ * @param b Árvore alvo da verificação
+ * @result true caso sejam iguais, false caso contrário
+ */
+bool equalsAVL(AVL a, AVL b) {
+	if (a->equals == b->equals)
+		return equalsNode(a->head, b->head, a->equals);
+
+	return false;
+}
+
+
+/**
+ * Verifica se uma dada AVL é vazia ou não.
+ * @param tree Árvore a ser verificada
+ * @return true caso seja vazia, false caso contrário.
+ */
+bool isEmptyAVL(AVL tree) {
+	return (tree->size == 0);
+}
+
+/**
+ * Conta o número de elementos presentes na árvore
+ * @param tree Árvore
+ * @return Número de elementos
+ */
+int countNodes(AVL tree) {
+	return tree->size;
+}
+
+/**
  * Liberta o espaço ocupado por uma AVL
  * @param p AVL a libertar
  */
@@ -288,20 +260,28 @@ void freeAVL(AVL tree) {
 	}	
 }
 
-static void freeNode(NODE node, void (*freeContent)(void*)) {
-	if (node) {
-		freeNode(node->left, freeContent);
-		freeNode(node->right, freeContent);
-	
-		free(node->hash);
 
-		if (freeContent)
-			freeContent(node->content);
+DATASET initDataSet(int n) {
+	DATASET new = malloc(sizeof(*new));
 
-		free(node);
-	}
+	new->size = n;
+	new->pos = 0;
+	new->set = malloc(sizeof(NODE) * n);
+
+	return new;
 }
 
+DATASET addDataSet(DATASET ds, AVL tree) {
+	ds = addDataSetAux(ds, tree->head);
+	return ds;	
+}
+
+DATASET datacpy (DATASET dest, DATASET src, int i) {
+	NODE n = src->set[i];
+	insertDataSet(dest, n);
+
+	return dest;
+}
 
 DATASET unionDataSets(DATASET dest, DATASET source) {
 	DATASET new = initDataSet(100);
@@ -381,6 +361,29 @@ DATASET diffDataSets(DATASET dest, DATASET source) {
 	free(new);
 
 	return new;
+}
+
+void* getDataPos(DATASET ds, int pos) {
+	if (pos < 0 || pos >= ds->pos)
+		return NULL;
+
+	return ds->set[pos]->content;
+}
+
+char* getHashPos(DATASET ds, int pos) {
+	if (pos < 0 || pos >= ds->pos)
+		return NULL;
+
+	return ds->set[pos]->hash;
+}
+
+int getDataSetSize(DATASET ds) { 
+	return ds->pos;
+}
+
+void freeDataSet(DATASET ds) {
+	free(ds->set);
+	free(ds);
 }
 
 static NODE newNode(char *hash, void *content, NODE left, NODE right) {
@@ -561,14 +564,59 @@ static NODE insertNode(NODE node, NODE new, int *update, NODE *last) {
 	return node;
 }
 
-DATASET initDataSet(int n) {
-	DATASET new = malloc(sizeof(*new));
+static NODE cloneNode(NODE n, void* (*clone)(void *)) {
 
-	new->size = n;
-	new->pos = 0;
-	new->set = malloc(sizeof(NODE) * n);
+	if (n) {
+		NODE new;
+	
+		new = malloc(sizeof(*new));
+		new->hash = malloc(sizeof(char) * HASH_SIZE);
+	
+		strncpy(new->hash, n->hash, HASH_SIZE);
+		new->bal = n->bal;
+		new->content = (clone) ? clone(n->content) : NULL;
+		new->left = cloneNode(n->left, clone);
+		new->right = cloneNode(n->right, clone);
+	
+		return new;
+	}
 
-	return new;
+	return NULL;
+}
+
+static bool equalsNode(NODE a, NODE b, bool (*equals)(void*, void*)) {
+	bool sameHash, sameContent = true;
+
+	if (!a && !b)
+		return true;
+
+	if (!a || !b)
+		return false;
+
+	sameHash = !strcmp(a->hash, b->hash);
+
+	if (equals)
+		sameContent = equals(a->content, b->content);
+
+	if (sameHash && sameContent)
+		return equalsNode(a->left,  b->left,  equals) && 
+			   equalsNode(a->right, b->right, equals);
+
+	return false;
+}
+
+static void freeNode(NODE node, void (*freeContent)(void*)) {
+	if (node) {
+		freeNode(node->left, freeContent);
+		freeNode(node->right, freeContent);
+
+		free(node->hash);
+
+		if (freeContent)
+			freeContent(node->content);
+
+		free(node);
+	}
 }
 
 static DATASET insertDataSet(DATASET ds, NODE data) {
@@ -584,12 +632,7 @@ static DATASET insertDataSet(DATASET ds, NODE data) {
 	return ds;
 }
 
-DATASET addDataSet(DATASET ds, AVL tree) {
-	ds = addDataSetAux(ds, tree->head);
-	return ds;	
-}
-
-DATASET addDataSetAux(DATASET ds, NODE node) {
+static DATASET addDataSetAux(DATASET ds, NODE node) {
 
 	if (node) {
 		ds = addDataSetAux(ds, node->left);
@@ -598,34 +641,4 @@ DATASET addDataSetAux(DATASET ds, NODE node) {
 	}
 
 	return ds;
-}
-
-void* getDataPos(DATASET ds, int pos) {
-	if (pos < 0 || pos >= ds->pos)
-		return NULL;
-
-	return ds->set[pos]->content;
-}
-
-char* getHashPos(DATASET ds, int pos) {
-	if (pos < 0 || pos >= ds->pos)
-		return NULL;
-
-	return ds->set[pos]->hash;
-}
-
-int getDataSetSize(DATASET ds) { 
-	return ds->pos;
-}
-
-DATASET datacpy (DATASET dest, DATASET src, int i) {
-	NODE n = src->set[i];
-	insertDataSet(dest, n);
-
-	return dest;
-}
-
-void freeDataSet(DATASET ds) {
-	free(ds->set);
-	free(ds);
 }
