@@ -4,7 +4,6 @@
 #include "avlTest.h"
 #include "salesTest.h"
 #include "heapTest.h"
-#include "hashTTest.h"
 
 void printHeader(const char *str);
 
