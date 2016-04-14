@@ -6,7 +6,7 @@
 #define CATALOG_SIZE 26
 #define BUFFER_SIZE 10
 
-
+#define INDEX(p) (p[0] - 'A')
 
 struct faturacao {
 	CATALOG cat;
@@ -52,7 +52,7 @@ FATGLOBAL addFat(FATGLOBAL fat, SALE s) {
 	char prod[10];
 
 	fromProduct(getProduct(s), prod);
-	r = getCatContent(fat->cat, prod[0] - 'A', prod);
+	r = getCatContent(fat->cat, INDEX(prod), prod);
 	addSale(r, s);
 
 	return fat;
@@ -65,7 +65,7 @@ FATDATA monthRevenue(FATGLOBAL fat, char *product, int month, int mode) {
 	int branch, quantN, quantP;
 
 	f = initFatdata();
-	r = getCatContent(fat->cat, product[0]-'A', product);
+	r = getCatContent(fat->cat, INDEX(product), product);
 
 	if (mode == TOTAL) {
 		getMonthQuant(r, month, &quantN, &quantP);
