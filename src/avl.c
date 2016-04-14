@@ -30,10 +30,10 @@ struct data_set {
 	NODE* set;
 };
 
-static NODE insertNode(NODE node, NODE new, int *update, NODE* last);
+static NODE insertNode(NODE node, char* hash, void* content, int *update, NODE* last);
 static NODE newNode(char *hash, void *content, NODE left, NODE right);
-static NODE insertRight(NODE node, NODE new, int *update, NODE *last);
-static NODE insertLeft(NODE node, NODE new, int *update, NODE *last);
+static NODE insertRight(NODE node, char* hash, void* content, int *update, NODE *last);
+static NODE insertLeft(NODE node, char* hash, void* content, int *update, NODE *last);
 static NODE balanceRight(NODE node);
 static NODE balanceLeft(NODE node);
 static NODE rotateRight(NODE node);
@@ -90,16 +90,14 @@ AVL changeOperations(AVL tree,
  * @return AVL com o novo nodo.
  */
 AVL insertAVL(AVL tree, char *hash, void *content) {
-	NODE new, last;
+	NODE last;
 	int update;
 
-	new = newNode(hash, content, NULL, NULL);
 	update = 0;
 
-	tree->head = insertNode(tree->head, new, &update, &last);
+	tree->head = insertNode(tree->head, hash, content, &update, &last);
 
-	if (last == new) tree->size++;
-	else free(new);
+	if (update != -1) tree->size++;
 
 	return tree;
 }
@@ -175,24 +173,19 @@ void *getAVLcontent(AVL tree, char *hash) {
 }
 
 void* addAVL(AVL tree, char* hash) {
-	NODE new, last;
+	NODE last;
 	int update;
 
-	new  = newNode(hash, NULL, NULL, NULL);
 	update = 0;
 
-	tree->head = insertNode(tree->head, new, &update, &last);
+	tree->head = insertNode(tree->head, hash, NULL, &update, &last);
 
-	if (last == new){
+	if (update != -1)
 		tree->size++;
-		new->content = tree->init();
-		return new->content;
-	}
 
 	if (!last->content)
 		last->content = tree->init();
 
-	free(new);
 	return last->content;
 }
 
@@ -499,10 +492,10 @@ static NODE balanceLeft(NODE node) {
 }
 
 /* Insere um novo Nodo à direita.*/
-static NODE insertRight(NODE node, NODE new, int *update, NODE *last) {
-	node->right = insertNode(node->right, new, update, last);
+static NODE insertRight(NODE node, char* hash, void* content, int *update, NODE *last) {
+	node->right = insertNode(node->right, hash, content, update, last);
 
-	if (*update) {
+	if (*update == 1) {
 		switch (node->bal) {
 			case LH:
 				node->bal = EH;
@@ -523,10 +516,10 @@ static NODE insertRight(NODE node, NODE new, int *update, NODE *last) {
 }
 
 /* Insere um novo Nodo à esquerda. */
-static NODE insertLeft(NODE node, NODE new, int *update, NODE *last) {
-	node->left = insertNode(node->left, new, update, last);
+static NODE insertLeft(NODE node, char* hash, void* content, int *update, NODE *last) {
+	node->left = insertNode(node->left, hash, content, update, last);
 
-	if (*update) {
+	if (*update == 1) {
 		switch (node->bal) {
 			case RH:
 				node->bal = EH;
@@ -547,21 +540,24 @@ static NODE insertLeft(NODE node, NODE new, int *update, NODE *last) {
 }
 
 /* Insere o novo Nodo na AVL.*/
-static NODE insertNode(NODE node, NODE new, int *update, NODE *last) {
+static NODE insertNode(NODE node, char* hash, void* content, int *update, NODE *last) {
+	NODE new;
 	int res;
 
 	if (!node) {
 		*update = 1;
+		new = newNode(hash, content, NULL, NULL);
 		*last = new;
 		return new;
 	}
 
-	res = strcmp(new->hash, node->hash);
+	res = strcmp(hash, node->hash);
 	if (res > 0)
-		node = insertRight(node, new, update, last);
+		node = insertRight(node, hash, content, update, last);
 	else if (res < 0)
-		node = insertLeft(node, new, update, last);
+		node = insertLeft(node, hash, content, update, last);
 	else {
+		*update = -1;
 		*last = node;
 		return node;
 	}
