@@ -1,5 +1,6 @@
 #include <stdlib.h>
 
+#include "hashT.h"
 #include "heap.h"
 
 #define BASE_SIZE 100
@@ -24,6 +25,7 @@ typedef struct heapNode {
 
 struct heap {
 	struct heapNode **list;
+	HASHTABLE positions;
 	int size;
 	int capacity;
 	void* (*init) ();
