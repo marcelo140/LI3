@@ -14,9 +14,9 @@
 #define NP 2
 #define BRANCHES 3
 
-struct filial {
-	CATALOG clients[BRANCHES];
-	CATALOG products[BRANCHES];
+struct branch {
+	CATALOG clients;
+	CATALOG products;
 };
 
 typedef struct month_list {
@@ -66,18 +66,16 @@ static void freeClientQuantity(CLIENTQUANT cq);
 
 BRANCHSALES initBranchSales () {
 	BRANCHSALES bs = malloc(sizeof(*bs));
-	int i;
 	
-	for (i=0; i < BRANCHES; i++) {
-		bs->clients[i] = initCatalog(  ALPHA_NUM,
-									   (void* (*) ()) initMonthList,
-									   NULL, NULL,
-									   (void (*) (void*))freeMonthList);
-		bs->products[i] = initCatalog( ALPHA_NUM,
-			   						   (void* (*) ()) initClientQuantity,
-									   NULL, NULL, 
-									   (void (*) (void*)) freeClientQuantity); 
-	} 
+	bs->clients = initCatalog(  ALPHA_NUM,
+							   (void* (*) ()) initMonthList,
+							   NULL, NULL,
+							   (void (*) (void*))freeMonthList);
+	bs->products = initCatalog( ALPHA_NUM,
+			   				   (void* (*) ()) initClientQuantity,
+							   NULL, NULL, 
+							   (void (*) (void*)) freeClientQuantity); 
+	
 	return bs;
 }
 
@@ -94,10 +92,10 @@ BRANCHSALES addSaleToBranch (BRANCHSALES bs, SALE s) {
 
 	branch = getBranch(s);
 
-	ml = addCatalog(bs->clients[branch], INDEX(c[0]), c);
+	ml = addCatalog(bs->clients, INDEX(c[0]), c);
 	ml = addToMonthList(ml, s);
 
-	cq = addCatalog(bs->clients[branch], INDEX(p[0]), p); 
+	cq = addCatalog(bs->clients, INDEX(p[0]), p); 
 	cq = addToClientQuantity(cq, s);
 
 	return bs;

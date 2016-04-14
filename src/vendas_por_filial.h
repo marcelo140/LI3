@@ -4,7 +4,7 @@
 #include "sales.h"
 #include "generic.h"
 
-typedef struct filial *BRANCHSALES;
+typedef struct branch *BRANCHSALES;
 
 BRANCHSALES initBranchSales();
 BRANCHSALES addSaleToBranch (BRANCHSALES bs, SALE s);
