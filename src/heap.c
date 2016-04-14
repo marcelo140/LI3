@@ -57,7 +57,7 @@ HEAP insertHeap(HEAP h, void *key, void *content) {
 	for (i=0; !exist && i < h->size; i++)
 		exist = !COMPARE(LIST[i]->key, key);
 
-	if (exist) h = updateHeap(h, i, content);
+	if (exist) h = updateHeap(h, i-1, content);
 	else {
 		node->key = key;
 		node->content = h->init();

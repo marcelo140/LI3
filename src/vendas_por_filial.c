@@ -10,9 +10,10 @@
 #define ALPHA_NUM 26
 #define NUM_MONTHS 12
 #define NP 2
+#define BRANCHES 3
 
 struct filial {
-	CATALOG clients;
+	CATALOG clients[BRANCHES];
 };
 
 typedef struct month_list {
@@ -52,23 +53,28 @@ static STOCK addToStock(STOCK stk, SALE s);
 
 BRANCHSALES initBranchSales () {
 	BRANCHSALES bs = malloc(sizeof(*bs));
-
-	bs->clients = initCatalog( ALPHA_NUM,
-							   (void* (*) ()) initMonthList,
-							   NULL, NULL,
-							   (void (*) (void*))freeMonthList);
+	int i;
+	
+	for (i=0; i < BRANCHES; i++)
+		bs->clients[i] = initCatalog(  ALPHA_NUM,
+									   (void* (*) ()) initMonthList,
+									   NULL, NULL,
+									   (void (*) (void*))freeMonthList);
 
 	return bs;
 }
 
 BRANCHSALES addSaleToBranch (BRANCHSALES bs, SALE s) {
 	char c[CLIENT_LENGTH];
+	int branch;
 	MONTHLIST ml;
 	CLIENT client = getClient(s);
 
 	fromClient(client, c);
 
-	ml = addCatalog(bs->clients, INDEX(c[0]), c);
+	branch = getBranch(s);
+
+	ml = addCatalog(bs->clients[branch], INDEX(c[0]), c);
 	ml = addToMonthList(ml, s);
 
 	return bs;
