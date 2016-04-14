@@ -52,7 +52,7 @@ FATGLOBAL addFat(FATGLOBAL fat, SALE s) {
 	char prod[10];
 
 	fromProduct(getProduct(s), prod);
-	r = addCatalog(fat->cat, prod[0] - 'A', prod);
+	r = getCatContent(fat->cat, prod[0] - 'A', prod);
 	addSale(r, s);
 
 	return fat;

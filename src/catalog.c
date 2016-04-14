@@ -95,9 +95,7 @@ CATALOG cloneCat(CATALOG cat, void* (*init)   (),
  * @return Conteúdo do elemento
  */
 void* getCatContent(CATALOG c, int i, char *hash) {
-	AVL p = c->root[i];
-
-	return getAVLcontent(p, hash);
+	return getAVLcontent(c->root[i], hash);
 }
 
 /**
