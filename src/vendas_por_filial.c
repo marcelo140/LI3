@@ -6,6 +6,8 @@
 #include "catalog.h"
 #include "heap.h"
 
+#include "avl.h"
+
 #define INDEX(i) i - 'A'
 #define ALPHA_NUM 26
 #define NUM_MONTHS 12
@@ -21,7 +23,7 @@ typedef struct month_list {
 } *MONTHLIST;
 
 typedef struct product_list {
-	HEAP sales;
+	AVL sales;
 	double billed;
 	int quant;
 } *PRODUCTLIST;
@@ -50,6 +52,7 @@ static HEAPKEY createHeapKey(char* product, int key);
 static STOCK initStock(); 
 static int quantCmp(HEAPKEY k1, HEAPKEY k2);
 static STOCK addToStock(STOCK stk, SALE s);
+static void freeStock(STOCK stk); 
 
 BRANCHSALES initBranchSales () {
 	BRANCHSALES bs = malloc(sizeof(*bs));
@@ -115,9 +118,9 @@ static void freeMonthList(MONTHLIST m) {
 static PRODUCTLIST initProductList() {
 	PRODUCTLIST new = malloc (sizeof(*new));
 
-	new->sales = initHeap( (void* (*) ()) initStock,
-						   (int   (*) (void*, void*)) quantCmp,
-						   (void* (*) (void*, void*)) addToStock);
+	new->sales = initAVL( (void* (*) ()) initStock, NULL, NULL, 
+						  (void (*) (void*)) freeStock);
+
 	new->quant = 0;
 	new->billed = 0;
 
@@ -129,12 +132,12 @@ static PRODUCTLIST addToProductList(PRODUCTLIST pl, SALE s) {
 	double billed = quant * getPrice(s);
 	char product[PRODUCT_LENGTH];
 	PRODUCT p = getProduct(s);
-	HEAPKEY hk;
+	STOCK stk;
 
 	fromProduct(p, product);
-	hk = createHeapKey(product, quant);
 
-	insertHeap(pl->sales, hk, s);
+	stk = addAVL(pl->sales, product);
+	addToStock(stk, s);
 
 	pl->billed += billed;
 	pl->quant += quant;
@@ -202,4 +205,9 @@ static STOCK addToStock(STOCK stk, SALE s) {
 	if (isEmptyProduct(stk->product)) stk->product = cloneProduct(product);
 
 	return stk;
+}
+
+static void freeStock(STOCK stk) {
+	freeProduct(stk->product);
+	free(stk);
 }

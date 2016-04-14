@@ -164,8 +164,11 @@ void *getAVLcontent(AVL tree, char *hash) {
 			p = p->right;
 		else if (res < 0)
 			p = p->left;
-		else
+		else{
+			if (tree->init && !p->content)
+				p->content = tree->init();
 			return p->content;
+		}
 	}
 	
 	return NULL;
