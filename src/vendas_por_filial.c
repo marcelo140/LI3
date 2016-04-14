@@ -16,6 +16,7 @@
 
 struct filial {
 	CATALOG clients[BRANCHES];
+	CATALOG products[BRANCHES];
 };
 
 typedef struct month_list {
@@ -39,6 +40,11 @@ typedef struct stock {
 	double billed[NP];
 } *STOCK;
 
+typedef struct clientQuantity {
+	char client[CLIENT_LENGTH];
+	int quantity;
+} *CLIENTQUANT;
+
 static MONTHLIST initMonthList();
 static MONTHLIST addToMonthList(MONTHLIST m, SALE s);
 static void freeMonthList(MONTHLIST m);
@@ -54,31 +60,45 @@ static int quantCmp(HEAPKEY k1, HEAPKEY k2);
 static STOCK addToStock(STOCK stk, SALE s);
 static void freeStock(STOCK stk); 
 
+static CLIENTQUANT initClientQuantity();
+static CLIENTQUANT addToClientQuantity(CLIENTQUANT cq, SALE s); 
+static void freeClientQuantity(CLIENTQUANT cq); 
+
 BRANCHSALES initBranchSales () {
 	BRANCHSALES bs = malloc(sizeof(*bs));
 	int i;
 	
-	for (i=0; i < BRANCHES; i++)
+	for (i=0; i < BRANCHES; i++) {
 		bs->clients[i] = initCatalog(  ALPHA_NUM,
 									   (void* (*) ()) initMonthList,
 									   NULL, NULL,
 									   (void (*) (void*))freeMonthList);
-
+		bs->products[i] = initCatalog( ALPHA_NUM,
+			   						   (void* (*) ()) initClientQuantity,
+									   NULL, NULL, 
+									   (void (*) (void*)) freeClientQuantity); 
+	} 
 	return bs;
 }
 
 BRANCHSALES addSaleToBranch (BRANCHSALES bs, SALE s) {
-	char c[CLIENT_LENGTH];
+	char c[CLIENT_LENGTH], p[PRODUCT_LENGTH];
 	int branch;
 	MONTHLIST ml;
+	CLIENTQUANT cq;
 	CLIENT client = getClient(s);
+	PRODUCT product = getProduct(s);
 
 	fromClient(client, c);
+	fromProduct(product, p);
 
 	branch = getBranch(s);
 
 	ml = addCatalog(bs->clients[branch], INDEX(c[0]), c);
 	ml = addToMonthList(ml, s);
+
+	cq = addCatalog(bs->clients[branch], INDEX(p[0]), p); 
+	cq = addToClientQuantity(cq, s);
 
 	return bs;
 }
@@ -210,4 +230,27 @@ static STOCK addToStock(STOCK stk, SALE s) {
 static void freeStock(STOCK stk) {
 	freeProduct(stk->product);
 	free(stk);
+}
+
+/*  ==========  FUNÇÕES PARA STOCK  =========== */
+
+static CLIENTQUANT initClientQuantity() {
+	CLIENTQUANT new = malloc(sizeof(*new));
+	new->client[0] = '\0';
+	new->quantity = 0;
+
+	return new;
+}
+	
+static CLIENTQUANT addToClientQuantity(CLIENTQUANT cq, SALE s) {
+	int quant = getQuant(s);
+
+	cq->quantity += quant;
+
+	return cq;
+}
+
+
+static void freeClientQuantity(CLIENTQUANT cq) {
+	free(cq);
 }
