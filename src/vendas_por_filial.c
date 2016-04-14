@@ -4,7 +4,6 @@
 #include "products.h"
 #include "clients.h"
 #include "catalog.h"
-#include "heap.h"
 
 #include "avl.h"
 
@@ -29,11 +28,6 @@ typedef struct product_list {
 	int quant;
 } *PRODUCTLIST;
 
-typedef struct heap_key {
-	char product[PRODUCT_LENGTH];
-	int key;
-} *HEAPKEY;
-
 typedef struct stock {
 	PRODUCT product;
 	int quantity[NP];
@@ -53,10 +47,8 @@ static PRODUCTLIST initProductList();
 static PRODUCTLIST addToProductList(PRODUCTLIST pl, SALE s);
 static void freeProductList(PRODUCTLIST pl);
 
-static HEAPKEY createHeapKey(char* product, int key);
 
 static STOCK initStock(); 
-static int quantCmp(HEAPKEY k1, HEAPKEY k2);
 static STOCK addToStock(STOCK stk, SALE s);
 static void freeStock(STOCK stk); 
 
@@ -165,22 +157,7 @@ static PRODUCTLIST addToProductList(PRODUCTLIST pl, SALE s) {
 	return pl;
 }
 
-static HEAPKEY createHeapKey(char *product, int key) {
-	HEAPKEY new = malloc (sizeof(*new));
-
-	new->key = key;
-	strncpy(new->product, product, PRODUCT_LENGTH);
-
-	return new;
-}
-
-/* TODO dar uso a esta freeHeapKey */
-static void freeHeapKey(HEAPKEY hk) {
-	free(hk);
-}
-
 static void freeProductList(PRODUCTLIST pl) {
-	freeHeap(pl->sales);
 	free(pl);
 }
 
@@ -198,21 +175,6 @@ STOCK initStock() {
 	new->product = newProduct();
 
 	return new;
-}
-
-static int quantCmp(HEAPKEY k1, HEAPKEY k2) {
-
-	int r, sub, q1 = k1->key, q2 = k2->key;
-
-	r = strcmp(k1->product, k2->product);
-
-	/* Só são iguais se o produto for o mesmo */
-	if (r != 0)	{
-		sub = q1 - q2;
-		r = (sub == 0) ? -1 : sub;
-	}
-
-	return r;
 }
 
 static STOCK addToStock(STOCK stk, SALE s) {

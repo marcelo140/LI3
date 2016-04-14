@@ -25,7 +25,7 @@ obj/products.o: src/products.h src/catalog.h src/generic.h
 obj/sales.o: src/sales.h src/clients.h src/products.h src/generic.h
 obj/interpreter.o: src/interpreter.h src/clients.h src/products.h
 obj/fatglobal.o: src/sales.h src/generic.h src/fatglobal.h src/products.h src/catalog.h
-obj/vendas_por_filial.o: src/sales.h src/generic.h src/products.h src/clients.h src/catalog.h src/heap.h
+obj/vendas_por_filial.o: src/sales.h src/generic.h src/products.h src/clients.h src/catalog.h 
 
 clearAll: clean
 	-@rm -rf doc
