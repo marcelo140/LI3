@@ -51,7 +51,7 @@ int loadProducts(FILE *file, PRODUCTCAT cat) {
 	return success;
 }
 
-int loadSales(FILE *file, FATGLOBAL fat, BRANCHSALES bs, PRODUCTCAT products, 
+int loadSales(FILE *file, FATGLOBAL fat, BRANCHSALES* bs, PRODUCTCAT products, 
               CLIENTCAT clients, int *failed) {
 
 	char buffer[BUFF_SIZE], *line;
@@ -72,7 +72,7 @@ int loadSales(FILE *file, FATGLOBAL fat, BRANCHSALES bs, PRODUCTCAT products,
 		
 		if (isSale(s, products, clients)) {
 			addFat(fat, s);	
-			addSaleToBranch(bs, s);
+			addSaleToBranch(bs[getBranch(s)], s);
 		 	success++;
 		}
 	}

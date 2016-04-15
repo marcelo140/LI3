@@ -6,7 +6,7 @@
 
 typedef struct branch *BRANCHSALES;
 
-BRANCHSALES initBranchSales();
+BRANCHSALES initBranchSales(CLIENTCAT client);
 BRANCHSALES addSaleToBranch (BRANCHSALES bs, SALE s);
 
 void freeBranchSale(BRANCHSALES bs);

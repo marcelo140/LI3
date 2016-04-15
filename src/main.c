@@ -13,13 +13,10 @@
 int main() {
 	FILE *clients, *products, *sales;
 	FATGLOBAL fat;
-	BRANCHSALES branchSales = initBranchSales();
+	BRANCHSALES branchSales[3];
 	CLIENTCAT clientCat;
 	PRODUCTCAT productCat;
 	int success, failed;
-
-	double time;
-	time_t end, begin;
 
 	clients = fopen(CLIENTS_PATH, "r");
 	products = fopen(PRODUCTS_PATH, "r");
@@ -33,53 +30,35 @@ int main() {
 	clientCat = initClientCat();
 	productCat = initProductCat();
 
-	begin = clock();
+
 	success = loadClients(clients, clientCat);
-	end = clock();
-	time = (double) (end - begin) / CLOCKS_PER_SEC;
-	printf("Clientes analisados: %d (%fs)\n", success, time);
+	printf("Clientes analisados: %d\n", success);
 
 
 	putchar('\n');
 
-	begin = clock();
 	success = loadProducts(products, productCat);
-	end = clock();
-	time = (double) (end - begin) / CLOCKS_PER_SEC;
-	printf("Produtos analisados: %d (%fs)\n", success, time);
+	printf("Produtos analisados: %d\n", success);
 
 	putchar('\n');
 
-	begin = clock();
 	fat = initFat(productCat);
-	end = clock();
-	time = (double) (end - begin) / CLOCKS_PER_SEC;
-	printf("FillFat (%fs)\n", time);
+
+	for( failed = 0; failed < 3; failed++)
+		branchSales[failed] = initBranchSales(clientCat);
 
 	putchar('\n');
 
-	begin = clock();
 	success = loadSales(sales, fat, branchSales, productCat, clientCat, &failed);
-	end = clock();
-	time = (double) (end - begin) / CLOCKS_PER_SEC;
-	printf("Vendas analisadas: %d (%fs)\n", success+failed, time);
+	printf("Vendas analisadas: %d\n", success+failed);
 	printf("Vendas corretas: %d\n", success);
 	printf("Vendas incorretas: %d\n", failed);
 
 	putchar('\n');
-
+/*
 	getchar();
 
 	interpreter(fat, productCat, clientCat);
-
-	freeClientCat(clientCat);
-	freeProductCat(productCat);
-	freeFat(fat);
-/*	freeBranchSale(branchSales); */
-
-	fclose(clients);
-	fclose(products);
-	fclose(sales);
-
+*/
 	return 0;
 }

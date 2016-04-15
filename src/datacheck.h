@@ -11,7 +11,7 @@
 
 int loadSales    (FILE *file,
                   FATGLOBAL fat,
-				  BRANCHSALES bs, 
+				  BRANCHSALES *bs, 
                   PRODUCTCAT products, 
                   CLIENTCAT clients, 
                   int *failed);
