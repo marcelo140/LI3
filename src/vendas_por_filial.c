@@ -35,7 +35,7 @@ typedef struct product_sale {
 
 typedef struct client_sale {
 	MONTHLIST months;
-	HASHTABLE products;
+	HASHT products;
 } *CLIENTSALE;
 
 static CLIENTSALE initClientSale  ();
@@ -107,7 +107,9 @@ static CLIENTSALE initClientSale() {
 	CLIENTSALE new = malloc(sizeof(*new));
 	
 	new->months = initMonthList();
-	new->products = initHashTable();
+	new->products = initHashT((ht_init_t) initProductSale,
+                              (ht_add_t)  addToProductSale,
+                              (ht_free_t) freeProductSale);
 
 	return new;
 }
@@ -126,7 +128,7 @@ static CLIENTSALE addToClientSale(CLIENTSALE cs, SALE sale) {
 static void freeClientSale(CLIENTSALE cs) {
 	if (cs){
 		freeMonthList(cs->months);
-		freeHashTable(cs->products);
+		freeHashT(cs->products);
 		free(cs);
 	}	
 }
