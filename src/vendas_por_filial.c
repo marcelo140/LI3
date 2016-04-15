@@ -6,73 +6,64 @@
 #include "catalog.h"
 
 #include "avl.h"
+#include "hashT.h"
 
 #define INDEX(p) p[0] - 'A'
 #define ALPHA_NUM 26
 #define MONTHS 12
 #define BRANCHES 3
 
-#define N  1
-#define NP 2
-#define P  3
+#define UNUSED 0
+#define N      1
+#define NP     2
+#define P      3
 
 struct branch {
 	CATALOG clients;
-	CATALOG products;
 };
 
 typedef struct month_list {
-	struct content_list *months[MONTHS];
+	double billed[MONTHS];
+	int quant[MONTHS];	
 } *MONTHLIST;
 
-typedef struct content_list {
-	AVL sales;
-	double billed;
-	int quant;
-} *CONTENTLIST;
-
-typedef struct stock {
-	int quantity;
-	double billed;
-} *STOCK;
-
-typedef struct saleType {
+typedef struct product_sale {
+	double billed[MONTHS];
+	int quantity[MONTHS];
 	int saleType;
-} *SALETYPE;
+} *PRODUCTSALE;
+
+typedef struct client_sale {
+	MONTHLIST months;
+	HASHTABLE products;
+} *CLIENTSALE;
+
+static CLIENTSALE initClientSale  ();
+static CLIENTSALE addToClientSale (CLIENTSALE cs, SALE sale);
+static void       freeClientSale  (CLIENTSALE cs);
 
 static MONTHLIST initMonthList  ();
-static MONTHLIST addToMonthList (MONTHLIST m, SALE s);
+static MONTHLIST addToMonthList (MONTHLIST ml, SALE s);
 static void      freeMonthList  (MONTHLIST m);
 
-static CONTENTLIST initProductList  ();
-static CONTENTLIST initClientList  ();
-static CONTENTLIST addToProductList (CONTENTLIST cl, SALE s);
-static CONTENTLIST addToClientList  (CONTENTLIST cl, SALE s);
-static void        freeContentList  (CONTENTLIST cl);
-
-static STOCK initStock  (); 
-static STOCK addToStock (STOCK stk, SALE s);
-static void  freeStock  (STOCK stk); 
-
-static SALETYPE initSaleType  ();
-static SALETYPE addToSaleType (SALETYPE st, SALE s); 
-static void     freeSaleType  (SALETYPE st); 
+static PRODUCTSALE initProductSale  ();
+static PRODUCTSALE addToProductSale (PRODUCTSALE ps, SALE sale);
+static void        freeProductSale  (PRODUCTSALE ps);
 
 BRANCHSALES initBranchSales (CLIENTCAT clientCat) {
 	BRANCHSALES bs = malloc(sizeof(*bs));
 	
 	bs->clients = getClientCat(clientCat);
 	bs->clients = changeCatalogOps(bs->clients,
-                                   (cat_init_t) initMonthList,
+                                   (cat_init_t) initClientSale,
                                    NULL, NULL,
-                                   (cat_free_t) freeMonthList);
+                                   (cat_free_t) freeClientSale);
 
 	return bs;
 }
 
 BRANCHSALES addSaleToBranch (BRANCHSALES bs, SALE s) {
-	MONTHLIST ml;
-	CONTENTLIST cl;
+	CLIENTSALE cs;
 	CLIENT client;
 	PRODUCT product;
 	char c[CLIENT_LENGTH], p[PRODUCT_LENGTH];
@@ -83,8 +74,8 @@ BRANCHSALES addSaleToBranch (BRANCHSALES bs, SALE s) {
 	fromClient(client, c);
 	fromProduct(product, p);
 
-	ml = getCatContent(bs->clients, INDEX(c), c);
-	ml = addToMonthList(ml, s);
+	cs = getCatContent(bs->clients, INDEX(c), c);
+	cs = addToClientSale(cs, s);
 
 	return bs;
 }
@@ -92,152 +83,86 @@ BRANCHSALES addSaleToBranch (BRANCHSALES bs, SALE s) {
 /*   =========  FUNÇÕES PARA MONTHLIST ========= */
 
 static MONTHLIST initMonthList() {
-	MONTHLIST new = malloc (sizeof(*new));
-	int i;
-
-	for (i = 0; i < MONTHS; i++)
-		new->months[i] = initProductList();
-
-	return new;
+	return calloc(1, sizeof(struct month_list));
 }
 
-static MONTHLIST addToMonthList(MONTHLIST m, SALE s) {
+static MONTHLIST addToMonthList(MONTHLIST ml, SALE s) {
 	int month = getMonth(s);
-	CONTENTLIST cl = m->months[month];
+	int quant = getQuant(s);
+	double billed = getPrice(s) * quant;
 
-	m->months[month] = addToProductList(cl, s);
-
-	return m;
+	ml->billed[month] += billed;
+	ml->quant[month]  += quant;
+	
+	return ml;
 }
 
-/*TODO if not null */
 static void freeMonthList(MONTHLIST m) {
-	int i;
-
-	for (i=0; i <MONTHS; i++)
-		freeContentList(m->months[i]);
-
 	free(m);
 }
 
-/*  ==========  FUNÇÕES PARA CONTENTLIST  =========== */
+/*  ==========  FUNÇÕES PARA CLIENTSALE =========== */
 
-static CONTENTLIST initProductList() {
-	CONTENTLIST new = malloc (sizeof(*new));
-
-	new->sales = initAVL( (void* (*) ()) initStock, NULL, NULL, 
-						  (void (*) (void*)) freeStock);
-
-	new->quant = 0;
-	new->billed = 0;
+static CLIENTSALE initClientSale() {
+	CLIENTSALE new = malloc(sizeof(*new));
+	
+	new->months = initMonthList();
+	new->products = initHashTable();
 
 	return new;
 }
 
-static CONTENTLIST initClientList() {
-	CONTENTLIST new = malloc (sizeof(*new));
-
-	new->sales = initAVL( (void* (*) ()) initSaleType, NULL, NULL, 
-						  (void (*) (void*)) freeSaleType);
-
-	new->quant = 0;
-	new->billed = 0;
-
-	return new;
-}
-
-static CONTENTLIST addToProductList(CONTENTLIST pl, SALE s) {
-	int quant = getQuant(s);
-	double billed = quant * getPrice(s);
+static CLIENTSALE addToClientSale(CLIENTSALE cs, SALE sale) {
 	char product[PRODUCT_LENGTH];
-	PRODUCT p = getProduct(s);
-	STOCK stk;
 
-	fromProduct(p, product);
+	fromProduct(getProduct(sale), product);	
 
-	stk = addAVL(pl->sales, product);
-	addToStock(stk, s);
-
-	pl->billed += billed;
-	pl->quant += quant;
-
-	return pl;
+	cs->months = addToMonthList(cs->months, sale);
+	cs->products = insertHashT(cs->products, product, sale);
+	
+	return cs;
 }
 
-static CONTENTLIST addToClientList(CONTENTLIST pl, SALE s) {
-	int quant = getQuant(s);
-	double billed = quant * getPrice(s);
-	char client[PRODUCT_LENGTH];
-	CLIENT c = getClient(s);
-	SALETYPE st;
-
-	fromClient(c, client);
-
-	st = addAVL(pl->sales, client);
-	addToSaleType(st, s);
-
-	pl->billed += billed;
-	pl->quant += quant;
-
-	return pl;
+static void freeClientSale(CLIENTSALE cs) {
+	if (cs){
+		freeMonthList(cs->months);
+		freeHashTable(cs->products);
+		free(cs);
+	}	
 }
 
-static void freeContentList(CONTENTLIST pl) {
-	freeAVL(pl->sales);
-	free(pl);
+
+/*  ==========  FUNÇÕES PARA PRODUCTSALE =========== */
+
+static PRODUCTSALE initProductSale() {
+	return calloc(1, (sizeof(struct product_sale)));
 }
 
-/*  ==========  FUNÇÕES PARA STOCK  =========== */
-
-STOCK initStock() {
-	STOCK new = malloc(sizeof(*new));
-
-	new->quantity = 0;
-	new->billed = 0;
-
-	return new;
-}
-
-static STOCK addToStock(STOCK stk, SALE s) {
-	int quant;
+static PRODUCTSALE addToProductSale(PRODUCTSALE ps, SALE sale) {
+	int quant, month, saleType;
 	double billed;
 
-	quant = getQuant(s);
-	billed = getPrice(s);
+	month = getMode(sale);
+	quant = getQuant(sale);
+	billed = getPrice(sale) * quant;
+	saleType = getMode(sale);
 
-	stk->quantity += quant;
-	stk->billed   += quant*billed;
+	ps->quantity[month] += quant;
+	ps->billed[month]   += billed;
 
-	return stk;
+	switch (ps->saleType) {
+		case UNUSED: ps->saleType = saleType;
+					 break;
+
+		case N:      ps->saleType = (saleType == P) ? NP : N;
+                     break;
+
+        case P:      ps->saleType = (saleType == N) ? NP : P;
+	}
+
+	return ps;
 }
 
-static void freeStock(STOCK stk) {
-	free(stk);
-}
-
-/*  ==========  FUNÇÕES PARA STOCK  =========== */
-
-static SALETYPE initSaleType() {
-	SALETYPE new = malloc(sizeof(*new));
-	new->saleType = 0;
-
-	return new;
-}
-	
-static SALETYPE addToSaleType(SALETYPE cq, SALE s) {
-	int mode = getMode(s);
-	
-	if ((mode == MODE_N && cq->saleType == P) || (mode == MODE_P && cq->saleType == N))
-		cq->saleType = NP;	
-	else if (cq->saleType == 0 && mode == MODE_N)
-		cq->saleType = N;
-	else if (cq->saleType == 0 && mode == MODE_P)
-		cq->saleType = P;			
-
-	return cq;
-}
-
-
-static void freeSaleType(SALETYPE cq) {
-	free(cq);
+static void freeProductSale(PRODUCTSALE ps) {
+	free(ps);
 }
