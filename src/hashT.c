@@ -2,6 +2,7 @@
 #include <string.h>
 #include "hashT.h"
 
+#define KEY_SIZE 10
 #define BASE_CAPACITY 64
 #define EMPTY   0
 #define BUSY    1
@@ -56,6 +57,7 @@ HASHT insertHashT(HASHT ht, char* key, void* content) {
 	} else {
 		if (STATUS(p) != BUSY) {
 			STATUS(p) = BUSY;
+			KEY(p) = malloc(KEY_SIZE * sizeof(char));
 			strcpy(KEY(p), key);
 			CONTENT(p) = ht->init();
 		}
