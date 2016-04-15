@@ -48,7 +48,7 @@ HASHT insertHashT(HASHT ht, char* key, void* content) {
 	p = hash = Hash(key) & (CAPACITY - 1);
 
 	for (i=0; HASH_CRAWLER(p); i++)
-		p = hash + (i*i) & (CAPACITY - 1);
+		p = (hash + (i*i)) & (CAPACITY - 1);
 
 	if (i == CAPACITY) {
 		ht = resizeHashT(ht);
@@ -84,7 +84,7 @@ void* getHashTcontent(HASHT ht, char* key) {
 	p = hash = Hash(key) & (CAPACITY - 1);
 
 	for(i=0; HASH_CRAWLER(p) ; i++)
-		p = hash + (i*i) & (CAPACITY - 1);
+		p = (hash + (i*i)) & (CAPACITY - 1);
 
 	return (i < CAPACITY && STATUS(p) == BUSY) ? CONTENT(p) : NULL; 
 }
