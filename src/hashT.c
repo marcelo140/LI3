@@ -65,12 +65,36 @@ HASHT insertHashT(HASHT ht, char* key, void* content) {
 	return ht;
 }
 
+void freeHashT(HASHT ht) {
+	int i;
+
+	for(i=0; i < ht->capacity; i++)
+		if (STATUS(i) == BUSY) {
+			free(KEY(i));
+			ht->free(CONTENT(i));
+		}
+	
+	free(ht->table);
+	free(ht);
+}
+
+void* getHashTcontent(HASHT ht, char* key) {
+	int i, p, hash;
+
+	p = hash = Hash(key) & (CAPACITY - 1);
+
+	for(i=0; HASH_CRAWLER(p) ; i++)
+		p = hash + (i*i) & (CAPACITY - 1);
+
+	return (i < CAPACITY && STATUS(p) == BUSY) ? CONTENT(p) : NULL; 
+}
+
 static int Hash(char *key) {
 	int i, hash = 5381;
 	char c;
 
 	for(i=0; (c = key[i]) ; i++)
-		hash = (hash << 5) + hash + c;
+		hash = ((hash << 5) + hash) + c;
 
 	return hash;
 }
