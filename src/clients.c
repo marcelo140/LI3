@@ -64,6 +64,10 @@ bool lookUpClient(CLIENTCAT clientCat, CLIENT client) {
 	return lookUpCatalog(clientCat->cat, INDEX(client), client->str);
 }
 
+CATALOG getClientCat(CLIENTCAT clientCat) {
+	return cloneCatalog(clientCat->cat);
+}
+
 /**
  * @return Retorna cliente não inicializado
  */

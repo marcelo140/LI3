@@ -17,15 +17,15 @@ void       freeProductCat (PRODUCTCAT catalog);
 bool lookUpProduct  (PRODUCTCAT catalog, PRODUCT product);
 int  countProducts  (PRODUCTCAT prodCat, char index);
 
-CATALOG prodToCat (PRODUCTCAT prodCat);
+CATALOG getProductCat (PRODUCTCAT prodCatalog);
 
-PRODUCT newProduct   ();
-PRODUCT toProduct    (char* str);
-PRODUCT writeProduct (PRODUCT p, char* str);
-PRODUCT cloneProduct (PRODUCT p);
-char*   fromProduct  (PRODUCT p, char* dest);
-bool isEmptyProduct(PRODUCT p); 
-void    freeProduct  (PRODUCT p);
+PRODUCT newProduct     ();
+PRODUCT toProduct      (char* str);
+PRODUCT writeProduct   (PRODUCT p, char* str);
+PRODUCT cloneProduct   (PRODUCT p);
+char*   fromProduct    (PRODUCT p, char* dest);
+bool    isEmptyProduct (PRODUCT p); 
+void    freeProduct    (PRODUCT p);
 
 bool isProduct (char* str);
 

@@ -1,10 +1,15 @@
-#ifndef __CATALOG_H__
-#define __CATALOG_H__
+#ifndef __CATALOG__
+#define __CATALOG__
 
 #include "generic.h"
 
 typedef struct catalog      *CATALOG;
 typedef struct catalog_set  *CATSET;
+
+typedef void* (*cat_init_t)   ();
+typedef void* (*cat_clone_t)  (void*);
+typedef bool  (*cat_equals_t) (void*, void*);
+typedef void  (*cat_free_t)   (void*);
 
 CATALOG initCatalog (int n,
 					 void* (*init)   (), 
@@ -12,11 +17,13 @@ CATALOG initCatalog (int n,
                      void* (*clone)  (void*), 
                      void  (*free)   (void*));
 
-CATALOG cloneCat    (CATALOG cat,
-					 void* (*init)   (), 
-                     bool  (*equals) (void*, void*),
-                     void* (*clone)  (void*),
-                     void  (*free)   (void*));
+CATALOG changeCatalogOps (CATALOG cat,
+					      void* (*init)   (), 
+                          bool  (*equals) (void*, void*), 
+                          void* (*clone)  (void*), 
+                          void  (*free)   (void*));
+
+CATALOG cloneCatalog   (CATALOG cat);
 
 CATALOG insertCatalog  (CATALOG c, int i, char* hash, void* content);
 void*   replaceCatalog (CATALOG c, int i, char* hash, void* content);

@@ -35,6 +35,19 @@ CATALOG initCatalog(int n, void* (*init)   (),
 	return c;
 }
 
+CATALOG changeCatalogOps (CATALOG cat, cat_init_t init, cat_equals_t equals,
+                                       cat_clone_t clone, cat_free_t free){
+
+	int i, size;
+	
+	size = cat->size;
+	for(i = 0; i < size; i++)
+		changeOperations(cat->root[i], init, equals, clone, free);
+
+	return cat;
+}
+
+
 /**
  * Insere conteúdo num dado Catálogo com a respetica Hash
  * @param c Catálogo
@@ -67,11 +80,7 @@ void *replaceCatalog(CATALOG c, int i, char *hash, void *cntt) {
 	return replaceAVL(p, hash, cntt);
 }
 
-CATALOG cloneCat(CATALOG cat, void* (*init)   (),
-                              bool  (*equals) (void*, void*), 
-                              void* (*clone)  (void*), 
-                              void  (*free)   (void*)) {
-
+CATALOG cloneCatalog(CATALOG cat){
 	CATALOG c;
 	int i;
 
@@ -79,10 +88,8 @@ CATALOG cloneCat(CATALOG cat, void* (*init)   (),
 	c->root = malloc(sizeof(*c->root) * cat->size);
 	c->size = cat->size;
 
-	for (i = 0; i < cat->size; i++){
+	for (i = 0; i < cat->size; i++)
 		c->root[i] = cloneAVL(cat->root[i]);
-		changeOperations(c->root[i], init, equals, clone, free);
-	}
 
 	return c;
 }

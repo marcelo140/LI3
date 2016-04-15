@@ -16,6 +16,8 @@ void      freeClientCat (CLIENTCAT catalog);
 
 bool lookUpClient (CLIENTCAT catalog, CLIENT client);
 
+CATALOG getClientCat (CLIENTCAT catalog);
+
 CLIENT newClient   ();
 CLIENT toClient    (char* str);
 CLIENT writeClient (CLIENT c, char* str);

@@ -74,8 +74,8 @@ int countProducts(PRODUCTCAT productCat, char index) {
 	return countPosElems(productCat->cat, index);
 }
 
-CATALOG prodToCat(PRODUCTCAT productCat) {
-	return productCat->cat;
+CATALOG getProductCat (PRODUCTCAT productCat) {
+	return cloneCatalog(productCat->cat);
 }
 
 /**
