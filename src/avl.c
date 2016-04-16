@@ -44,7 +44,12 @@ static bool equalsNode(NODE a, NODE b, bool (*equals)(void*, void*));
 static void freeNode(NODE node, void (*freeContent)(void *));
 
 static DATASET insertDataSet (DATASET ds, NODE n);
+static DATASET filterNode(NODE n, DATASET ds, bool (*condition)(void*,void*), void* arg);
 static DATASET addDataSetAux(DATASET ds, NODE node);
+static void separateNode(NODE n, compare_t comparator, void* arg, DATASET set1, DATASET set2);
+static void condSeparateNode(NODE n, DATASET set1, DATASET set2, 
+                                     condition_t cond, void* cond_arg,
+                                     compare_t comp, void* comp_arg);
 
 /**
  * Inicia uma nova AVL.
@@ -272,11 +277,70 @@ DATASET addDataSet(DATASET ds, AVL tree) {
 	return ds;	
 }
 
+DATASET filterAVL (AVL tree, DATASET ds,  bool (*condition)(void*,void*), void* arg) {
+    ds = filterNode(tree->head, ds, condition, arg);
+
+	return ds;
+}
+
+void separateAVL(AVL tree, compare_t comparator, void* arg, DATASET set1, DATASET set2) {
+	separateNode(tree->head, comparator, arg, set1, set2);
+}
+
+void conditionalSeparateAVL (AVL tree, DATASET set1, DATASET set2,
+                                       condition_t condition, void* cond_arg,
+                                       compare_t comparator, void* comp_arg) {
+
+	condSeparateNode(tree->head, set1, set2, condition, cond_arg, comparator, comp_arg);
+}
+
 DATASET datacpy (DATASET dest, DATASET src, int i) {
 	NODE n = src->set[i];
 	insertDataSet(dest, n);
 
 	return dest;
+}
+
+DATASET sortDataSet(DATASET set, compare_t comparator) {
+	DATASET below, above;
+	NODE pivot;
+	int i, pos;
+
+	if (set->size > 0) {	
+		pos = set->pos;
+		below = initDataSet(pos/2+1);
+		above = initDataSet(pos/2+1);
+		
+		pivot = set->set[pos-1];
+
+		for(i = 0; i < pos-2; i++){
+			if (comparator(pivot->content, set->set[i]->content) > 0)
+				insertDataSet(above, set->set[i]);
+			else
+				insertDataSet(below, set->set[i]);
+		}
+
+		below = sortDataSet(below, comparator);
+		above = sortDataSet(above, comparator);
+
+		below = insertDataSet(below, pivot);
+		below = concatDataSet(below, above);
+	
+		return below;
+	}
+
+	return set;
+}
+
+DATASET concatDataSet(DATASET set1, DATASET set2) {
+	int i, size;
+	
+	size = set2->pos;
+	
+	for(i = 0; i < size; i++)
+		insertDataSet(set1, set2->set[i]);
+
+	return set1;
 }
 
 DATASET unionDataSets(DATASET dest, DATASET source) {
@@ -631,6 +695,63 @@ static DATASET insertDataSet(DATASET ds, NODE data) {
 	ds->pos++;
 
 	return ds;
+}
+
+static DATASET filterNode(NODE n, DATASET ds, bool (*condition)(void*,void*), void* arg) {
+
+	if (n) {
+		ds = filterNode(n->left, ds, condition, arg);
+		
+		if (condition(n->content, arg))
+			ds = insertDataSet(ds, n);
+	
+		ds = filterNode(n->right, ds, condition, arg);
+	}
+	return ds;
+}
+
+static void separateNode(NODE n, compare_t comparator, void* arg, DATASET set1, 
+                                                                  DATASET set2) {
+	int res;
+	
+	if (n) {
+		separateNode(n->left, comparator, arg, set1, set2);
+
+		res = comparator(n->content, arg);
+
+		if (res < 0)
+			insertDataSet(set1, n);
+		else if (res > 0)
+			insertDataSet(set2, n);
+		else {
+			insertDataSet(set1, n);
+			insertDataSet(set2, n);
+		}
+
+		separateNode(n->right, comparator, arg, set1, set2);
+	}
+
+}
+
+static void condSeparateNode(NODE n, DATASET set1, DATASET set2, 
+                                     condition_t cond, void* cond_arg,
+                                     compare_t comp, void* comp_arg) {
+	int res;
+
+	if (n) {
+		if (cond(n->content, cond_arg)){
+			res = comp(n->content, comp_arg);
+
+			if (res < 0)
+				insertDataSet(set1, n);
+			else if (res > 0)
+				insertDataSet(set2, n);
+			else {
+				insertDataSet(set1, n);
+				insertDataSet(set2, n);
+			}
+		}
+	}
 }
 
 static DATASET addDataSetAux(DATASET ds, NODE node) {

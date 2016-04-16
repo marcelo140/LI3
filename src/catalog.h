@@ -43,8 +43,18 @@ CATSET fillCatalogSet (CATALOG cat, CATSET cs, int i);
 CATSET allCatalogSet  (CATALOG cat, CATSET cs);
 CATSET contcpy        (CATSET dest, CATSET src, int pos);
 
+CATSET filterCat(CATALOG cat, condition_t condition, void* arg);
+void   separateCat(CATALOG cat, compare_t compare, void* arg, CATSET set1, CATSET set2);
+
+void   condSepareteCat(CATALOG cat, CATSET set1, CATSET set2,
+                                    condition_t condition, void* cond_arg,
+                                    compare_t   comparator, void* comp_arg);
+
+CATSET sortCatSet(CATSET set, compare_t comparator);
+
 CATSET unionCatalogDataSets (CATSET dest, CATSET source);
 CATSET diffCatalogDataSets  (CATSET dest, CATSET source);
+CATSET concatCatSet         (CATSET set1, CATSET set2);
 
 char* getKeyPos         (CATSET cs, int pos);
 void* getContPos        (CATSET cs, int pos);

@@ -6,16 +6,10 @@
 typedef struct avl      *AVL;
 typedef struct data_set *DATASET;
 
-AVL initAVL          (void* (*init)   (),
-                      bool  (*equals) (void*, void*), 
-                      void* (*clone)  (void*), 
-                      void  (*free)   (void *));
+AVL initAVL          (init_t init, condition_t equals, clone_t clone, free_t free);
 
-AVL changeOperations (AVL tree,
-                      void* (*init)   (),
-                      bool  (*equals) (void*, void*),
-                      void* (*clone)  (void*),
-                      void  (*free)   (void*));
+AVL changeOperations (AVL tree, init_t init, condition_t equals,
+                                clone_t clone, free_t free);
 
 AVL    insertAVL     (AVL tree, char *hash, void *content);
 AVL    cloneAVL      (AVL tree);
@@ -36,6 +30,15 @@ DATASET initDataSet   (int n);
 DATASET addDataSet    (DATASET ds, AVL tree);
 DATASET datacpy       (DATASET dest, DATASET source, int pos);
 
+DATASET filterAVL     (AVL tree, DATASET ds, condition_t condition, void* arg);
+void    separateAVL   (AVL tree, compare_t compare, void* arg, DATASET set1, DATASET set2);
+
+void    condSeparateAVL (AVL tree, DATASET set1, DATASET set2,
+                                   condition_t condition,  void* cond_arg,
+                                   compare_t   comparator, void* comp_arg);
+                
+DATASET sortDataSet   (DATASET set1, compare_t comparator);                          
+DATASET concatDataSet (DATASET set1, DATASET set2);
 DATASET unionDataSets (DATASET dest, DATASET src);
 DATASET diffDataSets  (DATASET dest, DATASET src);
 

@@ -175,6 +175,27 @@ CATSET allCatalogSet(CATALOG cat, CATSET cs) {
 	return cs;
 }
 
+CATSET filterCat (CATALOG cat, condition_t condition, void* arg) {
+	CATSET cs;
+	int i;
+
+	cs = initCatalogSet(cat->size);
+
+	for(i = 0; i < cat->size; i++)
+		cs->set = filterAVL(cat->root[i], cs->set, condition, arg);
+
+	return cs;
+}
+
+void separateCat (CATALOG cat, compare_t comp, void* arg, CATSET set1, CATSET set2) {
+	int i, size;
+
+	size = cat->size;
+	for(i = 0; i < size; i++)
+		separateAVL(cat->root[i], comp, arg, set1->set, set2->set);
+
+}
+	
 CATSET unionCatalogDataSets(CATSET dest, CATSET source) {
 	dest->set = unionDataSets(dest->set, source->set);
 	return dest;

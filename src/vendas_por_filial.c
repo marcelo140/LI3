@@ -8,10 +8,11 @@
 #include "avl.h"
 #include "hashT.h"
 
-#define INDEX(p) p[0] - 'A'
+#define INDEX(p)  p[0] - 'A'
+
 #define ALPHA_NUM 26
-#define MONTHS 12
-#define BRANCHES 3
+#define BRANCHES  3
+#define MONTHS    12
 
 #define UNUSED 0
 #define N      1
@@ -78,6 +79,39 @@ BRANCHSALES addSaleToBranch (BRANCHSALES bs, SALE s) {
 	cs = addToClientSale(cs, s);
 
 	return bs;
+}
+
+int* getClientQuant(BRANCHSALES bs, CLIENT c) {
+	CLIENTSALE content;
+	char client[CLIENT_LENGTH];
+	int i, *quant;
+
+	fromClient(c, client);
+	quant = malloc(sizeof(int) * MONTHS);
+
+	content = getCatContent(bs->clients, INDEX(client), client);
+
+	for(i = 0; i < MONTHS; i++)
+		quant[i] = content->months->quant[i];
+
+	return quant;	
+}
+
+double *getClientExpenses(BRANCHSALES bs, CLIENT c) {
+	CLIENTSALE content;
+	char client[CLIENT_LENGTH];
+	double *expenses;
+	int i;
+	
+	fromClient(c, client);
+	expenses = malloc(sizeof(double) * MONTHS);
+
+	content = getCatContent(bs->clients, INDEX(client), client);
+
+	for(i = 0; i < MONTHS; i++)
+		expenses[i] = content->months->billed[i];
+
+	return expenses;	
 }
 
 /*   =========  FUNÇÕES PARA MONTHLIST ========= */
