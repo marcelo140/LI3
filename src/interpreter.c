@@ -26,8 +26,8 @@ static void presentCatalogSet (CATSET* cs,int branches, int page, int total, int
 static void presentProductSet (PRODUCTSET ps, int page, int total, int* cont);
 
 /*Devolve numero de comandos executados */
-int interpreter(BRANCHSALES bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat) {
-
+int interpreter(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat) {
+	PRINTSET ps;
 	char answ[BUFF_SIZE];
 	int qnum;
 
@@ -78,7 +78,8 @@ int interpreter(BRANCHSALES bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat) 
 		case 5 : printf("Cliente: ");
 				 fgets(answ, BUFF_SIZE, stdin);
 				 answ[CLIENT_LENGTH-1] = '\0';
-				 query5(bs, toClient(answ));
+				 ps = query5(bs[0], toClient(answ));
+				 presentList(ps); 
 		 		 break;
 		case 6 : 
 		  		 break;

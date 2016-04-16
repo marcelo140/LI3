@@ -9,7 +9,7 @@
 typedef struct printset *PRINTSET;
 
 /* void present(PRODUCTSET ps); */
-int interpreter(BRANCHSALES bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat); 
+int interpreter(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat); 
 
 /** 
  * Inicializa um novo PrintSet de tamanho n
