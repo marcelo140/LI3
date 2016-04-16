@@ -1,42 +1,32 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <ctype.h>
+#include <string.h>
 #include "interpreter.h"
 #include "clients.h"
 #include "products.h"
+#include "queries.h"
 
 #define TYPE_CATSET 0
 #define TYPE_PSET 1
 
 #define PRODUCT_SIZE 6
 #define LINES_NUM 20
+#define STR_SIZE 128
 #define BUFF_SIZE 255
 
-typedef struct {
-	void * set;
-	int setNums;
+struct printset{
+	char* header;
+	char** list;
 	int size;
-	int type;
-} PRINTSET;
-
-static void query1();
-static void query2(PRODUCTCAT pcat);
-static void query3(FATGLOBAL fat);
-static void query4(FATGLOBAL fat);
-static void query5();
-static void query6(FATGLOBAL fat);
-static void query7();
-static void query8();
-static void query9();
-static void query10();
-static void query11();
-static void query12();
+	int capacity;
+}; 
+	
 static void presentList(PRINTSET ps);
 static void presentCatalogSet (CATSET* cs,int branches, int page, int total, int* cont);
 static void presentProductSet (PRODUCTSET ps, int page, int total, int* cont);
 
 /*Devolve numero de comandos executados */
-int interpreter(FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat) {
+int interpreter(BRANCHSALES bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat) {
 
 	char answ[BUFF_SIZE];
 	int qnum;
@@ -77,39 +67,87 @@ int interpreter(FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat) {
 	qnum = atoi(answ);
 
 	switch(qnum) {
-		case 1 : query1();
+		case 1 : 
 				 break;
-		case 2 : query2(pcat);
+		case 2 : 
 				 break;
-		case 3 : query3(fat);
+		case 3 : 
 			 	 break;
-		case 4 : query4(fat);
+		case 4 :
 				 break;
-		case 5 : query5();
+		case 5 : printf("Cliente: ");
+				 fgets(answ, BUFF_SIZE, stdin);
+				 answ[CLIENT_LENGTH-1] = '\0';
+				 query5(bs, toClient(answ));
 		 		 break;
-		case 6 : query6(fat);
+		case 6 : 
 		  		 break;
-		case 7 : query7();
+		case 7 :
 				 break;
-		case 8 : query8();
+		case 8 :
 		 		 break;
-		case 9 : query9();
+		case 9 :
 		 		 break;
-		case 10 : query10();
+		case 10 :
 		 		  break;
-		case 11 : query11();
+		case 11 :
 		 		  break;
-		case 12 : query12();
-				  break;
-		default : return interpreter(fat, pcat, ccat);
+		case 12 :
+				  break; 
+		default : return interpreter(bs, fat, pcat, ccat);
 	}
-
-	return interpreter(fat, pcat, ccat) + 1;
+	
+	return 0;
+	return interpreter(bs, fat, pcat, ccat) + 1;
 }
 
+PRINTSET initPrintSet(int n) {
+	PRINTSET new = malloc(sizeof(*new));
+
+	new->capacity = n;
+	new->size = 0;
+	new->list = calloc(new->capacity, sizeof(char*));
+	new->header = NULL;
+
+	return new;
+}
+
+PRINTSET setPrintHeader(PRINTSET ps, char *header) {
+	ps->header = malloc(STR_SIZE * sizeof(char));
+	strncpy(ps->header, header, STR_SIZE);	
+
+	return ps;
+}
+
+PRINTSET addToPrintSet(PRINTSET ps, char* str) {
+	
+	if (ps->size >= ps->capacity) {
+		ps->capacity *= 2;
+		ps->list = realloc(ps->list, ps->capacity);
+	}
+
+	ps->size++;
+	ps->list[ps->size] = malloc(STR_SIZE * sizeof(char));
+	strcpy(ps->list[ps->size], str);
+	
+	return ps;
+}
+
+char** getPage(PRINTSET ps, int page) {
+	int p;
+
+	p = page * LINES_NUM;
+
+	if (p < ps->size) return NULL;
+
+	return ps->list + p;
+}
+
+
+
 static void presentList(PRINTSET ps) {
-	char nav, onav, option[BUFF_SIZE];
-	int cpage = 1, totalPages, cont=0, o, total = ps.size;
+	char nav, onav, option[BUFF_SIZE], **print;
+	int i, cpage = 1, totalPages, o, total = ps->size;
 
 	nav = '\n';
 	onav = '\n';
@@ -123,9 +161,14 @@ static void presentList(PRINTSET ps) {
 
 		printf(":::::::::::: PÁGINA %d de %d ::::::::::::\n\n", cpage, totalPages);
 
+		print = getPage(ps, cpage); 
+		for(i=0; i < LINES_NUM; i++) 
+			printf("%s\n", print[i]);
+
+		/*
 		if (ps.type == TYPE_CATSET) presentCatalogSet(ps.set, ps.setNums, cpage, total, &cont);
 		else if (ps.type == TYPE_PSET) presentProductSet(ps.set, cpage, total, &cont);
-
+*/
 
 		printf(":::::::::::::::::::::::::::::::::::::::::\n");
 		printf("\n b: Anterior\tn: Seguinte\th: Ajuda\n g: Ir para página\tq: Sair\n\t>> ");
@@ -155,14 +198,14 @@ static void presentList(PRINTSET ps) {
 			printf("\tb<num>  Retrocede <num> páginas.\n");
 			printf("\tn<num>  Avança <num> páginas.\n");
 			printf("\tg<num>  Salta para a página número <num>.\n");
-			printf("\t<enter> Utiliza o último comando.\n");
+			printf("\t<enter> Utiliza o último comando.\n\t");
 			getchar();
 		}
 		else if (nav == 'q')
 			break;
 	}
 }
-
+/*
 static void presentProductSet (PRODUCTSET ps, int page, int total, int* cont) {
 	int i;
 	char str[10];
@@ -201,14 +244,10 @@ static void presentCatalogSet (CATSET* cs,int branches, int page, int total, int
 			else printf("\t\t");
 		}
 		putchar('\n');
-		/*	free(str); */
+			free(str); 
 	}
 }
 
-
-static void query1() {
-
-}
 
 static void query2(PRODUCTCAT pcat) {
 
@@ -283,7 +322,7 @@ static void query3(FATGLOBAL fat) {
 	getchar();
 }
 
-/* Produtos não Vendidos */
+ Produtos não Vendidos 
 static void query4(FATGLOBAL fat) {
 
 	char answ;
@@ -320,10 +359,6 @@ static void query4(FATGLOBAL fat) {
 	presentList(ps);
 }
 
-static void query5() {
-
-}
-
 static void query6(FATGLOBAL fat) {
 
 	char buff[BUFF_SIZE];
@@ -357,27 +392,4 @@ static void query6(FATGLOBAL fat) {
 
 	getchar();
 }
-
-static void query7() {
-
-}
-
-static void query8() {
-
-}
-
-static void query9() {
-
-}
-
-static void query10() {
-
-}
-
-static void query11() {
-
-}
-
-static void query12() {
-
-}
+*/
