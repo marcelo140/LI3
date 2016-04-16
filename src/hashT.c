@@ -14,11 +14,11 @@
 #define CONTENT(i) 		ht->table[i].content
 #define STATUS(i)  		ht->table[i].status
 
-struct hashCntt {
-	char *key;
+typedef struct hashCntt {
+	char key[KEY_SIZE];
 	void *content;
 	int status;
-};
+} HASHTCNTT;
 
 struct hasht {
 	struct hashCntt* table;
@@ -30,13 +30,21 @@ struct hasht {
 	ht_free_t free;
 };
 
+struct hashtSet {
+	struct hashCntt* set;
+ 	int size;
+	int capacity;
+};
+
 static int Hash(char *key);
 static HASHT resizeHashT(HASHT ht);
+static HASHTSET initHashTSet(int size); 
+static HASHTSET insertHashTSet(HASHTSET hts, HASHTCNTT newCntt); 
 
 HASHT initHashT(ht_init_t init, ht_add_t add, ht_free_t free) {
 	HASHT new = malloc(sizeof(*new));
 
-	new->table    = calloc(BASE_CAPACITY, sizeof(struct hashCntt));
+	new->table    = calloc(BASE_CAPACITY, sizeof(HASHTCNTT));
 	new->capacity = BASE_CAPACITY;
 	new->size 	  = 0;
 	new->maxSize  = new->capacity * 0.8;
@@ -59,14 +67,35 @@ HASHT insertHashT(HASHT ht, char* key, void* content) {
 
 	if (STATUS(p) != BUSY) {
 		STATUS(p) = BUSY;
-		KEY(p) = malloc(KEY_SIZE * sizeof(char));
-		strcpy(KEY(p), key);
+		strncpy(KEY(p), key, KEY_SIZE);
 		CONTENT(p) = ht->init();
 		ht->size++;
 	}
 	CONTENT(p) = ht->add(CONTENT(p), content);
 
 	return ht;
+}
+
+HASHTSET dumpHashT(HASHT ht) {
+	HASHTSET r = initHashTSet(ht->size);
+	int i;
+
+	for (i=0; i < CAPACITY; i++) 
+		if (STATUS(i) == BUSY) r = insertHashTSet(r, ht->table[i]);
+
+	return r;
+}
+
+void* getHashTSetContent(HASHTSET hts, int pos) {
+	return hts->set[pos].content;
+}
+
+char* getHashTSetKey(HASHTSET hts, int pos) {
+	char ret[KEY_SIZE];
+
+	strncpy(ret, hts->set[pos].key, KEY_SIZE);
+
+	return hts->set[pos].key;
 }
 
 void freeHashT(HASHT ht) {
@@ -114,7 +143,7 @@ static HASHT resizeHashT(HASHT ht){
 	new->free     = ht->free;
 	new->add 	  = ht->add;
 	
-	new->table    = calloc(new->capacity, sizeof(struct hashCntt));
+	new->table    = calloc(new->capacity, sizeof(HASHTCNTT));
 
 	for(i=0; i < ht->capacity; i++)
 		if (STATUS(i) == BUSY) 
@@ -122,4 +151,26 @@ static HASHT resizeHashT(HASHT ht){
 
 	freeHashT(ht);
 	return new;
+}
+
+/* ***************** FUNÇÕES AUXILIARES DO HASHTSET ************************** */
+
+static HASHTSET initHashTSet(int size) {
+	HASHTSET new = malloc(sizeof(*new));
+	new->size = 0;
+	new->set  = calloc(size, sizeof(HASHTCNTT));
+	new->capacity = size;
+
+	return new;
+} 
+
+static HASHTSET insertHashTSet(HASHTSET hts, HASHTCNTT newCntt) {
+
+	if (hts->size < hts->capacity) {
+		hts->set[hts->size] = newCntt;
+		hts->size++;
+	} 
+	/* TODO se calhar meter um resize HashSet */
+
+	return hts;
 }

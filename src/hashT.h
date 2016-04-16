@@ -2,6 +2,7 @@
 #define __HASHT_H__
 
 typedef struct hasht *HASHT;
+typedef struct hashtSet *HASHTSET;
 typedef void* (*ht_init_t) ();
 typedef void* (*ht_add_t) (void*, void*);
 typedef void  (*ht_free_t) (void*);
@@ -21,6 +22,29 @@ HASHT initHashT(ht_init_t init, ht_add_t add, ht_free_t free);
  * @return Tabela de Hash atualizada
  */
 HASHT insertHashT(HASHT ht, char* key, void* content);
+
+/**
+ * Devolve um conjunto com todo o conteúdo da Tabela de Hash
+ * @param ht Tabela de Hash onde ler
+ * @return Conjunto com todo o conteúdo da Tabela
+ */ 
+HASHTSET dumpHashT(HASHT ht);
+
+/**
+ * Devolve o conteúdo de uma dada posição no HASHTSET
+ * @param hts Conjunto onde procurar
+ * @param pos Posição do conteúdo a retornar
+ * @return Conteúdo da dada posição
+ */
+void* getHashTSetContent(HASHTSET hts, int pos);
+
+/**
+ * Devolve a chave de uma dada posição no HASHTSET
+ * @param hts Conjunto onde procurar
+ * @param pos Posição da chave a retornar
+ * @return Chave da dada posição
+ */
+char* getHashTSetKey(HASHTSET hts, int pos);
 
 /**
  * Devolve o conteúdo de uma dada chave
