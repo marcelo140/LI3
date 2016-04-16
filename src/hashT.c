@@ -8,7 +8,7 @@
 #define BUSY    1
 #define REMOVED 2
 
-#define HASH_CRAWLER(i) i < ht->capacity && ht->table[i].status != EMPTY && strcmp(ht->table[i].key, key) != 0
+#define HASH_CRAWLER(i) ht->table[i].status != EMPTY && (ht->table[i].status == REMOVED || strcmp(ht->table[i].key, key)) != 0
 #define CAPACITY        ht->capacity
 #define KEY(i)     		ht->table[i].key
 #define CONTENT(i) 		ht->table[i].content
@@ -22,6 +22,8 @@ struct hashCntt {
 
 struct hasht {
 	struct hashCntt* table;
+	int size;
+	int maxSize;
 	int capacity;
 	ht_init_t init;
 	ht_add_t add;
@@ -34,11 +36,13 @@ static HASHT resizeHashT(HASHT ht);
 HASHT initHashT(ht_init_t init, ht_add_t add, ht_free_t free) {
 	HASHT new = malloc(sizeof(*new));
 
-	new->table = calloc(BASE_CAPACITY, sizeof(struct hashCntt));
+	new->table    = calloc(BASE_CAPACITY, sizeof(struct hashCntt));
 	new->capacity = BASE_CAPACITY;
-	new->init = init;
-	new->add  = add;
-	new->free = free;
+	new->size 	  = 0;
+	new->maxSize  = new->capacity * 0.8;
+	new->init 	  = init;
+	new->add  	  = add;
+	new->free 	  = free;
 
 	return new;
 }
@@ -47,22 +51,20 @@ HASHT insertHashT(HASHT ht, char* key, void* content) {
 	int i, hash, p;
 	
 	p = hash = Hash(key) & (CAPACITY - 1);
+	
+	if (ht->size + 1 >= ht->maxSize) ht = resizeHashT(ht);
 
-	for (i=0; HASH_CRAWLER(p); i++)
+	for (i=0; i < CAPACITY && HASH_CRAWLER(p); i++)
 		p = (hash + (i*i)) & (CAPACITY - 1);
 
-	if (i == CAPACITY) {
-		ht = resizeHashT(ht);
-		ht = insertHashT(ht, key, content);
-	} else {
-		if (STATUS(p) != BUSY) {
-			STATUS(p) = BUSY;
-			KEY(p) = malloc(KEY_SIZE * sizeof(char));
-			strcpy(KEY(p), key);
-			CONTENT(p) = ht->init();
-		}
-		CONTENT(p) = ht->add(CONTENT(p), content);
+	if (STATUS(p) != BUSY) {
+		STATUS(p) = BUSY;
+		KEY(p) = malloc(KEY_SIZE * sizeof(char));
+		strcpy(KEY(p), key);
+		CONTENT(p) = ht->init();
+		ht->size++;
 	}
+	CONTENT(p) = ht->add(CONTENT(p), content);
 
 	return ht;
 }
@@ -85,7 +87,7 @@ void* getHashTcontent(HASHT ht, char* key) {
 
 	p = hash = Hash(key) & (CAPACITY - 1);
 
-	for(i=0; HASH_CRAWLER(p) ; i++)
+	for(i=0; i < CAPACITY && HASH_CRAWLER(p) ; i++)
 		p = (hash + (i*i)) & (CAPACITY - 1);
 
 	return (i < CAPACITY && STATUS(p) == BUSY) ? CONTENT(p) : NULL; 
@@ -106,9 +108,13 @@ static HASHT resizeHashT(HASHT ht){
 	int i;
 
 	new->capacity = ht->capacity *2;
+	new->size 	  = ht->size;
+	new->maxSize  = new->capacity * 0.8;
 	new->init     = ht->init;
 	new->free     = ht->free;
 	new->add 	  = ht->add;
+	
+	new->table    = calloc(new->capacity, sizeof(struct hashCntt));
 
 	for(i=0; i < ht->capacity; i++)
 		if (STATUS(i) == BUSY) 
