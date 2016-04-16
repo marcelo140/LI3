@@ -24,6 +24,14 @@ HASHT initHashT(ht_init_t init, ht_add_t add, ht_free_t free);
 HASHT insertHashT(HASHT ht, char* key, void* content);
 
 /**
+ * Devolve o conteúdo de uma dada chave
+ * @param ht Tabela de Hash a consultar
+ * @param key Chave do conteúdo pretendido
+ * @return Conteúdo da chave
+ */
+void* getHashTcontent(HASHT ht, char* key);
+
+/**
  * Devolve um conjunto com todo o conteúdo da Tabela de Hash
  * @param ht Tabela de Hash onde ler
  * @return Conjunto com todo o conteúdo da Tabela
@@ -45,14 +53,6 @@ void* getHashTSetContent(HASHTSET hts, int pos);
  * @return Chave da dada posição
  */
 char* getHashTSetKey(HASHTSET hts, int pos);
-
-/**
- * Devolve o conteúdo de uma dada chave
- * @param ht Tabela de Hash a consultar
- * @param key Chave do conteúdo pretendido
- * @return Conteúdo da chave
- */
-void* getHashTcontent(HASHT ht, char* key);
 
 /**
  * Liberta a memória ocupada por uma dada Tabela de Hash

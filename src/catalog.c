@@ -35,8 +35,8 @@ CATALOG initCatalog(int n, void* (*init)   (),
 	return c;
 }
 
-CATALOG changeCatalogOps (CATALOG cat, cat_init_t init, cat_equals_t equals,
-                                       cat_clone_t clone, cat_free_t free){
+CATALOG changeCatalogOps (CATALOG cat, init_t init, condition_t equals,
+                                       clone_t clone, free_t free){
 
 	int i, size;
 	
@@ -191,11 +191,29 @@ void separateCat (CATALOG cat, compare_t comp, void* arg, CATSET set1, CATSET se
 	int i, size;
 
 	size = cat->size;
+
 	for(i = 0; i < size; i++)
 		separateAVL(cat->root[i], comp, arg, set1->set, set2->set);
-
 }
-	
+
+void condSeparateCat (CATALOG cat, CATSET set1, CATSET set2,
+                                   condition_t predicate, void* predicateArg,
+                                   compare_t  comparator, void* comparatorArg) {
+	int i, size;
+
+	size = cat->size;
+
+	for(i = 0; i < size; i++)
+		condSeparateAVL(cat->root[i], set1->set, set2->set, predicate, predicateArg,
+                                                            comparator, comparatorArg);
+}
+
+CATSET sortCatSet(CATSET cs, compare_t comp) {
+	cs->set = sortDataSet(cs->set, comp);
+
+	return cs;
+}
+
 CATSET unionCatalogDataSets(CATSET dest, CATSET source) {
 	dest->set = unionDataSets(dest->set, source->set);
 	return dest;

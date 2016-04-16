@@ -6,11 +6,6 @@
 typedef struct catalog      *CATALOG;
 typedef struct catalog_set  *CATSET;
 
-typedef void* (*cat_init_t)   ();
-typedef void* (*cat_clone_t)  (void*);
-typedef bool  (*cat_equals_t) (void*, void*);
-typedef void  (*cat_free_t)   (void*);
-
 CATALOG initCatalog (int n,
 					 void* (*init)   (), 
                      bool  (*equals) (void*, void*), 
@@ -46,7 +41,7 @@ CATSET contcpy        (CATSET dest, CATSET src, int pos);
 CATSET filterCat(CATALOG cat, condition_t condition, void* arg);
 void   separateCat(CATALOG cat, compare_t compare, void* arg, CATSET set1, CATSET set2);
 
-void   condSepareteCat(CATALOG cat, CATSET set1, CATSET set2,
+void   condSeparateCat(CATALOG cat, CATSET set1, CATSET set2,
                                     condition_t condition, void* cond_arg,
                                     compare_t   comparator, void* comp_arg);
 

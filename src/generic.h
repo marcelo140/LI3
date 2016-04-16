@@ -1,5 +1,5 @@
-#ifndef __GENERIC_H__
-#define __GENERIC_H__
+#ifndef __GENERIC__
+#define __GENERIC__
 
 typedef char bool;
 

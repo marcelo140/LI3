@@ -287,9 +287,9 @@ void separateAVL(AVL tree, compare_t comparator, void* arg, DATASET set1, DATASE
 	separateNode(tree->head, comparator, arg, set1, set2);
 }
 
-void conditionalSeparateAVL (AVL tree, DATASET set1, DATASET set2,
-                                       condition_t condition, void* cond_arg,
-                                       compare_t comparator, void* comp_arg) {
+void condSeparateAVL (AVL tree, DATASET set1, DATASET set2,
+                                condition_t condition, void* cond_arg,
+                                compare_t comparator, void* comp_arg) {
 
 	condSeparateNode(tree->head, set1, set2, condition, cond_arg, comparator, comp_arg);
 }

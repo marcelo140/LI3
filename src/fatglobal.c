@@ -28,8 +28,8 @@ static CATSET* notSoldTotal  (CATSET cs);
 FATGLOBAL initFat(PRODUCTCAT p) {
 	FATGLOBAL new = malloc(sizeof (*new));
 	new->cat = getProductCat(p);
-	new->cat = changeCatalogOps(new->cat, (cat_init_t) initRevenue, NULL, NULL,
-                                          (cat_free_t) freeRevenue);
+	new->cat = changeCatalogOps(new->cat, (init_t) initRevenue, NULL, NULL,
+                                          (free_t) freeRevenue);
 
 	return new;
 }
