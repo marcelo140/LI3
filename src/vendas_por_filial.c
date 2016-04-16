@@ -8,7 +8,7 @@
 #include "avl.h"
 #include "hashT.h"
 
-#define INDEX(p)  p[0] - 'A'
+#define INDEX(s)  s[0] - 'A'
 
 #define ALPHA_NUM 26
 #define BRANCHES  3
@@ -21,6 +21,14 @@
 
 struct branch {
 	CATALOG clients;
+};
+
+struct client_list {
+	CATSET set;
+};
+
+struct product_list {
+	CATSET set;
 };
 
 typedef struct month_list {
@@ -56,9 +64,9 @@ BRANCHSALES initBranchSales (CLIENTCAT clientCat) {
 	
 	bs->clients = getClientCat(clientCat);
 	bs->clients = changeCatalogOps(bs->clients,
-                                   (cat_init_t) initClientSale,
+                                   (init_t) initClientSale,
                                    NULL, NULL,
-                                   (cat_free_t) freeClientSale);
+                                   (free_t) freeClientSale);
 
 	return bs;
 }
@@ -79,6 +87,30 @@ BRANCHSALES addSaleToBranch (BRANCHSALES bs, SALE s) {
 	cs = addToClientSale(cs, s);
 
 	return bs;
+}
+
+bool isEmptyClientSale(CLIENTSALE cs) {
+	return (cs == NULL);
+}
+
+bool isNotEmptyClientSale(CLIENTSALE cs) {
+	return (cs != NULL);
+}
+
+CLIENTLIST getClientsWhoBought (BRANCHSALES bs) {
+	CLIENTLIST cl = newClientList();
+
+	cl->set = filterCat(bs->clients, (condition_t) isNotEmptyClientSale, NULL);
+	
+	return cl;
+}
+
+CLIENTLIST getClientsWhoHaveNotBought(BRANCHSALES bs) {
+	CLIENTLIST cl = newClientList();
+	
+	cl->set = filterCat(bs->clients, (condition_t) isEmptyClientSale, NULL);
+
+	return cl;
 }
 
 int* getClientQuant(BRANCHSALES bs, CLIENT c) {
@@ -112,6 +144,43 @@ double *getClientExpenses(BRANCHSALES bs, CLIENT c) {
 		expenses[i] = content->months->billed[i];
 
 	return expenses;	
+}
+
+bool existInProductList(CLIENTSALE cs, char* product) {
+	return (getHashTcontent(cs->products, product) != NULL);
+}
+
+int clientIsShopAholic(CLIENTSALE cs, char* product) {
+	PRODUCTSALE ps = getHashTcontent(cs->products, product);	
+
+	return (NP - ps->saleType);
+}
+
+void filterClientsByProduct(BRANCHSALES bs, PRODUCT prod, CLIENTLIST n, CLIENTLIST p){
+	char product[PRODUCT_LENGTH];
+
+	fromProduct(prod, product);
+
+	condSeparateCat(bs->clients, p->set, n->set, (condition_t) existInProductList, product,
+                                                 (compare_t)   clientIsShopAholic, product); 
+}
+
+/* TODO: Esperar que o 9 arranje a API dos hash sets */
+PRODUCTLIST filterProductByClient(BRANCHSALES bs, CLIENT c) {
+	PRODUCTLIST pl;
+	CLIENTSALE cs;
+	HASHTSET set; 
+	char client[CLIENT_LENGTH];
+
+	fromClient(c, client);
+	cs = getCatContent(bs->clients, INDEX(client), client);
+	set = dumpHashT(cs->products);
+
+	return pl;
+}
+
+CLIENTLIST newClientList() {
+	return malloc(sizeof(struct client_list));
 }
 
 /*   =========  FUNÇÕES PARA MONTHLIST ========= */
