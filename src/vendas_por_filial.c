@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+
 #include "vendas_por_filial.h"
 #include "products.h"
 #include "clients.h"
@@ -61,7 +62,7 @@ static void        freeProductSale  (PRODUCTSALE ps);
 
 BRANCHSALES initBranchSales (CLIENTCAT clientCat) {
 	BRANCHSALES bs = malloc(sizeof(*bs));
-	
+
 	bs->clients = getClientCat(clientCat);
 	bs->clients = changeCatalogOps(bs->clients,
                                    (init_t) initClientSale,
@@ -161,8 +162,8 @@ void filterClientsByProduct(BRANCHSALES bs, PRODUCT prod, CLIENTLIST n, CLIENTLI
 
 	fromProduct(prod, product);
 
-	condSeparateCat(bs->clients, p->set, n->set, (condition_t) existInProductList, product,
-                                                 (compare_t)   clientIsShopAholic, product); 
+	condSeparateCat(bs->clients, p->set, n->set,(condition_t) existInProductList, product,
+                                                (compare_t) clientIsShopAholic, product); 
 }
 
 /* TODO: Esperar que o 9 arranje a API dos hash sets */

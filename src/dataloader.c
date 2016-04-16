@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "datacheck.h"
+#include "dataloader.h"
 #include "sales.h"
 
 #define BUFF_SIZE 35
