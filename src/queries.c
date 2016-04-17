@@ -3,6 +3,7 @@
 #include <string.h>
 #include "queries.h"
 
+#define UPPER(a) (('a' <= (a) && (a) <= 'z') ? ((a - 'a') + 'A') : (a))
 #define MAX_SIZE 128
 
 PRINTSET query5(BRANCHSALES bs, CLIENT client) {
@@ -34,12 +35,18 @@ PRINTSET query8(BRANCHSALES bs, PRODUCT product){
 	printf(" 2• Clientes em modo P (%d)\n", clientListSize(p));
 	printf("\n::::::::::::::::::::::::::::::\n");
 
-	while (mode <= 0 || mode >= 3) {
+	while ((mode <= 0 || mode >= 3) && UPPER(answ[0]) != 'Q') {
 		printf("Escolha um modo: ");
 		fgets(answ, MAX_SIZE, stdin);
 		mode = atoi(answ);
+		
+		if (UPPER(answ[0]) == 'N')
+			mode = 1;
+		else if (UPPER(answ[0]) == 'P')
+			mode = 2;
 	}
-
+	if (UPPER(answ[0]) == 'Q') return NULL;
+	
 	toPrint = (mode == 1) ? n : p;
 
 	for(i=0; (buff = getClientListPos(toPrint, i)) ; i++) {

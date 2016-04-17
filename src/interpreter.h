@@ -36,4 +36,10 @@ PRINTSET addToPrintSet(PRINTSET ps, char* str);
 
 char** getPage(PRINTSET ps, int page);
 
+/**
+ * Liberta a memória alocada por um PrintSet
+ * @param ps PrintSet a libertar
+ */
+void freePrintSet(PRINTSET ps);
+
 #endif
