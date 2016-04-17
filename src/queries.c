@@ -20,3 +20,34 @@ PRINTSET query5(BRANCHSALES bs, CLIENT client) {
 	free(quantity);
 	return print;
 }
+
+PRINTSET query8(BRANCHSALES bs, PRODUCT product){
+	PRINTSET print = initPrintSet(MAX_SIZE);
+	CLIENTLIST n = newClientList(), p = newClientList(), toPrint;
+	char answ[MAX_SIZE], *buff;
+	int mode = 0, i;
+
+	filterClientsByProduct(bs, product, n, p);
+	
+	printf("\n::::::::::::::::::::::::::::::\n\n");
+	printf(" 1• Clientes em modo N (%d)\n", clientListSize(n));
+	printf(" 2• Clientes em modo P (%d)\n", clientListSize(p));
+	printf("\n::::::::::::::::::::::::::::::\n");
+
+	while (mode <= 0 || mode >= 2) {
+		fgets(answ, MAX_SIZE, stdin);
+		mode = atoi(answ);
+	}
+
+	toPrint = (mode == 1) ? n : p;
+
+	for(i=0; (buff = getClientListPos(toPrint, i)) ; i++) {
+		sprintf(answ, "\t\t%s", buff);
+		print = addToPrintSet(print, answ);
+		free(buff);
+	}
+	
+	freeClientList(n);
+	freeClientList(p);
+	return print;
+}

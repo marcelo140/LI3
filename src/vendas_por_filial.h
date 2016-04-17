@@ -98,6 +98,19 @@ void freeProductList (PRODUCTLIST pl);
 CLIENTLIST newClientList();
 
 /**
+ * Devolve o tamanho da lista de clientes.
+ */
+int clientListSize(CLIENTLIST cl);
+
+/**
+ * Devolve o cliente na posição pos da lista de clientes
+ * @param cl Lista de clientes
+ * @param pos Posição a devolver;
+ * @return o cliente nessa posição
+ */
+char* getClientListPos(CLIENTLIST cl, int pos);
+
+/**
  * Cria uma lista de produtos.
  */
 PRODUCTLIST newProductList();

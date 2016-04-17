@@ -24,12 +24,13 @@ struct printset{
 static void presentList(PRINTSET ps);
 static void presentCatalogSet (CATSET* cs,int branches, int page, int total, int* cont);
 static void presentProductSet (PRODUCTSET ps, int page, int total, int* cont);
+static int askBranch(); 
 
 /*Devolve numero de comandos executados */
 int interpreter(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat) {
 	PRINTSET ps;
 	char answ[BUFF_SIZE];
-	int qnum;
+	int qnum, option;
 
 	system("clear");
 	putchar('\n');
@@ -85,7 +86,12 @@ int interpreter(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat)
 		  		 break;
 		case 7 :
 				 break;
-		case 8 :
+		case 8 : option = askBranch();
+				 printf("Produto: ");
+				 fgets(answ, BUFF_SIZE, stdin);
+				 answ[PRODUCT_LENGTH-1] = '\0';
+				 ps = query8(bs[option], toProduct(answ));
+				 presentList(ps); 
 		 		 break;
 		case 9 :
 		 		 break;
@@ -166,11 +172,6 @@ static void presentList(PRINTSET ps) {
 		for(i=0; print[i] && i < LINES_NUM; i++) 
 			printf("%s\n", print[i]);
 
-		/*
-		if (ps.type == TYPE_CATSET) presentCatalogSet(ps.set, ps.setNums, cpage, total, &cont);
-		else if (ps.type == TYPE_PSET) presentProductSet(ps.set, cpage, total, &cont);
-*/
-
 		printf(":::::::::::::::::::::::::::::::::::::::::\n");
 		printf("\n b: Anterior\tn: Seguinte\th: Ajuda\n g: Ir para página\tq: Sair\n\t>> ");
 
@@ -206,6 +207,26 @@ static void presentList(PRINTSET ps) {
 			break;
 	}
 }
+
+static int askBranch() {
+	char buff[BUFF_SIZE];
+	int r=0;
+
+	printf("\n::::::::::::::::::::::::::::::\n");
+	printf("\t 1• Filial 1\n");
+	printf("\t 2• Filial 2\n");
+	printf("\t 3• Filial 3\n");
+	printf("::::::::::::::::::::::::::::::\n");
+
+	do {
+		printf("Escolha uma filial: ");
+		fgets(buff, BUFF_SIZE, stdin);
+		r = atoi(buff);
+	} while(buff[0] != 'q' && (r < 1 || r > 3)); 
+
+	return r-1;
+} 
+
 /*
 static void presentProductSet (PRODUCTSET ps, int page, int total, int* cont) {
 	int i;

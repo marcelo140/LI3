@@ -184,6 +184,18 @@ CLIENTLIST newClientList() {
 	return malloc(sizeof(struct client_list));
 }
 
+int clientListSize(CLIENTLIST cl) {
+	return getCatalogSetSize(cl->set);
+}
+
+char* getClientListPos(CLIENTLIST cl, int pos){
+	return getKeyPos(cl->set, pos);	
+}
+
+void freeClientList(CLIENTLIST cl) {
+	freeCatalogSet(cl->set);
+}
+
 /*   =========  FUNÇÕES PARA MONTHLIST ========= */
 
 static MONTHLIST initMonthList() {
