@@ -374,10 +374,15 @@ void* getDataPos(DATASET ds, int pos) {
 }
 
 char* getHashPos(DATASET ds, int pos) {
+	char* res;
+
 	if (pos < 0 || pos >= ds->pos)
 		return NULL;
 
-	return ds->set[pos]->hash;
+	res = malloc(sizeof(char) * HASH_SIZE);
+	strcpy(res, ds->set[pos]->hash);
+
+	return res;
 }
 
 int getDataSetSize(DATASET ds) { 

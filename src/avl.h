@@ -186,7 +186,7 @@ void condSeparateAVL (AVL tree, DATASET set1, DATASET set2,
  * @param comparator Função que define como comparar dois elementos
  * @return Conjunto de dados ordenado pelos parâmetros dados
  */ 
-DATASET sortDataSet   (DATASET set, compare_t comparator);
+DATASET sortDataSet (DATASET set, compare_t comparator);
 
 /**
  * Concatena os dois conjuntos de dados, acrescentado os elementos do set2 ao fim do set1
@@ -195,12 +195,15 @@ DATASET sortDataSet   (DATASET set, compare_t comparator);
 DATASET concatDataSet (DATASET set1, DATASET set2);
 
 DATASET unionDataSets (DATASET dest, DATASET src);
-DATASET diffDataSets  (DATASET dest, DATASET src);
 
-void*   getDataPos     (DATASET ds, int pos);
-char*   getHashPos     (DATASET ds, int pos);
-int     getDataSetSize (DATASET ds);
+DATASET diffDataSets (DATASET dest, DATASET src);
 
-void  freeDataSet    (DATASET set);
+void* getDataPos (DATASET ds, int pos);
+
+char* getHashPos (DATASET ds, int pos);
+
+int getDataSetSize (DATASET ds);
+
+void freeDataSet (DATASET set);
 
 #endif
