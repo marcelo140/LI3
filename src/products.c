@@ -158,8 +158,7 @@ bool isProduct (char *str){
 	       str[2] == '1'             && 
            IS_NUMBER(str[3])         && 
            IS_NUMBER(str[4])         && 
-           IS_NUMBER(str[5])         && 
-           str[6] == 0;
+           IS_NUMBER(str[5]);
 }
 
 /**
