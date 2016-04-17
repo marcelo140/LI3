@@ -106,7 +106,7 @@ PRINTSET initPrintSet(int n) {
 	PRINTSET new = malloc(sizeof(*new));
 
 	new->capacity = n;
-	new->size = 0;
+	new->size = -1;
 	new->list = calloc(new->capacity, sizeof(char*));
 	new->header = NULL;
 
@@ -137,9 +137,9 @@ PRINTSET addToPrintSet(PRINTSET ps, char* str) {
 char** getPage(PRINTSET ps, int page) {
 	int p;
 
-	p = page * LINES_NUM;
+	p = (page-1) * LINES_NUM;
 
-	if (p < ps->size) return NULL;
+	if (p >= ps->size) return NULL;
 
 	return ps->list + p;
 }
@@ -163,7 +163,7 @@ static void presentList(PRINTSET ps) {
 		printf(":::::::::::: PÁGINA %d de %d ::::::::::::\n\n", cpage, totalPages);
 
 		print = getPage(ps, cpage); 
-		for(i=0; i < LINES_NUM; i++) 
+		for(i=0; print[i] && i < LINES_NUM; i++) 
 			printf("%s\n", print[i]);
 
 		/*

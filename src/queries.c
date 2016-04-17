@@ -13,7 +13,7 @@ PRINTSET query5(BRANCHSALES bs, CLIENT client) {
 	quantity = getClientQuant(bs, client);
 
 	for(i=0; i < 12; i++){
-		sprintf(str, "Mês %d:\t%d", i+1, quantity[i]);
+		sprintf(str, "\tMês %d:\t\t%d", i+1, quantity[i]);
 		print = addToPrintSet(print, str);
 	}
 
