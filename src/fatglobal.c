@@ -18,6 +18,9 @@ REVENUE addBilled     (REVENUE r, int month, int branch, int MODE, double value)
 REVENUE addQuantity   (REVENUE r, int month, int branch, int MODE, int value);
 REVENUE updateRevenue (REVENUE r, int month, int branch, int MODE, 
                        double billed, int quantity); 
+int compareByQuant(REVENUE rev1, REVENUE rev2);
+int compareByBilling(REVENUE rev1, REVENUE rev2);
+bool isNotEmptyRev (REVENUE r);
 bool isEmptyRev (REVENUE r);
 double  getMonthBilled  (REVENUE r, int month,  double *normal, double *promo);
 double  getBranchBilled (REVENUE r, int branch, double *normal, double *promo);
@@ -58,6 +61,19 @@ FATGLOBAL addFat(FATGLOBAL fat, SALE s) {
 	return fat;
 }
 
+PRODUCTGROUP getProductsByLetter(FATGLOBAL fat, char letter) {
+	PRODUCTGROUP pg = initProductGroup();
+	pg->products = initCatalogSet(countPosElems(fat->cat, letter-'A'));
+
+	pg->products = fillCatalogSet(fat->cat, pg->products, letter-'A');
+
+	return pg;
+}
+
+char* getProductCode(PRODUCTGROUP pg, int pos) {
+	return getKeyPos(pg->products, pos);
+}
+
 int getProductDataByMonth(FATGLOBAL fat, PRODUCT prod, int month, double billed[][2], 
                                                                      int quant[][2]){
 	REVENUE rev;
@@ -65,6 +81,8 @@ int getProductDataByMonth(FATGLOBAL fat, PRODUCT prod, int month, double billed[
 	double billedN, billedP;
 	int branch, quantN, quantP;
 
+	quantN = quantP = 0;
+	billedN = billedP = 0;
 	fromProduct(prod, product);
 	rev = getCatContent(fat->cat, INDEX(product), product);
 
@@ -81,6 +99,15 @@ int getProductDataByMonth(FATGLOBAL fat, PRODUCT prod, int month, double billed[
 	return BRANCHES;
 }
 
+PRODUCTGROUP getProductsSold(FATGLOBAL fat) {
+	PRODUCTGROUP pg;
+	pg = initProductGroup();
+
+	pg->products = filterCat(fat->cat, (condition_t) isNotEmptyRev, NULL);
+
+	return pg;
+}
+
 PRODUCTGROUP getProductsNotSold(FATGLOBAL fat) {
 	PRODUCTGROUP pg;
 	pg = initProductGroup();
@@ -91,7 +118,71 @@ PRODUCTGROUP getProductsNotSold(FATGLOBAL fat) {
 }
 
 PRODUCTGROUP* getProductsNotSoldByBranch(FATGLOBAL fat) {
-	cs = initCatalogSet(countAllElems(fat->cat));
+	PRODUCTGROUP* res;
+	CATSET cs;
+	REVENUE rev;
+	int i, branch, size;
+
+	res = malloc(sizeof(PRODUCTGROUP) * BRANCHES);
+	size = countAllElems(fat->cat);
+
+	cs = initCatalogSet(size);
+	cs = allCatalogSet(fat->cat, cs);
+
+	for(branch = 0; branch < BRANCHES; branch++){
+		res[branch] = initProductGroup();
+		res[branch]->products = initCatalogSet(10000);
+	}
+
+	for(i = 0; i < size; i++) {
+		rev = getContPos(cs, i);
+
+		for(branch = 0; branch < BRANCHES; branch++){
+			if (!getBranchQuant(rev, branch, NULL, NULL))
+				contcpy(res[branch]->products, cs, i);
+		}
+	}
+
+	return res;
+}
+
+double getBilledByMonthRange(FATGLOBAL fat, int initialMonth, int finalMonth) {
+	CATSET cs;
+	REVENUE rev;
+	int i, month, size;
+	double res;
+
+	res = 0;
+	cs = filterCat(fat->cat, (condition_t) isNotEmptyRev, NULL);
+	size = getCatalogSetSize(cs);
+
+	for(i = 0; i < size; i++){
+		rev = getContPos(cs, i);
+
+		for(month = initialMonth; month <= finalMonth; month++)
+			res += getMonthBilled(rev, month, NULL, NULL);	
+	}
+
+	return res;
+}
+
+int getQuantByMonthRange(FATGLOBAL fat, int initialMonth, int finalMonth) {
+	CATSET cs;
+	REVENUE rev;
+	int i, month, size, res;
+
+	res = 0;
+	cs = filterCat(fat->cat, (condition_t) isNotEmptyRev, NULL);
+	size = getCatalogSetSize(cs);
+
+	for(i = 0; i < size; i++){
+		rev = getContPos(cs, i);
+
+		for(month = initialMonth; month <= finalMonth; month++)
+			res += getMonthQuant(rev, month, NULL, NULL);	
+	}
+
+	return res;
 }
 
 void freeFat(FATGLOBAL fat) {
@@ -99,10 +190,31 @@ void freeFat(FATGLOBAL fat) {
 	free(fat);
 }
 
+void freeProductGroup(PRODUCTGROUP pg) {
+	freeCatalogSet(pg->products);
+	free(pg);
+}
+
 PRODUCTGROUP initProductGroup() {
 	return malloc(sizeof(struct product_group));
 }
 
+PRODUCTGROUP sortProductGroup(PRODUCTGROUP pg, int sortMode) {
+	if (sortMode == BY_QUANTITY)
+		pg->products = sortCatSet(pg->products, (compare_t) compareByQuant);
+	else if (sortMode == BY_BILLING)
+		pg->products = sortCatSet(pg->products, (compare_t) compareByBilling);
+
+	return pg;
+}
+
+int compareByQuant(REVENUE rev1, REVENUE rev2) {
+	return (rev1->quantity - rev2->quantity);
+}
+
+int compareByBilling(REVENUE rev1, REVENUE rev2) {
+	return (rev1->billed - rev2->billed);
+}
 
 /************************** REVENUE *****************************/
 
@@ -127,6 +239,10 @@ REVENUE addSale(REVENUE r, SALE s) {
 
 bool isEmptyRev (REVENUE r) {
 	return (r == NULL);
+}
+
+bool isNotEmptyRev (REVENUE r) {
+	return (r != NULL);
 }
 
 double getMonthBilled(REVENUE r, int month, double *normal, double *promo) {

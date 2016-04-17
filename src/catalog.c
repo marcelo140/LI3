@@ -193,7 +193,7 @@ void separateCat (CATALOG cat, compare_t comp, void* arg, CATSET set1, CATSET se
 	size = cat->size;
 
 	for(i = 0; i < size; i++)
-		separateAVL(cat->root[i], comp, arg, set1->set, set2->set);
+		separateAVL(cat->root[i], set1->set, set2->set, comp, arg);
 }
 
 void condSeparateCat (CATALOG cat, CATSET set1, CATSET set2,
