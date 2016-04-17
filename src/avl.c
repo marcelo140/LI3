@@ -257,7 +257,7 @@ DATASET sortDataSet(DATASET set, compare_t comparator) {
 	NODE pivot;
 	int i, pos;
 
-	if (set->size > 0) {	
+	if (set->pos > 0) {	
 		pos = set->pos;
 		below = initDataSet(pos/2+1);
 		above = initDataSet(pos/2+1);

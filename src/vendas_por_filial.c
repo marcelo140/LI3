@@ -168,7 +168,7 @@ double *getClientExpenses(BRANCHSALES bs, CLIENT c) {
 }
 
 bool existInProductList(CLIENTSALE cs, char* product) {
-	return (getHashTcontent(cs->products, product) != NULL);
+	return (cs && cs->products && getHashTcontent(cs->products, product) != NULL);
 }
 
 int clientIsShopAholic(CLIENTSALE cs, char* product) {

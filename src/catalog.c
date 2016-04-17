@@ -203,8 +203,10 @@ CATSET* massFilterCat (CATALOG cat, int num, condition_t predicate, void** args)
 	for(i = 0; i < size; i++)
 		ds = massFilterAVL(cat->root[i], ds, num, predicate, args);
 
-	for(i = 0; i < num; i++)
+	for(i = 0; i < num; i++){
+		cs[i] = malloc(sizeof(struct catalog_set));
 		cs[i]->set = ds[i];
+	}
 
 	return cs;
 }
