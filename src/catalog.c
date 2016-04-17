@@ -42,7 +42,7 @@ CATALOG changeCatalogOps (CATALOG cat, init_t init, condition_t equals,
 	
 	size = cat->size;
 	for(i = 0; i < size; i++)
-		changeOperations(cat->root[i], init, equals, clone, free);
+		changeOps(cat->root[i], init, equals, clone, free);
 
 	return cat;
 }

@@ -28,6 +28,7 @@ static int askBranch();
 
 /*Devolve numero de comandos executados */
 int interpreter(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat) {
+	PRODUCT p;
 	PRINTSET ps;
 	char answ[BUFF_SIZE];
 	int qnum, option;
@@ -90,7 +91,8 @@ int interpreter(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat)
 				 printf("Produto: ");
 				 fgets(answ, BUFF_SIZE, stdin);
 				 answ[PRODUCT_LENGTH-1] = '\0';
-				 ps = query8(bs[option], toProduct(answ));
+				 p = toProduct(answ);
+				 ps = query8(bs[option], p);
 				 presentList(ps); 
 		 		 break;
 		case 9 :

@@ -56,8 +56,6 @@ int main() {
 
 	putchar('\n');
 
-	getchar();
-
 	interpreter(branchSales, fat, productCat, clientCat);
 
 	return 0;
