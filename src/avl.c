@@ -49,6 +49,9 @@ static DATASET addDataSetAux(DATASET ds, NODE node);
 static void separateNode(NODE n, compare_t comparator, void* arg,
                                  DATASET set1, DATASET set2);
 
+static DATASET* massFilterNode(NODE n, DATASET* ds, int num, condition_t condition,
+                                                             void** args);
+
 static void condSeparateNode(NODE n, DATASET set1, DATASET set2, 
                                      condition_t cond, void* cond_arg,
                                      compare_t comp, void* comp_arg);
@@ -220,9 +223,14 @@ DATASET addDataSet(DATASET ds, AVL tree) {
 	return ds;	
 }
 
-DATASET filterAVL (AVL tree, DATASET ds,  bool (*condition)(void*,void*), void* arg) {
+DATASET filterAVL (AVL tree, DATASET ds,  condition_t condition, void* arg) {
     ds = filterNode(tree->head, ds, condition, arg);
 
+	return ds;
+}
+
+DATASET* massFilterAVL(AVL tree, DATASET* ds, int n, condition_t predicate, void** args){
+	ds = massFilterNode(tree->head, ds, n, predicate, args);
 	return ds;
 }
 
@@ -665,7 +673,7 @@ static DATASET insertDataSet(DATASET ds, NODE data) {
 	return ds;
 }
 
-static DATASET filterNode(NODE n, DATASET ds, bool (*condition)(void*,void*), void* arg) {
+static DATASET filterNode(NODE n, DATASET ds, condition_t condition, void* arg) {
 
 	if (n) {
 		ds = filterNode(n->left, ds, condition, arg);
@@ -675,6 +683,24 @@ static DATASET filterNode(NODE n, DATASET ds, bool (*condition)(void*,void*), vo
 	
 		ds = filterNode(n->right, ds, condition, arg);
 	}
+	return ds;
+}
+
+static DATASET* massFilterNode(NODE n, DATASET* ds, int num, condition_t condition,
+                                                             void** args){
+	int i;
+
+	if (n) {
+		ds = massFilterNode(n->left, ds, num, condition, args);
+		
+		for(i = 0; i < num; i++){
+			if (condition(n->content, args[i]))
+				ds[i] = insertDataSet(ds[i], n);
+		}
+
+		ds = massFilterNode(n->right, ds, num, condition, args);
+	}
+
 	return ds;
 }
 

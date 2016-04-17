@@ -135,6 +135,8 @@ DATASET datacpy (DATASET dest, DATASET source, int pos);
  */
 DATASET filterAVL (AVL tree, DATASET ds, condition_t condition, void* arg);
 
+DATASET* massFilterAVL (AVL tree, DATASET* ds, int num, condition_t predicate, void** args);
+
 /**
  * Constrói dois conjuntos de dados a partir do resultado da função comparação dada que
  * será aplicada a todos os nodos da árvore, por ordem crescente.

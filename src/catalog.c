@@ -177,12 +177,34 @@ CATSET allCatalogSet(CATALOG cat, CATSET cs) {
 
 CATSET filterCat (CATALOG cat, condition_t condition, void* arg) {
 	CATSET cs;
-	int i;
+	int i, size;
 
-	cs = initCatalogSet(cat->size);
+	size = cat->size;
+	cs = initCatalogSet(size);
 
-	for(i = 0; i < cat->size; i++)
+	for(i = 0; i < size; i++)
 		cs->set = filterAVL(cat->root[i], cs->set, condition, arg);
+
+	return cs;
+}
+
+CATSET* massFilterCat (CATALOG cat, int num, condition_t predicate, void** args){
+	DATASET* ds;
+	CATSET* cs;
+	int i, size;
+
+	size = cat->size;
+	cs = malloc(sizeof(CATSET)*num);
+	ds = malloc(sizeof(DATASET)*num);
+
+	for(i = 0; i < num; i++)
+		ds[i] = initDataSet(1000);
+
+	for(i = 0; i < size; i++)
+		ds = massFilterAVL(cat->root[i], ds, num, predicate, args);
+
+	for(i = 0; i < num; i++)
+		cs[i]->set = ds[i];
 
 	return cs;
 }

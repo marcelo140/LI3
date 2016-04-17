@@ -39,6 +39,8 @@ CATSET allCatalogSet  (CATALOG cat, CATSET cs);
 CATSET contcpy        (CATSET dest, CATSET src, int pos);
 
 CATSET filterCat(CATALOG cat, condition_t condition, void* arg);
+CATSET* massFilterCat(CATALOG cat, int num, condition_t condition, void** args);
+
 void   separateCat(CATALOG cat, compare_t compare, void* arg, CATSET set1, CATSET set2);
 
 void   condSeparateCat(CATALOG cat, CATSET set1, CATSET set2,
