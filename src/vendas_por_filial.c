@@ -181,7 +181,10 @@ PRODUCTLIST filterProductByClient(BRANCHSALES bs, CLIENT c) {
 }
 
 CLIENTLIST newClientList() {
-	return malloc(sizeof(struct client_list));
+	CLIENTLIST new = malloc(sizeof(struct client_list));
+	new->set = initCatalogSet(20);
+
+	return new;
 }
 
 int clientListSize(CLIENTLIST cl) {
