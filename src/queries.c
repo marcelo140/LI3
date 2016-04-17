@@ -34,7 +34,8 @@ PRINTSET query8(BRANCHSALES bs, PRODUCT product){
 	printf(" 2• Clientes em modo P (%d)\n", clientListSize(p));
 	printf("\n::::::::::::::::::::::::::::::\n");
 
-	while (mode <= 0 || mode >= 2) {
+	while (mode <= 0 || mode >= 3) {
+		printf("Escolha um modo: ");
 		fgets(answ, MAX_SIZE, stdin);
 		mode = atoi(answ);
 	}
@@ -42,7 +43,7 @@ PRINTSET query8(BRANCHSALES bs, PRODUCT product){
 	toPrint = (mode == 1) ? n : p;
 
 	for(i=0; (buff = getClientListPos(toPrint, i)) ; i++) {
-		sprintf(answ, "\t\t%s", buff);
+		sprintf(answ, "\t\t%s",buff);
 		print = addToPrintSet(print, answ);
 		free(buff);
 	}
