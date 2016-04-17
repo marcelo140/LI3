@@ -80,6 +80,18 @@ BRANCHSALES initBranchSales (CLIENTCAT clientCat) {
 	return bs;
 }
 
+char* getNameFromProductData(PRODUCTDATA pd) {
+	return pd->productCode;
+}
+
+int getQuantFromProductData(PRODUCTDATA pd) {
+	return pd->quantity;
+}
+
+int getClientsFromProductData(PRODUCTDATA pd) {
+	return pd->clients;
+}
+
 BRANCHSALES addSaleToBranch (BRANCHSALES bs, SALE s) {
 	CLIENTSALE cs;
 	CLIENT client;

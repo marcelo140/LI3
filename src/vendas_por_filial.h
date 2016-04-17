@@ -13,6 +13,10 @@ typedef struct product_data *PRODUCTDATA;
 #define BY_EXPENSES 1
 #define BY_NAME     2
 
+char* getNameFromProductData(PRODUCTDATA pd);
+int getQuantFromProductData(PRODUCTDATA pd);
+int getClientsFromProductData(PRODUCTDATA pd);
+
 /**
  * Inicia uma filial com os clientes dados. Esta esturutra relaciona os clientes de
  * uma filial com as compras efetuadas na mesma.
