@@ -20,27 +20,10 @@ struct sale {
 	int mode;       /** Promoção N (Normal) ou P (Promoção). */
 };
 
-struct revenue{
-	double billed[MONTHS][BRANCHES][PROMO];
-	int  quantity[MONTHS][BRANCHES][PROMO];
-};
-
 SALE initSale() {
 	return malloc(sizeof(struct sale));
 }
 
-/**
- * Inicializa a REVENUE e coloca todos os seus valores a 0;
- * @return nova REVENUE
- */
-REVENUE initRevenue() {
-	return calloc (1, sizeof(struct revenue));
-}
-
-/** Transforma uma string numa SALE
- * @param line Linha a ser lida
- * @return Sale resultante
- */
 SALE readSale(SALE s, PRODUCT p, CLIENT c, char *line) {
 	char *token;
 	double price;
@@ -70,18 +53,6 @@ SALE readSale(SALE s, PRODUCT p, CLIENT c, char *line) {
 	return updateSale(s, p, c, price, quant, month-1, branch-1, mode);	
 }
 
-/**
- * Preenche uma dada SALE.
- * @param s SALE a preencher
- * @param p Produto
- * @param c Client
- * @param price Preço da venda
- * @param quant Quantidade comprada
- * @param month Mês da compra
- * @param branch Filial onde foi efetuada a compra
- * @param mode Modo de promoção N ou P
- * @return nova SALE
- */
 SALE updateSale(SALE s, PRODUCT p, CLIENT c, double price, int quant, int month, int branch, int mode) {
 
 	s->prod = p;
@@ -95,18 +66,6 @@ SALE updateSale(SALE s, PRODUCT p, CLIENT c, double price, int quant, int month,
 	return s;
 }
 
-REVENUE addSale(REVENUE r, SALE s) {
-	double price = s->price;
-	int quant  = s->quantity;
-	int month  = s->month; 
-	int branch = s->branch;
-	int mode   = s->mode;
-
-	r->billed[month][branch][mode]   += quant*price;
-	r->quantity[month][branch][mode] += quant;
-
-	return r;
-}
 
 /**
  * Adicionar ao total faturado o valor faturado num dado mes num dado modo.
@@ -116,11 +75,15 @@ REVENUE addSale(REVENUE r, SALE s) {
  * @param value Valor a somar
  * @return REVENUE atualizada
  */
+
+/*
 REVENUE addBilled(REVENUE r, int month, int branch, int MODE, double value) {
 	r->billed[month][branch][MODE] += value;
+	r->totalBilled += value;
 
 	return r;	
 }
+*/
 
 /**
  * Adicionar à quantidade total o valor num dado mes num dado modo.
@@ -130,12 +93,14 @@ REVENUE addBilled(REVENUE r, int month, int branch, int MODE, double value) {
  * @param value Valor a somar
  * @return REVENUE atualizada
  */
+/*
 REVENUE addQuantity(REVENUE r, int month, int branch, int MODE, int value) {
 	r->quantity[month][branch][MODE] += value;
+	r->totalQuant += value;
 
 	return r;	
 }
-
+*/
 /** 
  * Adiciona uma nova faturação e uma nova quantidade à REVENUE
  * @param r REVENUE a modificar
@@ -144,13 +109,18 @@ REVENUE addQuantity(REVENUE r, int month, int branch, int MODE, int value) {
  * @param quantity Quantidade a adicionar
  * @return REVENUE alterada 
  */
-REVENUE updateRevenue(REVENUE r, int month, int branch, int MODE, double price, int quantity) {
-	r->billed[month][branch][MODE]   += quantity*price;
-	r->quantity[month][branch][MODE] += quantity;
+/*
+REVENUE updateRevenue(REVENUE r, int month, int branch, int MODE, double price, int quant){
+	double billed = quant*price;
+
+	r->billed[month][branch][MODE]   += billed;
+	r->quantity[month][branch][MODE] += quant;
+	r->totalBilled += billed;
+	r->totalQuant += quant;
 
 	return r;
 }
-
+*/
 /**
  * Verifica se uma SALE é válida.
  * @param sale SALE a verificar
@@ -163,9 +133,6 @@ bool isSale(SALE sale, PRODUCTCAT prodCat, CLIENTCAT clientCat) {
 		 lookUpClient(clientCat, sale->client));
 }
 
-bool isEmptyRev (REVENUE r) {
-	return (r == NULL);
-}
 
 PRODUCT getProduct(SALE s) {
 	return s->prod;
@@ -195,46 +162,6 @@ int getMode(SALE s) {
 	return s->mode;
 }
 
-double getMonthBilled(REVENUE r, int month, double *normal, double *promo) {
-	double n, p;
-	int branch;
-
-	if (!r)
-		return 0;
-
-	n = p = 0;
-
-	for(branch = 0; branch < BRANCHES; branch++) {
-		n += r->billed[month][branch][MODE_N];
-		p += r->billed[month][branch][MODE_P];
-	}
-
-	if (promo)  *promo  = p;
-	if (normal) *normal = n;
-
-	return n+p;		
-}
-
-double getBranchBilled(REVENUE r, int branch, double *normal, double *promo) {
-	double n, p;
-	int  month;
-
-	if (!r)
-		return 0;
-
-	n = p = 0;
-
-	for(month = 0; month < MONTHS; month++){
-		n += r->billed[month][branch][MODE_N];
-		p += r->billed[month][branch][MODE_P];
-	}
-
-	if (promo)  *promo  = p;
-	if (normal) *normal = n;
-
-	return n+p;
-}
-
 /**
  * Devolve o total faturado num dado mês numa dada promoção
  * @param r REVENUE
@@ -242,47 +169,12 @@ double getBranchBilled(REVENUE r, int branch, double *normal, double *promo) {
  * @param MODE Modo da promoção
  * @return O total faturado
  */
+/*
 double getBilled(REVENUE r, int month, int branch, int MODE) {
 	return r->billed[month][branch][MODE]; 
 }
+*/
 
-int getMonthQuant(REVENUE r, int month, int *normal, int *promo) {
-	int n, p, branch;
-
-	if (!r)
-		return 0;
-
-	n = p = 0;
-
-	for(branch = 0; branch < BRANCHES; branch++) {
-		n += r->quantity[month][branch][MODE_N];
-		p += r->quantity[month][branch][MODE_P];
-	}
-
-	if (promo)  *promo  = p;
-	if (normal) *normal = n;
-
-	return n+p;
-}
-
-int getBranchQuant(REVENUE r, int branch, int *normal, int *promo) {
-	int n, p, month;
-
-	if (!r)
-		return 0;
-
-	n = p = 0;
-
-	for(month = 0; month < MONTHS; month++) {
-		n += r->quantity[month][branch][MODE_N];
-		p += r->quantity[month][branch][MODE_P];
-	}
-
-	if (promo)  *promo  = p;
-	if (normal) *normal = n;
-
-	return n+p;
-}
 
 /**
  * Devolve a quantidade total vendida num dado mês num dada promoção
@@ -291,17 +183,15 @@ int getBranchQuant(REVENUE r, int branch, int *normal, int *promo) {
  * @param MODE Modo da promoção
  * @return A quantidade total vendida
  */
+/*
 int getQuantity(REVENUE r, int month, int branch, int MODE) {
 	return r->quantity[month][branch][MODE];
 }
-
+*/
 /**
  * Liberta o espaço ocupado pela REVENUE  
  * @param r REVENUE a libertar
  */
-void freeRevenue(REVENUE r) {
-	free(r);
-}
 
 /**
  * Liberta o espaço ocupado pela SALE s

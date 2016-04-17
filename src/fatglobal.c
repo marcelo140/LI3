@@ -12,19 +12,32 @@ struct faturacao {
 	CATALOG cat;
 };
 
-struct fatdata {
-	double billed[BRANCHES][NP];
-	int    quant[BRANCHES][NP];
+REVENUE initRevenue ();
+REVENUE addSale       (REVENUE r, SALE s);
+REVENUE addBilled     (REVENUE r, int month, int branch, int MODE, double value);
+REVENUE addQuantity   (REVENUE r, int month, int branch, int MODE, int value);
+REVENUE updateRevenue (REVENUE r, int month, int branch, int MODE, 
+                       double billed, int quantity); 
+bool isEmptyRev (REVENUE r);
+double  getMonthBilled  (REVENUE r, int month,  double *normal, double *promo);
+double  getBranchBilled (REVENUE r, int branch, double *normal, double *promo);
+int     getMonthQuant   (REVENUE r, int month,  int *normal, int *promo);
+int     getBranchQuant  (REVENUE r, int branch, int *normal, int *promo);
+void freeRevenue (REVENUE r);
+
+PRODUCTGROUP initProductGroup();
+
+struct revenue{
+	double billed[MONTHS][BRANCHES][SALEMODE];
+	int  quantity[MONTHS][BRANCHES][SALEMODE];
+	double totalBilled;
+	int totalQuant;
 };
 
-static CATSET* notSoldBranch (CATSET cs);
-static CATSET* notSoldTotal  (CATSET cs);
+struct product_group {
+	CATSET products;
+};
 
-/**
- * Preenche a Faturação Global com o catálog de Produtos
- * @param p Catálogo de Produtos
- * @return Faturação Global preenchida
- */
 FATGLOBAL initFat(PRODUCTCAT p) {
 	FATGLOBAL new = malloc(sizeof (*new));
 	new->cat = getProductCat(p);
@@ -34,21 +47,9 @@ FATGLOBAL initFat(PRODUCTCAT p) {
 	return new;
 }
 
-FATDATA initFatdata() {
-	FATDATA new = malloc(sizeof(*new));
-
-	return new;
-}
-
-/**
- * Adiciona uma venda à faturação global
- * @param fat Faturação
- * @param s Venda a ser adicionada
- * @return Faturação com a nova venda
- */
 FATGLOBAL addFat(FATGLOBAL fat, SALE s) {
 	REVENUE r;
-	char prod[10];
+	char prod[PRODUCT_LENGTH];
 
 	fromProduct(getProduct(s), prod);
 	r = getCatContent(fat->cat, INDEX(prod), prod);
@@ -57,137 +58,155 @@ FATGLOBAL addFat(FATGLOBAL fat, SALE s) {
 	return fat;
 }
 
-FATDATA monthRevenue(FATGLOBAL fat, char *product, int month, int mode) {
-	FATDATA f;
-	REVENUE r;
+int getProductDataByMonth(FATGLOBAL fat, PRODUCT prod, int month, double billed[][2], 
+                                                                     int quant[][2]){
+	REVENUE rev;
+	char product[PRODUCT_LENGTH];
 	double billedN, billedP;
 	int branch, quantN, quantP;
 
-	f = initFatdata();
-	r = getCatContent(fat->cat, INDEX(product), product);
+	fromProduct(prod, product);
+	rev = getCatContent(fat->cat, INDEX(product), product);
 
-	if (mode == TOTAL) {
-		getMonthQuant(r, month, &quantN, &quantP);
-		getMonthBilled(r, month, &billedN, &billedP);
+	for(branch = 0; branch < BRANCHES; branch++) {
+		getMonthBilled(rev, month, &billedN, &billedP);
+		getMonthQuant(rev, month, &quantN, &quantP);
 
-		f->quant[0][MODE_N]  = quantN;
-		f->quant[0][MODE_P]  = quantP;
-		f->billed[0][MODE_N] = billedN;
-		f->billed[0][MODE_P] = billedP;
-	}else{
-		for(branch = 0; branch < BRANCHES; branch++) {
-			f->quant[branch][MODE_N] = getQuantity(r, month, branch, MODE_N);
-			f->quant[branch][MODE_N] = getQuantity(r, month, branch, MODE_P);
-			f->billed[branch][MODE_N] = getBilled(r, month, branch, MODE_N);
-			f->billed[branch][MODE_N] = getBilled(r, month, branch, MODE_P);
-		}	
+		billed[branch][MODE_N] = billedN;
+		billed[branch][MODE_P] = billedP;
+		quant[branch][MODE_N] = quantN;
+		quant[branch][MODE_P] = quantP;
 	}
 
-	return f;
+	return BRANCHES;
 }
 
-void monthRange(FATGLOBAL fat, int min, int max, int* quantT, double* billedT) {
-	CATSET cs;
-	REVENUE r;
-	double billed;
-	int i, quant, month, size;
+PRODUCTGROUP getProductsNotSold(FATGLOBAL fat) {
+	PRODUCTGROUP pg;
+	pg = initProductGroup();
 
-	size = countAllElems(fat->cat);
-	billed = 0;
-	quant = 0;
-
-	cs = initCatalogSet(size);
-	cs = allCatalogSet(fat->cat, cs);
-
-	for(i = 0; i < size; i++) {
-		r = getContPos(cs, i);
-		
-		if (!isEmptyRev(r)){
-			for(month = min; month <= max; month++){
-				quant += getMonthQuant(r, month, NULL, NULL);
-				billed += getMonthBilled(r, month, NULL, NULL);
-			}
-		}
-	}
-
-	*quantT = quant;
-	*billedT = billed;
-}
-
-CATSET* notSold(FATGLOBAL fat, int mode) {
-	CATSET cs = initCatalogSet(countAllElems(fat->cat));
-	cs = allCatalogSet(fat->cat, cs);
-
-	if (mode == BRANCHES)
-		return notSoldBranch(cs);
-	else
-		return notSoldTotal(cs);
-}
-
-static CATSET* notSoldTotal(CATSET cs) {
-	CATSET* res;
-	REVENUE rev;
-	int i, size;
-
-	size = getCatalogSetSize(cs);
-	res = malloc(sizeof(*res));
-
-	res[0] = initCatalogSet(1000);
-
-	for(i = 0; i < size; i++) {
-		rev = getContPos(cs, i);
-
-		if (isEmptyRev(rev))
-			contcpy(res[0], cs, i);
-	}
-
-	return res;
-}
-
-static CATSET* notSoldBranch(CATSET cs) {
-	CATSET* res;
-	REVENUE rev;
-	int i, branch, size;
-
-	size = getCatalogSetSize(cs);
-	res = malloc(sizeof(*res) * BRANCHES);
-
-	for(branch = 0; branch < BRANCHES; branch++)
-		res[branch] = initCatalogSet(1000);
-
-	for(i = 0; i < size; i++){
-		rev = getContPos(cs, i);
-		
-		for(branch = 0; branch < BRANCHES; branch++)
-			if (!getBranchQuant(rev, branch, NULL, NULL))
-				contcpy(res[branch], cs, i);
-		
-	}
+	pg->products = filterCat(fat->cat, (condition_t) isEmptyRev, NULL);	
 	
-	return res;
+	return pg;
 }
 
-double getBilledFat(FATDATA data, int branch, double *billedN, double *billedP) {
-	*billedN = data->billed[branch][MODE_N];
-	*billedP = data->billed[branch][MODE_P];
-
-	return *billedN + *billedP;
-}
-
-int getQuantFat(FATDATA data, int branch, int *quantN, int *quantP) {
-	*quantN = data->quant[branch][MODE_N];
-	*quantP = data->quant[branch][MODE_P];
-
-	return *quantN + *quantP;
-}
-
-void freeFatData(FATDATA fd) {
-	free(fd->billed);
-	free(fd->quant);
-	free(fd);
+PRODUCTGROUP* getProductsNotSoldByBranch(FATGLOBAL fat) {
+	cs = initCatalogSet(countAllElems(fat->cat));
 }
 
 void freeFat(FATGLOBAL fat) {
 	freeCatalog(fat->cat);
 	free(fat);
+}
+
+PRODUCTGROUP initProductGroup() {
+	return malloc(sizeof(struct product_group));
+}
+
+
+/************************** REVENUE *****************************/
+
+REVENUE initRevenue() {
+	return calloc (1, sizeof(struct revenue));
+}
+
+REVENUE addSale(REVENUE r, SALE s) {
+	int quant  = getQuant(s);
+	int month  = getMonth(s); 
+	int branch = getBranch(s);
+	int mode   = getMode(s);
+	double billed = quant*getPrice(s);
+
+	r->billed[month][branch][mode]   += billed;
+	r->quantity[month][branch][mode] += quant;
+	r->totalQuant += quant;
+	r->totalBilled += billed;
+
+	return r;
+}
+
+bool isEmptyRev (REVENUE r) {
+	return (r == NULL);
+}
+
+double getMonthBilled(REVENUE r, int month, double *normal, double *promo) {
+	double n, p;
+	int branch;
+
+	if (!r)
+		return 0;
+
+	n = p = 0;
+
+	for(branch = 0; branch < BRANCHES; branch++) {
+		n += r->billed[month][branch][MODE_N];
+		p += r->billed[month][branch][MODE_P];
+	}
+
+	if (promo)  *promo  = p;
+	if (normal) *normal = n;
+
+	return n+p;		
+}
+
+double getBranchBilled(REVENUE r, int branch, double *normal, double *promo) {
+	double n, p;
+	int  month;
+
+	if (!r)
+		return 0;
+
+	n = p = 0;
+
+	for(month = 0; month < MONTHS; month++){
+		n += r->billed[month][branch][MODE_N];
+		p += r->billed[month][branch][MODE_P];
+	}
+
+	if (promo)  *promo  = p;
+	if (normal) *normal = n;
+
+	return n+p;
+}
+
+int getMonthQuant(REVENUE r, int month, int *normal, int *promo) {
+	int n, p, branch;
+
+	if (!r)
+		return 0;
+
+	n = p = 0;
+
+	for(branch = 0; branch < BRANCHES; branch++) {
+		n += r->quantity[month][branch][MODE_N];
+		p += r->quantity[month][branch][MODE_P];
+	}
+
+	if (promo)  *promo  = p;
+	if (normal) *normal = n;
+
+	return n+p;
+}
+
+int getBranchQuant(REVENUE r, int branch, int *normal, int *promo) {
+	int n, p, month;
+
+	if (!r)
+		return 0;
+
+	n = p = 0;
+
+	for(month = 0; month < MONTHS; month++) {
+		n += r->quantity[month][branch][MODE_N];
+		p += r->quantity[month][branch][MODE_P];
+	}
+
+	if (promo)  *promo  = p;
+	if (normal) *normal = n;
+
+	return n+p;
+}
+
+void freeRevenue(REVENUE r) {
+	free(r);
 }
