@@ -366,6 +366,26 @@ DATASET diffDataSets(DATASET dest, DATASET source) {
 	return new;
 }
 
+DATASET intersectDataSet (DATASET d1, DATASET d2) {
+	DATASET new;
+	int i, j, size;
+
+	size = (d1->size < d2->size) ? d1->size : d2->size;
+	new = initDataSet(size);
+
+	for(i=0, j=0 ; i < d1->size && j < d1->size;) {
+		if (d1->set[i] < d2->set[j]) i++;	
+		else if (d1->set[i] > d2->set[j]) j++;
+		else {
+			new = insertDataSet(new, d1->set[i]);
+			i++;
+			j++;
+		}
+	}
+
+	return new;
+}
+
 void* getDataPos(DATASET ds, int pos) {
 	if (pos < 0 || pos >= ds->pos)
 		return NULL;

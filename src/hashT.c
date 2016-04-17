@@ -40,6 +40,7 @@ static int Hash(char *key);
 static HASHT resizeHashT(HASHT ht);
 static HASHTSET initHashTSet(int size); 
 static HASHTSET insertHashTSet(HASHTSET hts, HASHTCNTT newCntt); 
+static HASHTSET resizeHashTSet(HASHTSET hts);
 
 HASHT initHashT(ht_init_t init, ht_add_t add, ht_free_t free) {
 	HASHT new = malloc(sizeof(*new));
@@ -96,6 +97,46 @@ char* getHashTSetKey(HASHTSET hts, int pos) {
 	strncpy(ret, hts->set[pos].key, KEY_SIZE);
 
 	return hts->set[pos].key;
+}
+
+HASHTSET concatHashTSet(HASHTSET h1, HASHTSET h2) {
+	int i;
+
+	for(i=0; i < h2->size; i++)
+		insertHashTSet(h1, h2->set[i]);
+
+	return h1;
+}
+
+HASHTSET sortHashTSet(HASHTSET hts, compare_t comparator) {
+	HASHTSET below, above;
+	HASHTCNTT pivot;
+	int i, pos;
+
+	if (hts->capacity > 0) {
+		pos = hts->size;
+		below = initHashTSet(pos/2+1);
+		above = initHashTSet(pos/2+1);
+
+		pivot = hts->set[pos-1];
+
+		for(i = 0; i < pos-2; i++) {
+			if (comparator(pivot.content, hts->set[i].content) > 0)
+				insertHashTSet(above, hts->set[i]);
+			else 
+				insertHashTSet(below, hts->set[i]);
+		}
+
+		below = sortHashTSet(below, comparator);
+		above = sortHashTSet(above, comparator);
+
+		below = insertHashTSet(below, pivot);
+		below = concatHashTSet(below, above);
+
+		return below;
+	}
+	
+	return hts;
 }
 
 void freeHashT(HASHT ht) {
@@ -165,12 +206,23 @@ static HASHTSET initHashTSet(int size) {
 } 
 
 static HASHTSET insertHashTSet(HASHTSET hts, HASHTCNTT newCntt) {
+	HASHTCNTT new;
+	strcpy(new.key, newCntt.key);
+	new.status  = newCntt.status;
+	new.content = newCntt.content;
+	
+	if (hts->size >= hts->capacity) 
+		hts = resizeHashTSet(hts);
 
-	if (hts->size < hts->capacity) {
-		hts->set[hts->size] = newCntt;
-		hts->size++;
-	} 
-	/* TODO se calhar meter um resize HashSet */
+	hts->set[hts->size] = new;
+	hts->size++;
+
+	return hts;
+}
+
+static HASHTSET resizeHashTSet(HASHTSET hts) {
+	hts->capacity *= 2;
+	hts->set = realloc(hts->set, hts->capacity * sizeof(struct hashCntt) );
 
 	return hts;
 }

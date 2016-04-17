@@ -197,6 +197,15 @@ DATASET concatDataSet (DATASET set1, DATASET set2);
 DATASET unionDataSets (DATASET dest, DATASET src);
 
 DATASET diffDataSets (DATASET dest, DATASET src);
+/**
+ * Cria um novo dataSet com a interseção de d1 e d2
+ * d1 e d2 devem já estar ordenados para usar esta função.
+ */
+DATASET intersectDataSet (DATASET d1, DATASET d2);
+
+void*   getDataPos     (DATASET ds, int pos);
+char*   getHashPos     (DATASET ds, int pos);
+int     getDataSetSize (DATASET ds);
 
 void* getDataPos (DATASET ds, int pos);
 

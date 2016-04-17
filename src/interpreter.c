@@ -60,7 +60,7 @@ int interpreter(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat)
 	printf("                                                         \n");
 	printf("  :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n");
 
-	printf("\n Escolha uma opção : ");
+	printf("\n  Escolha uma opção : ");
 
 	fgets(answ, BUFF_SIZE, stdin);
 
@@ -77,10 +77,11 @@ int interpreter(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat)
 			 	 break;
 		case 4 :
 				 break;
-		case 5 : printf("Cliente: ");
+		case 5 : option = askBranch();
+				 printf("  Cliente: ");
 				 fgets(answ, BUFF_SIZE, stdin);
 				 answ[CLIENT_LENGTH-1] = '\0';
-				 ps = query5(bs[0], toClient(answ));
+				 ps = query5(bs[option], toClient(answ));
 				 presentList(ps); 
 		 		 break;
 		case 6 : 
@@ -93,7 +94,9 @@ int interpreter(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat)
 				 answ[PRODUCT_LENGTH-1] = '\0';
 				 p = toProduct(answ);
 				 ps = query8(bs[option], p);
-				 presentList(ps); 
+				 if (ps) presentList(ps);
+				 freeProduct(p);
+			     if (ps) freePrintSet(ps); 
 		 		 break;
 		case 9 :
 		 		 break;
@@ -106,7 +109,6 @@ int interpreter(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat)
 		default : return interpreter(bs, fat, pcat, ccat);
 	}
 	
-	return 0;
 	return interpreter(bs, fat, pcat, ccat) + 1;
 }
 
@@ -152,6 +154,15 @@ char** getPage(PRINTSET ps, int page) {
 	return ps->list + p;
 }
 
+void freePrintSet(PRINTSET ps) {
+	int i;
+
+	for(i=0; i < ps->capacity; i++)
+		free(ps->list[i]);
+	free(ps->list);
+	free(ps->header);
+	free(ps);
+}
 
 
 static void presentList(PRINTSET ps) {
@@ -171,7 +182,7 @@ static void presentList(PRINTSET ps) {
 		printf(":::::::::::: PÁGINA %d de %d ::::::::::::\n\n", cpage, totalPages);
 
 		print = getPage(ps, cpage); 
-		for(i=0; print[i] && i < LINES_NUM; i++) 
+		for(i=0; print && print[i] && i < LINES_NUM; i++) 
 			printf("%s\n", print[i]);
 
 		printf(":::::::::::::::::::::::::::::::::::::::::\n");
@@ -214,14 +225,14 @@ static int askBranch() {
 	char buff[BUFF_SIZE];
 	int r=0;
 
-	printf("\n::::::::::::::::::::::::::::::\n");
-	printf("\t 1• Filial 1\n");
-	printf("\t 2• Filial 2\n");
-	printf("\t 3• Filial 3\n");
-	printf("::::::::::::::::::::::::::::::\n");
+	printf("\n  ::::::::::::::::::::::::::::::\n");
+	printf("\t   1• Filial 1\n");
+	printf("\t   2• Filial 2\n");
+	printf("\t   3• Filial 3\n");
+	printf("  ::::::::::::::::::::::::::::::\n");
 
 	do {
-		printf("Escolha uma filial: ");
+		printf("  Escolha uma filial: ");
 		fgets(buff, BUFF_SIZE, stdin);
 		r = atoi(buff);
 	} while(buff[0] != 'q' && (r < 1 || r > 3)); 
