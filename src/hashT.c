@@ -113,7 +113,7 @@ HASHTSET sortHashTSet(HASHTSET hts, compare_t comparator) {
 	HASHTCNTT pivot;
 	int i, pos;
 
-	if (hts->capacity > 0) {
+	if (hts->size > 0) {
 		pos = hts->size;
 		below = initHashTSet(pos/2+1);
 		above = initHashTSet(pos/2+1);
