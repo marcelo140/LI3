@@ -192,6 +192,8 @@ void freeProductSet(PRODUCTSET ps) {
 
 PRODUCT getProductByPos(PRODUCTSET ps, int pos) {
 	char *str = getKeyPos(ps->set, pos);
+	
+	if (str == NULL) return NULL;
 
 	return toProduct(str);
 }
