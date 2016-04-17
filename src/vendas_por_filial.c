@@ -268,6 +268,11 @@ static PRODUCTSALE addToProductSale(PRODUCTSALE ps, SALE sale) {
 	billed = getPrice(sale) * quant;
 	saleType = getMode(sale);
 
+	if (saleType == MODE_N)
+		saleType = N;
+	else
+		saleType = P;
+
 	ps->quantity[month] += quant;
 	ps->billed[month]   += billed;
 
