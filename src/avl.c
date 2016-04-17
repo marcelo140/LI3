@@ -336,7 +336,7 @@ DATASET unionDataSets(DATASET dest, DATASET source) {
 
 void* dumpDataNode(NODE n, void* data, void* (*dumper) (void*, void*)) {
 	if (n) {
-		dumper(data, n->content);
+		data = dumper(data, n->content);
 		data = dumpDataNode(n->left, data, dumper);
 		data = dumpDataNode(n->right, data, dumper);	
 	}

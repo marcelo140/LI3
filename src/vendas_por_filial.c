@@ -133,7 +133,7 @@ int toProductData(HASHTSET set, PRODUCTDATA* pd) {
 		productName = getHashTSetKey(set, i);
 		quant = 0;
 
-		for(clients = 0; !strcmp(productName, getHashTSetKey(set, i)) && i < size; clients++, i++){
+		for(clients = 0; i < size && !strcmp(productName, getHashTSetKey(set, i)); clients++, i++){
 			ps = getHashTSetContent(set, i);
 			
 			for(month = 0; month < MONTHS; month++)

@@ -118,12 +118,12 @@ HASHTSET sortHashTByName(HASHTSET hts) {
 
 	if (hts->size > 0) {
 		pos = hts->size;
-		below = initHashTSet(pos/2+1);
-		above = initHashTSet(pos/2+1);
+		below = initHashTSet(pos);
+		above = initHashTSet(pos);
 
 		pivot = hts->set[pos-1];
 
-		for(i = 0; i < pos-2; i++) {
+		for(i = 0; i < pos-1; i++) {
 			if (strcmp(pivot.key, hts->set[i].key) < 0)
 				insertHashTSet(above, hts->set[i]);
 			else 
