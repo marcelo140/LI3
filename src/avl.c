@@ -30,36 +30,31 @@ struct data_set {
 	NODE* set;
 };
 
-static NODE insertNode(NODE node, char* hash, void* content, int *update, NODE* last);
-static NODE newNode(char *hash, void *content, NODE left, NODE right);
-static NODE insertRight(NODE node, char* hash, void* content, int *update, NODE *last);
-static NODE insertLeft(NODE node, char* hash, void* content, int *update, NODE *last);
-static NODE balanceRight(NODE node);
-static NODE balanceLeft(NODE node);
-static NODE rotateRight(NODE node);
-static NODE rotateLeft(NODE node);
-static NODE cloneNode(NODE n, void* (*clone)(void *));
+static NODE insertNode   (NODE node, char* hash, void* content, int *update, NODE* last);
+static NODE newNode      (char *hash, void *content, NODE left, NODE right);
+static NODE insertRight  (NODE node, char* hash, void* content, int *update, NODE *last);
+static NODE insertLeft   (NODE node, char* hash, void* content, int *update, NODE *last);
+static NODE balanceRight (NODE node);
+static NODE balanceLeft  (NODE node);
+static NODE rotateRight  (NODE node);
+static NODE rotateLeft   (NODE node);
+static NODE cloneNode    (NODE n, void* (*clone)(void *));
 
-static bool equalsNode(NODE a, NODE b, bool (*equals)(void*, void*));
-static void freeNode(NODE node, void (*freeContent)(void *));
+static bool equalsNode (NODE a, NODE b, bool (*equals)(void*, void*));
+static void freeNode   (NODE node, void (*freeContent)(void *));
 
 static DATASET insertDataSet (DATASET ds, NODE n);
-static DATASET filterNode(NODE n, DATASET ds, bool (*condition)(void*,void*), void* arg);
+static DATASET filterNode(NODE n, DATASET ds, condition_t condition, void* arg);
 static DATASET addDataSetAux(DATASET ds, NODE node);
-static void separateNode(NODE n, compare_t comparator, void* arg, DATASET set1, DATASET set2);
+static void separateNode(NODE n, compare_t comparator, void* arg,
+                                 DATASET set1, DATASET set2);
+
 static void condSeparateNode(NODE n, DATASET set1, DATASET set2, 
                                      condition_t cond, void* cond_arg,
                                      compare_t comp, void* comp_arg);
 
-/**
- * Inicia uma nova AVL.
- * @return Nova AVL
- */
-AVL initAVL(void* (*init)   (),
-            bool  (*equals) (void*, void*), 
-            void* (*clone)  (void*),
-            void  (*free)   (void *)){
 
+AVL initAVL(init_t init, condition_t equals, clone_t clone, free_t free){
 	AVL tree = malloc (sizeof (*tree));
 
 	tree->head = NULL;
@@ -73,11 +68,7 @@ AVL initAVL(void* (*init)   (),
 	return tree;
 }
 
-AVL changeOperations(AVL tree,
-                     void* (*init)   (void*, void*),
-                     bool  (*equals) (void*, void*),
-                     void* (*clone)  (void*),
-                     void  (*free)   (void*)){
+AVL changeOps (AVL tree, init_t init, condition_t equals, clone_t clone, free_t free){
 
 	tree->init = init;
 	tree->equals = equals;
@@ -87,13 +78,6 @@ AVL changeOperations(AVL tree,
 	return tree;
 }
 
-/**
- * Insere conteúdo na AVL com Hash característica do Nodo.
- * @param tree AVL a onde inserir
- * @param s Hash a inserir
- * @param c Conteúdo a inserir
- * @return AVL com o novo nodo.
- */
 AVL insertAVL(AVL tree, char *hash, void *content) {
 	NODE last;
 	int update;
@@ -116,14 +100,6 @@ AVL cloneAVL(AVL tree) {
 	return new;
 }
 
-
-/**
- * Substitui o conteúdo atual do elemento com a hash indicada com o novo conteúdo, libertando o conteúdo antigo
- * @param tree Árvore com o elemento a ser modificado
- * @param hash Identificador do elemento
- * @param content Novo conteúdo do elemento
- * @result Conteúdo antigo do nodo
- */
 void* replaceAVL(AVL tree, char* hash, void* content) {
 	void* oldContent;
 	NODE p;
@@ -151,11 +127,6 @@ void* replaceAVL(AVL tree, char* hash, void* content) {
 	return oldContent;
 }
 
-/**
- * @param tree Árvore a ser procurada
- * @param hash Hash do element a encontrar
- * @return se existir retorna o conteúdo do elemento, senão NULL
- */
 void *getAVLcontent(AVL tree, char *hash) {
 	NODE p = tree->head;
 	int res;
@@ -194,12 +165,6 @@ void* addAVL(AVL tree, char* hash) {
 	return last->content;
 }
 
-/**
- * Dado um catálogo e uma string verifica se existe essa string na AVL.
- * @param tree AVL
- * @param hash String a procurar
- * @return true caso encontre, false caso contrário
- */
 bool lookUpAVL(AVL tree, char *hash) {
 	NODE p = tree->head;
 	int res;
@@ -218,12 +183,6 @@ bool lookUpAVL(AVL tree, char *hash) {
 	return false;
 }
 
-/**
- * Verifica se duas árvores são iguais
- * @param a Árvore alvo da verificação
- * @param b Árvore alvo da verificação
- * @result true caso sejam iguais, false caso contrário
- */
 bool equalsAVL(AVL a, AVL b) {
 	if (a->equals == b->equals)
 		return equalsNode(a->head, b->head, a->equals);
@@ -231,36 +190,20 @@ bool equalsAVL(AVL a, AVL b) {
 	return false;
 }
 
-
-/**
- * Verifica se uma dada AVL é vazia ou não.
- * @param tree Árvore a ser verificada
- * @return true caso seja vazia, false caso contrário.
- */
 bool isEmptyAVL(AVL tree) {
 	return (tree->size == 0);
 }
 
-/**
- * Conta o número de elementos presentes na árvore
- * @param tree Árvore
- * @return Número de elementos
- */
 int countNodes(AVL tree) {
 	return tree->size;
 }
 
-/**
- * Liberta o espaço ocupado por uma AVL
- * @param p AVL a libertar
- */
 void freeAVL(AVL tree) {
 	if (tree){
 		freeNode(tree->head, tree->free);
 		free(tree);
 	}	
 }
-
 
 DATASET initDataSet(int n) {
 	DATASET new = malloc(sizeof(*new));
@@ -283,7 +226,7 @@ DATASET filterAVL (AVL tree, DATASET ds,  bool (*condition)(void*,void*), void* 
 	return ds;
 }
 
-void separateAVL(AVL tree, compare_t comparator, void* arg, DATASET set1, DATASET set2) {
+void separateAVL(AVL tree, DATASET set1, DATASET set2, compare_t comparator, void* arg){
 	separateNode(tree->head, comparator, arg, set1, set2);
 }
 
@@ -739,6 +682,8 @@ static void condSeparateNode(NODE n, DATASET set1, DATASET set2,
 	int res;
 
 	if (n) {
+		condSeparateNode(n->left, set1, set2, cond, cond_arg, comp, comp_arg);
+
 		if (cond(n->content, cond_arg)){
 			res = comp(n->content, comp_arg);
 
@@ -751,6 +696,8 @@ static void condSeparateNode(NODE n, DATASET set1, DATASET set2,
 				insertDataSet(set2, n);
 			}
 		}
+
+		condSeparateNode(n->right, set1, set2, cond, cond_arg, comp, comp_arg);
 	}
 }
 
