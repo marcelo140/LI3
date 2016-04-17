@@ -1,6 +1,8 @@
 #ifndef __HASHT_H__
 #define __HASHT_H__
 
+#include "generic.h"
+
 typedef struct hasht *HASHT;
 typedef struct hashtSet *HASHTSET;
 typedef void* (*ht_init_t) ();
@@ -59,6 +61,14 @@ char* getHashTSetKey(HASHTSET hts, int pos);
  * @return Concatenação dos dois HashSets
  */
 HASHTSET concatHashTSet(HASHTSET h1, HASHTSET h2);
+
+/**
+ * Ordena um hashSet segundo um dado comparador
+ * @param hts HashSet a ordenar
+ * @param comparator Função que define como comparar dois elementos
+ * @return HashSet ordenado
+ */
+HASHTSET sortHashTSet(HASHTSET hts, compare_t comparator);
 
 /**
  * Liberta a memória ocupada por uma dada Tabela de Hash

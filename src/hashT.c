@@ -108,6 +108,37 @@ HASHTSET concatHashTSet(HASHTSET h1, HASHTSET h2) {
 	return h1;
 }
 
+HASHTSET sortHashTSet(HASHTSET hts, compare_t comparator) {
+	HASHTSET below, above;
+	HASHTCNTT pivot;
+	int i, pos;
+
+	if (hts->capacity > 0) {
+		pos = hts->size;
+		below = initHashTSet(pos/2+1);
+		above = initHashTSet(pos/2+1);
+
+		pivot = hts->set[pos-1];
+
+		for(i = 0; i < pos-2; i++) {
+			if (comparator(pivot.content, hts->set[i].content) > 0)
+				insertHashTSet(above, hts->set[i]);
+			else 
+				insertHashTSet(below, hts->set[i]);
+		}
+
+		below = sortHashTSet(below, comparator);
+		above = sortHashTSet(above, comparator);
+
+		below = insertHashTSet(below, pivot);
+		below = concatHashTSet(below, above);
+
+		return below;
+	}
+	
+	return hts;
+}
+
 void freeHashT(HASHT ht) {
 	int i;
 
