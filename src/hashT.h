@@ -55,6 +55,12 @@ void* getHashTSetContent(HASHTSET hts, int pos);
 char* getHashTSetKey(HASHTSET hts, int pos);
 
 /**
+ * Concatena duas HashSets numa só colocando todo o h2 em h1
+ * @return Concatenação dos dois HashSets
+ */
+HASHTSET concatHashTSet(HASHTSET h1, HASHTSET h2);
+
+/**
  * Liberta a memória ocupada por uma dada Tabela de Hash
  * @param ht Tabela de Hash a libertar
  */
