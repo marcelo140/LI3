@@ -334,6 +334,20 @@ DATASET unionDataSets(DATASET dest, DATASET source) {
 	return dest;
 }
 
+void* dumpDataNode(NODE n, void* data, void* (*dumper) (void*, void*)) {
+	if (n) {
+		dumper(data, n->content);
+		data = dumpDataNode(n->left, data, dumper);
+		data = dumpDataNode(n->right, data, dumper);	
+	}
+
+	return data;
+}
+
+void* dumpDataAVL (AVL tree, void* data, void* (*dumper)(void*, void*)){
+	data = dumpDataNode(tree->head, data, dumper);
+	return data;
+}
 
 DATASET diffDataSets(DATASET dest, DATASET source) {
 	DATASET new = initDataSet(100);

@@ -141,27 +141,23 @@ PRINTSET query8(BRANCHSALES bs, PRODUCT product){
 
 PRINTSET query10(FATGLOBAL fat, BRANCHSALES bs, int n) {
 	PRINTSET print = initPrintSet(n);
-	PRODUCTGROUP pgroup;
 	PRODUCTDATA *pdata;  
-	char buff[MAX_SIZE], **products = malloc(n * sizeof(char*)), *product;
+	char buff[MAX_SIZE], *product;
 	int i, clients, quantity;
+	int max;
 
 	clock_t inicio, fim;
 	double tempo;
 
 	inicio = clock();
 
-	pgroup = getProductsSold(fat);
-	pgroup = sortProductGroup(pgroup, BY_QUANTITY);
+	pdata = getAllContent(bs, &max);
 
-	for (i=0; i < n; i++) 
-		products[i] = getProductCode(pgroup, i);
-	
-	pdata = getProductsData(bs, products, n);
+	if (max < n)
+		n = max;
 
-	
 	sprintf(buff, "\tPRODUTO\tCLIENTES\tQUANTIDADE");
-	print = setPrintHeader(print, buff);	
+	print = setPrintHeader(print, buff);
 
 	for(i=0; i < n ; i++) {
 		product  = getNameFromProductData(pdata[i]);

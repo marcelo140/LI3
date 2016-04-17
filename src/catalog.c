@@ -12,6 +12,17 @@ struct catalog_set {
 	DATASET set;
 };
 
+void* dumpDataCat(CATALOG cat, void* data, void* (*dumper)(void*, void*)) {
+	int i, size;
+
+	size = cat->size;
+
+	for (i = 0; i < size; i++)
+		data = dumpDataAVL(cat->root[i], data, dumper);
+
+	return data;
+}
+
 /**
  * Inicia um novo Catálogo
  * @param n Número de índices do catálogo

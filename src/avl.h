@@ -6,6 +6,8 @@
 typedef struct avl      *AVL;
 typedef struct data_set *DATASET;
 
+void* dumpDataAVL(AVL tree, void* data, void* (*dumper)(void*, void*));
+
 /**
  * Inicia uma AVL com as funções auxiliares dadas.
  * @param init Inicia o conteúdo quando necessário

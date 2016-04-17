@@ -20,6 +20,8 @@ CATALOG changeCatalogOps (CATALOG cat,
 
 CATALOG cloneCatalog   (CATALOG cat);
 
+void* dumpDataCat(CATALOG cat, void* data, void* (*dumper)(void*, void*));
+
 CATALOG insertCatalog  (CATALOG c, int i, char* hash, void* content);
 void*   replaceCatalog (CATALOG c, int i, char* hash, void* content);
 void*   getCatContent  (CATALOG c, int i, char* hash);

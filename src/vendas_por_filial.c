@@ -81,15 +81,24 @@ BRANCHSALES initBranchSales (CLIENTCAT clientCat) {
 }
 
 char* getNameFromProductData(PRODUCTDATA pd) {
-	return pd->productCode;
+	if(pd)
+		return pd->productCode;
+
+	return NULL;
 }
 
 int getQuantFromProductData(PRODUCTDATA pd) {
-	return pd->quantity;
+	if (pd)
+		return pd->quantity;
+
+	return 0;
 }
 
 int getClientsFromProductData(PRODUCTDATA pd) {
-	return pd->clients;
+	if (pd)
+		return pd->clients;
+
+	return 0;
 }
 
 BRANCHSALES addSaleToBranch (BRANCHSALES bs, SALE s) {
@@ -109,6 +118,84 @@ BRANCHSALES addSaleToBranch (BRANCHSALES bs, SALE s) {
 
 	return bs;
 }
+
+void* dumpContent(HASHTSET hs, CLIENTSALE cs) {
+	return dumpHashT(cs->products, hs);
+}
+
+int toProductData(HASHTSET set, PRODUCTDATA* pd) {
+	PRODUCTSALE ps;
+	int size = getHashTsize(set);
+	int i, j, clients, quant, month;
+	char* productName;
+
+	for (i = 0, j = 0; i < size; j++) {
+		productName = getHashTSetKey(set, i);
+		quant = 0;
+
+		for(clients = 0; !strcmp(productName, getHashTSetKey(set, i)) && i < size; clients++, i++){
+			ps = getHashTSetContent(set, i);
+			
+			for(month = 0; month < MONTHS; month++)
+				quant += ps->quantity[month];
+		}
+		pd[j] = newProductData(productName, quant, clients);
+	}
+
+	return j;
+}
+
+PRODUCTDATA* sortProductData(PRODUCTDATA* pd, int size) {
+	PRODUCTDATA *below, *above;
+	PRODUCTDATA pivot;
+	int i, belowSize, aboveSize;
+
+	belowSize = 0;
+	aboveSize = 0;
+
+
+	if (size > 0){
+		pivot = pd[size-1];
+		below = malloc(sizeof(PRODUCTDATA) * size);
+		above = malloc(sizeof(PRODUCTDATA) * size);
+
+		for(i = 0; i < size-1; i++) {
+			if (pivot->quantity < pd[i]->quantity)
+				below[belowSize++] = pd[i];
+			else
+				above[aboveSize++] = pd[i];	
+		}
+
+		below = sortProductData(below, belowSize);
+		above = sortProductData(above, aboveSize);
+
+		below[belowSize++] = pivot;
+		memcpy(below+belowSize, above, aboveSize*sizeof(PRODUCTDATA));
+		
+		return below;
+	}
+
+	return pd;
+}
+
+PRODUCTDATA* getAllContent(BRANCHSALES bs, int *cenas) {
+	HASHTSET hashSet;
+	PRODUCTDATA* pd;
+	int size;
+
+	hashSet = initHashTSet(50000);
+	pd = malloc(sizeof(PRODUCTDATA) * 200000);
+
+	hashSet = dumpDataCat(bs->clients, hashSet, (void* (*) (void*, void*)) dumpContent);
+
+	hashSet = sortHashTByName(hashSet);
+	size = toProductData(hashSet, pd);
+	pd = sortProductData(pd, size);
+
+	*cenas = size;
+	return pd;	
+}
+
 
 bool isEmptyClientSale(CLIENTSALE cs) {
 	return (cs == NULL);
@@ -186,35 +273,6 @@ void filterClientsByProduct(BRANCHSALES bs, PRODUCT prod, CLIENTLIST n, CLIENTLI
                                                 (compare_t) clientIsShopAholic, product); 
 }
 
-PRODUCTDATA* getProductsData(BRANCHSALES bs, char** productsName, int num) {
-	CATSET* css;
-	PRODUCTDATA* res;
-	CLIENTSALE clientS;
-	PRODUCTSALE productS;
-	int i, j, k, clients, quant;
-
-	quant = 0;
-	res = malloc(sizeof(PRODUCTDATA) * num);
-	css = massFilterCat(bs->clients, num, (condition_t) existInProductList, 
-                                          (void**) productsName);
-
-	for(i = 0; i < num; i++) {
-		clients = getCatalogSetSize(css[i]);
-		
-		for(j = 0; j < clients; j++){
-			clientS = getContPos(css[i], j);
-			productS = getHashTcontent(clientS->products, productsName[i]);
-
-			for(k = 0; k < MONTHS; k++)
-				quant += productS->quantity[k];
-		}
-		
-		res[i] = newProductData(productsName[i], quant, clients);			
-	}
-
-	return res;
-}
-
 PRODUCTDATA newProductData(char *productName, int quantity, int clients) {
 	PRODUCTDATA new = malloc(sizeof(*new));
 
@@ -227,19 +285,6 @@ PRODUCTDATA newProductData(char *productName, int quantity, int clients) {
 	return new;
 }
 
-/* TODO: Esperar que o 9 arranje a API dos hash sets */
-PRODUCTLIST filterProductByClient(BRANCHSALES bs, CLIENT c) {
-	PRODUCTLIST pl;
-	CLIENTSALE cs;
-	HASHTSET set; 
-	char client[CLIENT_LENGTH];
-
-	fromClient(c, client);
-	cs = getCatContent(bs->clients, INDEX(client), client);
-	set = dumpHashT(cs->products);
-
-	return pl;
-}
 
 CLIENTLIST newClientList() {
 	CLIENTLIST new = malloc(sizeof(struct client_list));

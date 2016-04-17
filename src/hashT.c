@@ -38,7 +38,6 @@ struct hashtSet {
 
 static int Hash(char *key);
 static HASHT resizeHashT(HASHT ht);
-static HASHTSET initHashTSet(int size); 
 static HASHTSET insertHashTSet(HASHTSET hts, HASHTCNTT newCntt); 
 static HASHTSET resizeHashTSet(HASHTSET hts);
 
@@ -54,6 +53,10 @@ HASHT initHashT(ht_init_t init, ht_add_t add, ht_free_t free) {
 	new->free 	  = free;
 
 	return new;
+}
+
+int getHashTsize(HASHTSET set) {
+	return set->size;
 }
 
 HASHT insertHashT(HASHT ht, char* key, void* content) {
@@ -77,14 +80,14 @@ HASHT insertHashT(HASHT ht, char* key, void* content) {
 	return ht;
 }
 
-HASHTSET dumpHashT(HASHT ht) {
-	HASHTSET r = initHashTSet(ht->size);
+HASHTSET dumpHashT(HASHT ht, HASHTSET set) {
+	
 	int i;
 
 	for (i=0; i < CAPACITY; i++) 
-		if (STATUS(i) == BUSY) r = insertHashTSet(r, ht->table[i]);
+		if (STATUS(i) == BUSY) set = insertHashTSet(set, ht->table[i]);
 
-	return r;
+	return set;
 }
 
 void* getHashTSetContent(HASHTSET hts, int pos) {
@@ -106,6 +109,37 @@ HASHTSET concatHashTSet(HASHTSET h1, HASHTSET h2) {
 		insertHashTSet(h1, h2->set[i]);
 
 	return h1;
+}
+
+HASHTSET sortHashTByName(HASHTSET hts) {
+	HASHTSET below, above;
+	HASHTCNTT pivot;
+	int i, pos;
+
+	if (hts->size > 0) {
+		pos = hts->size;
+		below = initHashTSet(pos/2+1);
+		above = initHashTSet(pos/2+1);
+
+		pivot = hts->set[pos-1];
+
+		for(i = 0; i < pos-2; i++) {
+			if (strcmp(pivot.key, hts->set[i].key) < 0)
+				insertHashTSet(above, hts->set[i]);
+			else 
+				insertHashTSet(below, hts->set[i]);
+		}
+
+		below = sortHashTByName(below);
+		above = sortHashTByName(above);
+
+		below = insertHashTSet(below, pivot);
+		below = concatHashTSet(below, above);
+
+		return below;
+	}
+	
+	return hts;
 }
 
 HASHTSET sortHashTSet(HASHTSET hts, compare_t comparator) {
@@ -196,7 +230,7 @@ static HASHT resizeHashT(HASHT ht){
 
 /* ***************** FUNÇÕES AUXILIARES DO HASHTSET ************************** */
 
-static HASHTSET initHashTSet(int size) {
+HASHTSET initHashTSet(int size) {
 	HASHTSET new = malloc(sizeof(*new));
 	new->size = 0;
 	new->set  = calloc(size, sizeof(HASHTCNTT));

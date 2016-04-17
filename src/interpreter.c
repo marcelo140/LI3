@@ -116,7 +116,9 @@ int interpreter(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat)
 				  printf("  Quantos: ");
 				  fgets(answ, BUFF_SIZE, stdin);
 				  n = atoi(answ);
-				  ps = query10(fat, bs[option], n);
+				  ps = query10(fat, bs[0], n);
+				  ps = query10(fat, bs[1], n);
+				  ps = query10(fat, bs[2], n);
 				  presentList(ps);
 				  freePrintSet(ps);
 		 		  break;

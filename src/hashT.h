@@ -9,6 +9,9 @@ typedef void* (*ht_init_t) ();
 typedef void* (*ht_add_t) (void*, void*);
 typedef void  (*ht_free_t) (void*);
 
+HASHTSET initHashTSet(int size); 
+int getHashTsize(HASHTSET set);
+HASHTSET sortHashTByName(HASHTSET hts);
 /**
  * Inicializa uma nova tabela de Hash 
  * @return Nova tabela de Hash
@@ -38,7 +41,7 @@ void* getHashTcontent(HASHT ht, char* key);
  * @param ht Tabela de Hash onde ler
  * @return Conjunto com todo o conteúdo da Tabela
  */ 
-HASHTSET dumpHashT(HASHT ht);
+HASHTSET dumpHashT(HASHT ht, HASHTSET set);
 
 /**
  * Devolve o conteúdo de uma dada posição no HASHTSET
