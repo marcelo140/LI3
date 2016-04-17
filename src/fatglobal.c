@@ -81,6 +81,8 @@ int getProductDataByMonth(FATGLOBAL fat, PRODUCT prod, int month, double billed[
 	double billedN, billedP;
 	int branch, quantN, quantP;
 
+	quantN = quantP = 0;
+	billedN = billedP = 0;
 	fromProduct(prod, product);
 	rev = getCatContent(fat->cat, INDEX(product), product);
 
@@ -197,10 +199,10 @@ PRODUCTGROUP initProductGroup() {
 	return malloc(sizeof(struct product_group));
 }
 
-PRODUCTGROUP sortProductGroup(PRODUCTGROUP pg, SORT_MODE mode) {
-	if (mode == BY_QUANTITY)
+PRODUCTGROUP sortProductGroup(PRODUCTGROUP pg, int sortMode) {
+	if (sortMode == BY_QUANTITY)
 		pg->products = sortCatSet(pg->products, (compare_t) compareByQuant);
-	else if (mode == BY_BILLING)
+	else if (sortMode == BY_BILLING)
 		pg->products = sortCatSet(pg->products, (compare_t) compareByBilling);
 
 	return pg;

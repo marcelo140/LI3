@@ -14,7 +14,6 @@
 
 typedef struct faturacao *FATGLOBAL;
 typedef struct product_group *PRODUCTGROUP;
-typedef char SORT_MODE;
 
 FATGLOBAL initFat (PRODUCTCAT p);
 
@@ -33,7 +32,7 @@ PRODUCTGROUP getProductsNotSold(FATGLOBAL fat);
 
 PRODUCTGROUP* getProductsNotSoldByBranch(FATGLOBAL);
 
-PRODUCTGROUP sortProductGroup(PRODUCTGROUP pg, SORT_MODE mode);
+PRODUCTGROUP sortProductGroup(PRODUCTGROUP pg, int mode);
 
 void freeFat(FATGLOBAL fat);
 

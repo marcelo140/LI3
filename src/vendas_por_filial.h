@@ -8,8 +8,6 @@ typedef struct branch       *BRANCHSALES;
 typedef struct client_list  *CLIENTLIST;
 typedef struct product_list *PRODUCTLIST;
 
-typedef char SORT_MODE;
-
 #define BY_QUANT    0
 #define BY_EXPENSES 1
 #define BY_NAME     2
@@ -121,7 +119,7 @@ PRODUCTLIST newProductList();
  * @param mode Modo de ordenação (BY_QUANT, BY_EXPENSES, BY_NAME)
  * @return Lista ordenada pelo modo pedido
  */
-CLIENTLIST sortClientList (CLIENTLIST cl, SORT_MODE mode);
+CLIENTLIST sortClientList (CLIENTLIST cl, int mode);
 
 
 /**
@@ -130,6 +128,6 @@ CLIENTLIST sortClientList (CLIENTLIST cl, SORT_MODE mode);
  * @param mode Modo de ordenação (BY_QUANT, BY_EXPENSES, BY_NAME)
  * @return Lista ordenada pelo modo pedido
  */
-PRODUCTLIST sortProductList (PRODUCTLIST pl, SORT_MODE mode);
+PRODUCTLIST sortProductList (PRODUCTLIST pl, int mode);
 
 #endif
