@@ -18,11 +18,8 @@ REVENUE addBilled     (REVENUE r, int month, int branch, int MODE, double value)
 REVENUE addQuantity   (REVENUE r, int month, int branch, int MODE, int value);
 REVENUE updateRevenue (REVENUE r, int month, int branch, int MODE, 
                        double billed, int quantity); 
-<<<<<<< Updated upstream
 int compareByQuant(REVENUE rev1, REVENUE rev2);
 int compareByBilling(REVENUE rev1, REVENUE rev2);
-=======
->>>>>>> Stashed changes
 bool isNotEmptyRev (REVENUE r);
 bool isEmptyRev (REVENUE r);
 double  getMonthBilled  (REVENUE r, int month,  double *normal, double *promo);
@@ -143,7 +140,6 @@ PRODUCTGROUP* getProductsNotSoldByBranch(FATGLOBAL fat) {
 double getBilledByMonthRange(FATGLOBAL fat, int initialMonth, int finalMonth) {
 	CATSET cs;
 	REVENUE rev;
-<<<<<<< Updated upstream
 	int i, month, size;
 	double res;
 
@@ -178,17 +174,6 @@ int getQuantByMonthRange(FATGLOBAL fat, int initialMonth, int finalMonth) {
 	}
 
 	return res;
-=======
-	int i, size;
-	double res;
-
-	cs = filterCat(fat->cat, isNotEmptyRev, NULL);
-	size = getCatalogSetSize(cs);
-
-	for(i = 0; i < size; i++){
-
-	}
->>>>>>> Stashed changes
 }
 
 void freeFat(FATGLOBAL fat) {
