@@ -34,7 +34,7 @@ int interpreter(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat)
 	PRODUCT p;
 	PRINTSET ps;
 	char answ[BUFF_SIZE];
-	int qnum, option;
+	int qnum, option, n;
 
 	system("clear");
 	putchar('\n');
@@ -112,7 +112,13 @@ int interpreter(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat)
 		 		 break;
 		case 9 :
 		 		 break;
-		case 10 :
+		case 10 : option = askBranch();
+				  printf("  Quantos: ");
+				  fgets(answ, BUFF_SIZE, stdin);
+				  n = atoi(answ);
+				  ps = query10(fat, bs[option], n);
+				  presentList(ps);
+				  freePrintSet(ps);
 		 		  break;
 		case 11 :
 		 		  break;

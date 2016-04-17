@@ -16,6 +16,7 @@ typedef struct product_data *PRODUCTDATA;
 char* getNameFromProductData(PRODUCTDATA pd);
 int getQuantFromProductData(PRODUCTDATA pd);
 int getClientsFromProductData(PRODUCTDATA pd);
+PRODUCTDATA* getProductsData(BRANCHSALES bs, char** productsName, int num); 
 
 /**
  * Inicia uma filial com os clientes dados. Esta esturutra relaciona os clientes de

@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "queries.h"
+#include <time.h>
 
 #define UPPER(a) (('a' <= (a) && (a) <= 'z') ? ((a - 'a') + 'A') : (a))
 #define MAX_SIZE 128
@@ -137,3 +138,47 @@ PRINTSET query8(BRANCHSALES bs, PRODUCT product){
 	freeClientList(p);
 	return print;
 }
+
+PRINTSET query10(FATGLOBAL fat, BRANCHSALES bs, int n) {
+	PRINTSET print = initPrintSet(n);
+	PRODUCTGROUP pgroup;
+	PRODUCTDATA *pdata;  
+	char buff[MAX_SIZE], **products = malloc(n * sizeof(char*)), *product;
+	int i, clients, quantity;
+
+	clock_t inicio, fim;
+	double tempo;
+
+	inicio = clock();
+
+	pgroup = getProductsSold(fat);
+	pgroup = sortProductGroup(pgroup, BY_QUANTITY);
+
+	for (i=0; i < n; i++) 
+		products[i] = getProductCode(pgroup, i);
+	
+	pdata = getProductsData(bs, products, n);
+
+	
+	sprintf(buff, "\tPRODUTO\tCLIENTES\tQUANTIDADE");
+	print = setPrintHeader(print, buff);	
+
+	for(i=0; i < n ; i++) {
+		product  = getNameFromProductData(pdata[i]);
+		clients  = getClientsFromProductData(pdata[i]);
+		quantity = getQuantFromProductData(pdata[i]);
+		
+		sprintf(buff, "%dº\t%s\t%d\t%d", i, product, clients, quantity );
+		print = addToPrintSet(print, buff);
+
+		free(product);
+	}
+
+	
+	fim = clock();
+	tempo = (double) (fim - inicio) / CLOCKS_PER_SEC; 
+
+	printf("Tempo: %f\n", tempo);
+
+	return print;	
+} 
