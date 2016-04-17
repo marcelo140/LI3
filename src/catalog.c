@@ -120,7 +120,7 @@ bool lookUpCatalog(CATALOG c, int i, char *s) {
 
 
 int countPosElems(CATALOG c, int i){
-	return countNodes(c->root[i]);
+	return countNodes(c->root[i-'A']);
 }
 
 int countAllElems(CATALOG c) {

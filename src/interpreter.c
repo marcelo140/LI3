@@ -9,6 +9,7 @@
 #define TYPE_CATSET 0
 #define TYPE_PSET 1
 
+#define UPPER(a) (('a' <= a && a <= 'z') ? (a - 'a' + 'A') : a)
 #define PRODUCT_SIZE 6
 #define LINES_NUM 20
 #define STR_SIZE 128
@@ -25,6 +26,8 @@ static void presentList(PRINTSET ps);
 static void presentCatalogSet (CATSET* cs,int branches, int page, int total, int* cont);
 static void presentProductSet (PRODUCTSET ps, int page, int total, int* cont);
 static int askBranch(); 
+static PRODUCT askProduct();
+static int askMonth();
 
 /*Devolve numero de comandos executados */
 int interpreter(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat) {
@@ -69,11 +72,20 @@ int interpreter(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat)
 	qnum = atoi(answ);
 
 	switch(qnum) {
-		case 1 : 
+		case 1 :
 				 break;
-		case 2 : 
+		case 2 : printf("  Letra: ");
+				 fgets(answ, BUFF_SIZE, stdin);
+				 ps = query2(pcat, answ[0]);
+				 if (ps) presentList(ps);
+				 freePrintSet(ps); 
 				 break;
-		case 3 : 
+		case 3 : p = askProduct(); 
+				 if (!p) break;
+				 option = askMonth();
+				 if (option == -1) break; 
+				 ps = query3(fat, p, option);
+				 if (ps) presentList(ps);
 			 	 break;
 		case 4 :
 				 break;
@@ -179,13 +191,15 @@ static void presentList(PRINTSET ps) {
 		system("clear");
 		putchar('\n');
 
-		printf(":::::::::::: PÁGINA %d de %d ::::::::::::\n\n", cpage, totalPages);
+		printf("::::::::::::::::::::: PÁGINA %d de %d :::::::::::::::::::::\n\n", cpage, totalPages);
+
+		if (ps->header) printf("  %s\n", ps->header);
 
 		print = getPage(ps, cpage); 
 		for(i=0; print && print[i] && i < LINES_NUM; i++) 
-			printf("%s\n", print[i]);
+			printf("  %s\n", print[i]);
 
-		printf(":::::::::::::::::::::::::::::::::::::::::\n");
+		printf(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n");
 		printf("\n b: Anterior\tn: Seguinte\th: Ajuda\n g: Ir para página\tq: Sair\n\t>> ");
 
 		onav = nav;
@@ -239,6 +253,36 @@ static int askBranch() {
 
 	return r-1;
 } 
+
+static PRODUCT askProduct() {
+	char buff[BUFF_SIZE];
+	
+	while(1) {
+		printf("  Produto: ");
+		fgets(buff, BUFF_SIZE, stdin);
+		if (isProduct(buff)) break;
+		if (UPPER(buff[0]) == 'Q') return NULL;
+		if (buff[0] != '\n') printf("Produto Inválido!\n");	
+	}
+	
+	return toProduct(buff);
+}
+
+static int askMonth() {
+	char buff[BUFF_SIZE];
+	int mes;
+
+	while(1) {
+		printf("  Mês (1-12): ");
+		fgets(buff, BUFF_SIZE, stdin);
+		mes = atoi(buff);
+		if (mes > 0 && mes < 13) break;
+		if (UPPER(buff[0]) == 'Q') return -1;	
+		printf("Um mês deve estar entre 1 e 12.");
+	}
+
+	return mes;
+}
 
 /*
 static void presentProductSet (PRODUCTSET ps, int page, int total, int* cont) {

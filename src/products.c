@@ -103,6 +103,7 @@ PRODUCT toProduct(char *str) {
 
 	new = malloc (sizeof (*new));
 	strncpy(new->str, str, PRODUCT_LENGTH);
+	new->str[PRODUCT_LENGTH-1] = '\0';
 
 	return new;
 }
@@ -157,8 +158,7 @@ bool isProduct (char *str){
 	       str[2] == '1'             && 
            IS_NUMBER(str[3])         && 
            IS_NUMBER(str[4])         && 
-           IS_NUMBER(str[5])         && 
-           str[6] == 0;
+           IS_NUMBER(str[5]);
 }
 
 /**
@@ -192,6 +192,8 @@ void freeProductSet(PRODUCTSET ps) {
 
 PRODUCT getProductByPos(PRODUCTSET ps, int pos) {
 	char *str = getKeyPos(ps->set, pos);
+	
+	if (str == NULL) return NULL;
 
 	return toProduct(str);
 }
