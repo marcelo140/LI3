@@ -103,6 +103,7 @@ PRODUCT toProduct(char *str) {
 
 	new = malloc (sizeof (*new));
 	strncpy(new->str, str, PRODUCT_LENGTH);
+	new->str[PRODUCT_LENGTH-1] = '\0';
 
 	return new;
 }
