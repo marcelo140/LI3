@@ -8,6 +8,29 @@
 #define BRANCHES 3
 #define NP 2
 
+PRINTSET query2(PRODUCTCAT pcat, char index) {
+	PRINTSET print;
+	PRODUCTSET ps;
+	PRODUCT product;
+	int i, size;
+	char buff[MAX_SIZE], aux[MAX_SIZE];
+
+	size  = countProducts(pcat, index);
+	print = initPrintSet(size);
+	ps    = initProductSet(size);
+	
+	ps = fillProductSet(pcat, ps, index);
+
+	for(i=0; (product = getProductByPos(ps, i)) ; i++) {
+		fromProduct(product, buff);
+		sprintf(aux, "\t\t\t%s", buff);
+		print = addToPrintSet(print, aux);
+		freeProduct(product);
+	}
+
+	return print;
+}
+
 PRINTSET query3(FATGLOBAL fat, PRODUCT product, int month) {
 	PRINTSET print = initPrintSet(10);
 	char answ[MAX_SIZE];

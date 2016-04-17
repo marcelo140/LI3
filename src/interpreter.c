@@ -74,7 +74,11 @@ int interpreter(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat)
 	switch(qnum) {
 		case 1 :
 				 break;
-		case 2 : 
+		case 2 : printf("  Letra: ");
+				 fgets(answ, BUFF_SIZE, stdin);
+				 ps = query2(pcat, answ[0]);
+				 if (ps) presentList(ps);
+				 freePrintSet(ps); 
 				 break;
 		case 3 : p = askProduct(); 
 				 if (!p) break;
