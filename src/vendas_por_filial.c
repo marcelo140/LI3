@@ -32,6 +32,12 @@ struct product_list {
 	CATSET set;
 };
 
+struct product_data {
+	char* productCode;
+	int quantity;
+	int clients;
+};
+
 typedef struct month_list {
 	double billed[MONTHS];
 	int quant[MONTHS];	
@@ -59,6 +65,8 @@ static void      freeMonthList  (MONTHLIST m);
 static PRODUCTSALE initProductSale  ();
 static PRODUCTSALE addToProductSale (PRODUCTSALE ps, SALE sale);
 static void        freeProductSale  (PRODUCTSALE ps);
+
+PRODUCTDATA newProductData(char *productName, int quantity, int clients);
 
 BRANCHSALES initBranchSales (CLIENTCAT clientCat) {
 	BRANCHSALES bs = malloc(sizeof(*bs));
@@ -164,6 +172,47 @@ void filterClientsByProduct(BRANCHSALES bs, PRODUCT prod, CLIENTLIST n, CLIENTLI
 
 	condSeparateCat(bs->clients, p->set, n->set,(condition_t) existInProductList, product,
                                                 (compare_t) clientIsShopAholic, product); 
+}
+
+PRODUCTDATA* getProductsData(BRANCHSALES bs, char** productsName, int num) {
+	CATSET* css;
+	PRODUCTDATA* res;
+	CLIENTSALE clientS;
+	PRODUCTSALE productS;
+	int i, j, k, clients, quant;
+
+	quant = 0;
+	res = malloc(sizeof(PRODUCTDATA) * num);
+	css = massFilterCat(bs->clients, num, (condition_t) existInProductList, 
+                                          (void**) productsName);
+
+	for(i = 0; i < num; i++) {
+		clients = getCatalogSetSize(css[i]);
+		
+		for(j = 0; j < clients; j++){
+			clientS = getContPos(css[i], j);
+			productS = getHashTcontent(clientS->products, productsName[i]);
+
+			for(k = 0; k < MONTHS; k++)
+				quant += productS->quantity[k];
+		}
+		
+		res[i] = newProductData(productsName[i], quant, clients);			
+	}
+
+	return res;
+}
+
+PRODUCTDATA newProductData(char *productName, int quantity, int clients) {
+	PRODUCTDATA new = malloc(sizeof(*new));
+
+	new->productCode = malloc(sizeof(char) * PRODUCT_LENGTH);
+	strncpy(new->productCode, productName, PRODUCT_LENGTH);
+
+	new->quantity = quantity;
+	new->clients = clients;
+
+	return new;
 }
 
 /* TODO: Esperar que o 9 arranje a API dos hash sets */

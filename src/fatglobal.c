@@ -61,15 +61,6 @@ FATGLOBAL addFat(FATGLOBAL fat, SALE s) {
 	return fat;
 }
 
-PRODUCTGROUP getProductsByLetter(FATGLOBAL fat, char letter) {
-	PRODUCTGROUP pg = initProductGroup();
-	pg->products = initCatalogSet(countPosElems(fat->cat, letter-'A'));
-
-	pg->products = fillCatalogSet(fat->cat, pg->products, letter-'A');
-
-	return pg;
-}
-
 char* getProductCode(PRODUCTGROUP pg, int pos) {
 	return getKeyPos(pg->products, pos);
 }

@@ -7,6 +7,7 @@
 typedef struct branch       *BRANCHSALES;
 typedef struct client_list  *CLIENTLIST;
 typedef struct product_list *PRODUCTLIST;
+typedef struct product_data *PRODUCTDATA;
 
 #define BY_QUANT    0
 #define BY_EXPENSES 1
