@@ -5,6 +5,61 @@
 
 #define UPPER(a) (('a' <= (a) && (a) <= 'z') ? ((a - 'a') + 'A') : (a))
 #define MAX_SIZE 128
+#define BRANCHES 3
+#define NP 2
+
+PRINTSET query3(FATGLOBAL fat, PRODUCT product, int month) {
+	PRINTSET print = initPrintSet(10);
+	char answ[MAX_SIZE];
+	int i, mode=0, quantT, quantity[BRANCHES][NP];
+	double billedT, billed[BRANCHES][NP];	
+
+	printf("\n::::::::::::::::::::::::::::::\n\n");
+	printf(" 1• Total\n");
+	printf(" 2• Filial a Filial\n");
+	printf("\n::::::::::::::::::::::::::::::\n");
+
+	while(mode != 1 && mode != 2) {
+		printf("  Escolha um modo: ");
+		fgets(answ, MAX_SIZE, stdin);
+		mode = atoi(answ);
+		if (UPPER(answ[0]) == 'Q') return NULL;
+	}
+
+	getProductDataByMonth(fat, product, month, billed, quantity);
+
+	if (mode == 1) {
+		quantT  = 0;
+		billedT = 0;
+		for (i=0; i < BRANCHES; i++) {
+			quantT += quantity[i][0];
+			quantT += quantity[i][1];
+			billedT += billed[i][0];
+			billedT += billed[i][1];
+		}	
+		sprintf(answ, "Quantidade Total: \t%d", quantT);
+		print = addToPrintSet(print, answ);	
+		sprintf(answ, "Faturação Total: \t%f", billedT);
+		print = addToPrintSet(print, answ);
+	} else {
+		print = setPrintHeader(print, "\t\tFilial 1\tFilial 2\tFilial 3");
+		print = addToPrintSet(print, "");
+		
+		sprintf(answ, "Quantidade N:\t%d\t\t%d\t\t%d", quantity[0][0], quantity[1][0], quantity[2][0]);
+		print = addToPrintSet(print, answ);
+		sprintf(answ, "Quantidade P:\t%d\t\t%d\t\t%d", quantity[0][1], quantity[1][1], quantity[2][1]);
+		print = addToPrintSet(print, answ);
+	
+		print = addToPrintSet(print, "");
+
+		sprintf(answ, "Faturado N:\t%f\t%f\t%f", billed[0][0], billed[1][0], billed[2][0]);
+		print = addToPrintSet(print, answ);
+		sprintf(answ, "Faturado P:\t%f\t%f\t%f", billed[0][1], billed[1][1], billed[2][1]);
+		print = addToPrintSet(print, answ);
+	}
+
+	return print;
+}
 
 PRINTSET query5(BRANCHSALES bs, CLIENT client) {
 	PRINTSET print = initPrintSet(12);
