@@ -34,7 +34,7 @@ int interpreter(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat)
 	PRODUCT p;
 	PRINTSET ps;
 	char answ[BUFF_SIZE];
-	int qnum, option, n;
+	int qnum, x, y;
 
 	system("clear");
 	putchar('\n');
@@ -82,43 +82,51 @@ int interpreter(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat)
 				 break;
 		case 3 : p = askProduct(); 
 				 if (!p) break;
-				 option = askMonth();
-				 if (option == -1) break; 
-				 ps = query3(fat, p, option);
+				 x = askMonth();
+				 if (x == -1) break; 
+				 ps = query3(fat, p, x);
 				 if (ps) presentList(ps);
 			 	 break;
 		case 4 : ps = query4(fat);
 				 if (ps) presentList(ps);
 				 freePrintSet(ps);
 				 break;
-		case 5 : option = askBranch();
+		case 5 : x = askBranch();
 				 printf("  Cliente: ");
 				 fgets(answ, BUFF_SIZE, stdin);
 				 answ[CLIENT_LENGTH-1] = '\0';
-				 ps = query5(bs[option], toClient(answ));
+				 ps = query5(bs[x], toClient(answ));
 				 presentList(ps); 
 		 		 break;
-		case 6 : 
+		case 6 : printf("Mês inicial: ");
+				 fgets(answ, BUFF_SIZE, stdin);
+				 x = atoi(answ);
+				 printf("Mês final: ");
+				 fgets(answ, BUFF_SIZE, stdin);
+				 y = atoi(answ); 
+				 ps = query6(fat, x, y);
+				 if (ps) presentList(ps);
+				 freePrintSet(ps); 
 		  		 break;
 		case 7 :
 				 break;
-		case 8 : option = askBranch();
+		case 8 : x = askBranch();
 				 printf("Produto: ");
 				 fgets(answ, BUFF_SIZE, stdin);
 				 answ[PRODUCT_LENGTH-1] = '\0';
 				 p = toProduct(answ);
-				 ps = query8(bs[option], p);
+				 ps = query8(bs[x], p);
 				 if (ps) presentList(ps);
 				 freeProduct(p);
 			     if (ps) freePrintSet(ps); 
 		 		 break;
 		case 9 :
 		 		 break;
-		case 10 : option = askBranch();
+		case 10 : x = askBranch();
 				  printf("  Quantos: ");
 				  fgets(answ, BUFF_SIZE, stdin);
-				  n = atoi(answ);
-				  ps = query10(bs[option], n);
+				  y = atoi(answ);
+				  ps = query10(bs[x], y);
 				  presentList(ps);
 				  freePrintSet(ps);
 		 		  break;
@@ -195,7 +203,7 @@ static void presentList(PRINTSET ps) {
 	totalPages = (total / LINES_NUM) + (total % LINES_NUM != 0);
 
 	while (cpage <= totalPages) {
-		
+	
 		system("clear");
 		putchar('\n');
 

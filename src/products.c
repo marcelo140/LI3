@@ -83,7 +83,7 @@ PRODUCT cloneProduct(PRODUCT product) {
 }
 
 char* fromProduct(PRODUCT product, char* dest) {
-	strncpy(dest, product->str, PRODUCT_LENGTH);
+	strcpy(dest, product->str);
 	return dest;
 }
 
