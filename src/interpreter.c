@@ -118,7 +118,7 @@ int interpreter(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat)
 				  printf("  Quantos: ");
 				  fgets(answ, BUFF_SIZE, stdin);
 				  n = atoi(answ);
-				  ps = query10(fat, bs[option], n);
+				  ps = query10(bs[option], n);
 				  presentList(ps);
 				  freePrintSet(ps);
 		 		  break;
@@ -136,8 +136,8 @@ PRINTSET initPrintSet(int n) {
 	PRINTSET new = malloc(sizeof(*new));
 
 	new->capacity = n;
-	new->size = -1;
-	new->list = calloc(new->capacity, sizeof(char*));
+	new->size = 0;
+	new->list = calloc(n, sizeof(char*));
 	new->header = NULL;
 
 	return new;
@@ -157,9 +157,9 @@ PRINTSET addToPrintSet(PRINTSET ps, char* str) {
 		ps->list = realloc(ps->list, ps->capacity);
 	}
 
+	ps->list[ps->size] = calloc(STR_SIZE, sizeof(char)); 
+	strncpy(ps->list[ps->size], str, STR_SIZE);
 	ps->size++;
-	ps->list[ps->size] = malloc(STR_SIZE * sizeof(char));
-	strcpy(ps->list[ps->size], str);
 	
 	return ps;
 }
@@ -204,7 +204,7 @@ static void presentList(PRINTSET ps) {
 		if (ps->header) printf("  %s\n", ps->header);
 
 		print = getPage(ps, cpage); 
-		for(i=0; print && print[i] && i < LINES_NUM; i++) 
+		for(i=0; print && print[i] && i < LINES_NUM; i++)  
 			printf("  %s\n", print[i]);
 
 		printf(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n");

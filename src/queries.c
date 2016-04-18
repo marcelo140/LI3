@@ -107,13 +107,16 @@ PRINTSET query4(FATGLOBAL fat) {
 
 	if (op == 1) {
 		pgroupT = getProductsNotSold(fat);
-		
-		for (i=0; (product = getProductCode(pgroupT, i)) ; i++) {
+		product = getProductCode(pgroupT, 0);
+
+		for (i=0; product ; i++) {
 			sprintf(buff, "\t\t\t%s", product);
 			print = addToPrintSet(print, buff);
+			free(product);
+			product = getProductCode(pgroupT, i+1);
 		}
 
-		freeProductGroup(pgroupT);
+/*		freeProductGroup(pgroupT); */
 	} else {
 		pgroupB = getProductsNotSoldByBranch(fat);
 		
@@ -122,7 +125,7 @@ PRINTSET query4(FATGLOBAL fat) {
 
 		for (i=0;  ; i++){
 			n = 0;
-			sprintf(buff, "");
+			buff[0] = '\0';
 			for (j=0; j < BRANCHES; j++) {
 				product = getProductCode(pgroupB[j], i);
 				if (product) sprintf(buff, "%s\t%s", buff, product);
@@ -193,7 +196,7 @@ PRINTSET query8(BRANCHSALES bs, PRODUCT product){
 	return print;
 }
 
-PRINTSET query10(FATGLOBAL fat, BRANCHSALES bs, int n) {
+PRINTSET query10(BRANCHSALES bs, int n) {
 	PRINTSET print = initPrintSet(n);
 	PRODUCTDATA *pdata;  
 	char buff[MAX_SIZE], *product;
