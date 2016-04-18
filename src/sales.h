@@ -5,33 +5,72 @@
 #include "clients.h"
 #include "products.h"
 
-#define MODE_N 0
-#define MODE_P 1
-
 typedef struct sale    *SALE;
 typedef struct revenue *REVENUE;
 
-SALE    initSale    ();
+#define MODE_N 0
+#define MODE_P 1
 
-SALE    readSale      (SALE s, PRODUCT p, CLIENT c, char *line);
-SALE    updateSale    (SALE s, PRODUCT p, CLIENT c,
-                       double price, int quant, int month, int branch, int mode);
+/**
+ * Aloca memória para uma SALE. Esta estrutura de dados descreve todos os elementos
+ * envolvidos numa transação.
+ */
+SALE initSale ();
 
+/**
+ * Dado uma string correspondente a uma venda, extrai toda a sua informação para uma SALE.
+ * @param s SALE que receberá os dados lidos
+ * @param p Estrutura para onde serão extraidos os dados sobre o produto vendido
+ * @param c Estrutura para onde serão extraidos os dados sobre o cliente que realizaou
+ * a transação
+ * @return SALE com os dados lidos
+ */
+SALE readSale (SALE s, PRODUCT p, CLIENT c, char *line);
 
-bool isSale     (SALE sale, PRODUCTCAT prodCat, CLIENTCAT clientCat);
+/**
+ * Verifica se todos os dados e uma transação são válidos.
+ */
+bool isSale (SALE sale, PRODUCTCAT prodCat, CLIENTCAT clientCat);
 
+/**
+ * Devolve o produto vendido na transação dada.
+ */
 PRODUCT getProduct (SALE s);
-CLIENT  getClient  (SALE s);
-double  getPrice   (SALE s);
-int     getQuant   (SALE s);
-int     getMonth   (SALE s);
-int     getBranch  (SALE s);
-int     getMode    (SALE s);
 
-/*double  getBilled       (REVENUE r, int month,  int branch, int MODE);*/
+/**
+ * Devolve o cliente que participou na transação dada.
+ */
+CLIENT getClient (SALE s);
 
-/*int     getQuantity     (REVENUE r, int month, int branch, int MODE);*/
+/**
+ * Devolve o preço unitário a que foi vendido o produto na transação dada.
+ */
+double getPrice (SALE s);
 
-void freeSale    (SALE s);
+/**
+ * Devolve a quantidade de produto vendida na transação dada.
+ */
+int getQuant (SALE s);
+
+/**
+ * Devolve o mês em que a transação dada se realizou.
+ */
+int getMonth (SALE s);
+
+/**
+ * Devolve a filial em que a transação dada ocorreu.
+ */
+int getBranch (SALE s);
+
+/**
+ * Devolve o modo em que a transação dada ocorreu, isto é, se o produto se encontrava
+ * em modo promoção ou modo normal.
+ */
+int getMode (SALE s);
+
+/**
+ * Liberta todo o espaço reservado para descrever uma venda.
+ */
+void freeSale (SALE s);
 
 #endif
