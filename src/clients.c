@@ -4,8 +4,11 @@
 #include "catalog.h"
 #include "clients.h"
 
+#define CATALOG_SIZE 26
+
 #define INDEX(c)             (c->str[0] - 'A')
 
+/* MUST BE IMPROVED */
 #define IS_CAPITAL_LETTER(c) (c >= 'A' && c <= 'Z')
 #define IS_IN_RANGE(c, i, j) (c >= i   && c <= j)
 #define IS_NUMBER(c)         (c >= '0' && c <= '9')
@@ -22,85 +25,57 @@ struct client_set {
 	CATSET set;
 };
 
-/** 
- * Inicia o Catálogo de Clientes
- * @return Catálogo de Clientes novo
- */
 CLIENTCAT initClientCat() {
 	CLIENTCAT clientCat = malloc(sizeof (*clientCat));
-	clientCat->cat = initCatalog(26, NULL, NULL, NULL, NULL);
+
+	clientCat->cat = initCatalog(CATALOG_SIZE, NULL, NULL, NULL);
 
     return clientCat;
 }
 
-/** 
- * Insere cliente no catálogo de Clientes.
- * @param clientCat Catálogo de Clientes
- * @param client Cliente a inserir
- * @return Catálogo de Clientes com o novo cliente inserido.
- */
 CLIENTCAT insertClient(CLIENTCAT clientCat, CLIENT client) {
 	clientCat->cat = insertCatalog(clientCat->cat, INDEX(client), client->str, NULL);
 
 	return clientCat;
 }
 
-/** 
- * Liberta o espaço ocupado pelo Catálogo de Clientes
- * @param clientCat Catálogo de Clientes
- */
 void freeClientCat(CLIENTCAT clientCat) {
 	freeCatalog(clientCat->cat);
 	free(clientCat);
 }
 
-/** 
- * Verifica se um dado cliente existe num dado catálogo
- * @param clientCat Catálogo de Clientes
- * @param client Cliente a procurar
- * @return true se encontrou, false caso contrário
- */
 bool lookUpClient(CLIENTCAT clientCat, CLIENT client) {
 	return lookUpCatalog(clientCat->cat, INDEX(client), client->str);
+}
+
+int countClients(CLIENTCAT clientCat, char index) {
+	return countPosElems(clientCat->cat, index-'A');
 }
 
 CATALOG getClientCat(CLIENTCAT clientCat) {
 	return cloneCatalog(clientCat->cat);
 }
 
-/**
- * @return Retorna cliente não inicializado
- */
 CLIENT newClient() {
-	return malloc(sizeof(struct client));
+	CLIENT new = malloc(sizeof(struct client));
+
+	new->str[0] = '\0';
+
+	return new;
 }
 
-/** 
- * Converte String para CLIENT
- * @param str String a converter
- * @return CLIENT novo
- */
-CLIENT toClient(char* str) {
-	CLIENT r = malloc(sizeof (*r));
-
-/*	if (!isClient(str))
-		return NULL;
-*/
-
-	strncpy(r->str, str, CLIENT_LENGTH);
-
-	return r;
-}
-
-/**
- * Atribui a string dada ao cliente
- * @param c Cliente a ser alteado
- * @param str String dada
- * @return Cliente alterado
- */
 CLIENT writeClient(CLIENT c, char* str) {
 	strncpy(c->str, str, CLIENT_LENGTH);
 	return c;
+}
+
+CLIENT toClient(char* str) {
+	CLIENT new = malloc(sizeof (*new));
+	
+	new = malloc(sizeof(*new));
+	strncpy(new->str, str, CLIENT_LENGTH-1);
+
+	return new;
 }
 
 CLIENT cloneClient(CLIENT c) {
@@ -117,14 +92,10 @@ char* fromClient(CLIENT c, char* dest) {
 	return dest;
 }
 
-/**
- * Liberta memória ocupada pelo cliente
- * @param c Cliente a ser libertado
- */
-void freeClient(CLIENT c) {
-	free(c);
+bool isEmptyClient(CLIENT c) {
+	return (c->str[0] == '\0');
 }
-
+ 
 bool isClient(char *str) {
 	return IS_CAPITAL_LETTER(str[0]) &&
            /* Se str[1] é '5', todos os carateres seguintes são '0' */
@@ -135,47 +106,37 @@ bool isClient(char *str) {
                                            && IS_IN_RANGE(str[4], '0', '9')));
 }
 
-/**
- * Inicializa um CLIENTSET com um tamanho n
- * @param n Tamanho mínimo do CLIENTSET
- * @return CLIENTSET inicializado
- */
+void freeClient(CLIENT client) {
+	free(client);
+}
+ 
 CLIENTSET initClientSet(int n) {
 	CLIENTSET new = malloc (sizeof (*new));
-	new->set = initCatalogSet(n);
+	new->set = initCatSet(n);
 
 	return new;
 }
 
-/**
- * @param catProd Catálogo onde se encontra a informação pretendida
- * @param cs Set onde se pretende guardar a informação
- * @param index Posição do catálogo onde se encontra a informação
- * @return Set preenchido
- */
 CLIENTSET fillClientSet(CLIENTCAT catProd, CLIENTSET cs, char index) {
-	cs->set = fillCatalogSet(catProd->cat, cs->set, index - 'A');
+	cs->set = fillCatSet(catProd->cat, cs->set, index - 'A');
 
 	return cs;
 }
 
-void freeClientSet(CLIENTSET cs) {
-	freeCatalogSet(cs->set);
-	free(cs);	
+int getClientSetSize(CLIENTSET cs) {
+	return getCatSetSize(cs->set);
 }
 
-/**
- * @param cs Set de clientes
- * @param pos Posição do cliente
- * @return Cliente
- */
 CLIENT getClientByPos(CLIENTSET cs, int pos) {
 	char *str = getKeyPos(cs->set, pos);
+
+	if (str == NULL)
+		return NULL;
 	
 	return toClient(str);
 }
 
-int getClientSetSize(CLIENTSET cs) {
-	return getCatalogSetSize(cs->set);
+void freeClientSet(CLIENTSET cs) {
+	freeCatSet(cs->set);
+	free(cs);	
 }
-

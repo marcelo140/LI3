@@ -44,7 +44,7 @@ struct product_group {
 FATGLOBAL initFat(PRODUCTCAT p) {
 	FATGLOBAL new = malloc(sizeof (*new));
 	new->cat = getProductCat(p);
-	new->cat = changeCatalogOps(new->cat, (init_t) initRevenue, NULL, NULL,
+	new->cat = changeCatalogOps(new->cat, (init_t) initRevenue, NULL, 
                                           (free_t) freeRevenue);
 
 	return new;
@@ -63,6 +63,7 @@ FATGLOBAL addFat(FATGLOBAL fat, SALE s) {
 
 char* getProductCode(PRODUCTGROUP pg, int pos) {
 	if (!pg || !pg->products) return NULL;
+
 	return getKeyPos(pg->products, pos);
 }
 
@@ -116,14 +117,14 @@ PRODUCTGROUP* getProductsNotSoldByBranch(FATGLOBAL fat) {
 	int i, branch, size;
 
 	res = malloc(sizeof(PRODUCTGROUP) * BRANCHES);
-	size = countAllElems(fat->cat);
 
-	cs = initCatalogSet(size);
-	cs = allCatalogSet(fat->cat, cs);
+	size = countAllElems(fat->cat);
+	cs = initCatSet(size);
+	cs = fillAllCatSet(fat->cat, cs);
 
 	for(branch = 0; branch < BRANCHES; branch++){
 		res[branch] = initProductGroup();
-		res[branch]->products = initCatalogSet(10000);
+		res[branch]->products = initCatSet(10000);
 	}
 
 	for(i = 0; i < size; i++) {
@@ -146,7 +147,7 @@ double getBilledByMonthRange(FATGLOBAL fat, int initialMonth, int finalMonth) {
 
 	res = 0;
 	cs = filterCat(fat->cat, (condition_t) isNotEmptyRev, NULL);
-	size = getCatalogSetSize(cs);
+	size = getCatSetSize(cs);
 
 	for(i = 0; i < size; i++){
 		rev = getContPos(cs, i);
@@ -165,7 +166,7 @@ int getQuantByMonthRange(FATGLOBAL fat, int initialMonth, int finalMonth) {
 
 	res = 0;
 	cs = filterCat(fat->cat, (condition_t) isNotEmptyRev, NULL);
-	size = getCatalogSetSize(cs);
+	size = getCatSetSize(cs);
 
 	for(i = 0; i < size; i++){
 		rev = getContPos(cs, i);
@@ -183,7 +184,7 @@ void freeFat(FATGLOBAL fat) {
 }
 
 void freeProductGroup(PRODUCTGROUP pg) {
-	freeCatalogSet(pg->products);
+	freeCatSet(pg->products);
 	free(pg);
 }
 
@@ -193,9 +194,9 @@ PRODUCTGROUP initProductGroup() {
 
 PRODUCTGROUP sortProductGroup(PRODUCTGROUP pg, int sortMode) {
 	if (sortMode == BY_QUANTITY)
-		pg->products = sortCatSet(pg->products, (compare_t) compareByQuant);
+		sortCatSet(pg->products, (compare_t) compareByQuant);
 	else if (sortMode == BY_BILLING)
-		pg->products = sortCatSet(pg->products, (compare_t) compareByBilling);
+		sortCatSet(pg->products, (compare_t) compareByBilling);
 
 	return pg;
 }

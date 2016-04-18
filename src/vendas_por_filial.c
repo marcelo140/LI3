@@ -73,10 +73,8 @@ BRANCHSALES initBranchSales (CLIENTCAT clientCat) {
 	BRANCHSALES bs = malloc(sizeof(*bs));
 
 	bs->clients = getClientCat(clientCat);
-	bs->clients = changeCatalogOps(bs->clients,
-                                   (init_t) initClientSale,
-                                   NULL, NULL,
-                                   (free_t) freeClientSale);
+	bs->clients = changeCatalogOps(bs->clients, (init_t) initClientSale,  NULL,
+                                                (free_t) freeClientSale);
 
 	return bs;
 }
@@ -301,13 +299,13 @@ PRODUCTDATA newProductData(char *productName, int quantity, int clients) {
 
 CLIENTLIST newClientList() {
 	CLIENTLIST new = malloc(sizeof(struct client_list));
-	new->set = initCatalogSet(20);
+	new->set = initCatSet(20);
 
 	return new;
 }
 
 int clientListSize(CLIENTLIST cl) {
-	return getCatalogSetSize(cl->set);
+	return getCatSetSize(cl->set);
 }
 
 char* getClientListPos(CLIENTLIST cl, int pos){
@@ -315,7 +313,7 @@ char* getClientListPos(CLIENTLIST cl, int pos){
 }
 
 void freeClientList(CLIENTLIST cl) {
-	freeCatalogSet(cl->set);
+	freeCatSet(cl->set);
 }
 
 /*   =========  FUNÇÕES PARA MONTHLIST ========= */
