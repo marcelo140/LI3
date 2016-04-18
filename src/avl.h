@@ -6,8 +6,6 @@
 typedef struct avl      *AVL;
 typedef struct data_set *DATASET;
 
-void* dumpDataAVL(AVL tree, void* data, void* (*dumper)(void*, void*));
-
 /**
  * Inicia uma AVL com as funções auxiliares dadas.
  * @param init Inicia o conteúdo quando necessário
@@ -137,8 +135,6 @@ DATASET datacpy (DATASET dest, DATASET source, int pos);
  */
 DATASET filterAVL (AVL tree, DATASET ds, condition_t condition, void* arg);
 
-DATASET* massFilterAVL (AVL tree, DATASET* ds, int num, condition_t predicate, void** args);
-
 /**
  * Constrói dois conjuntos de dados a partir do resultado da função comparação dada que
  * será aplicada a todos os nodos da árvore, por ordem crescente.
@@ -158,6 +154,19 @@ DATASET* massFilterAVL (AVL tree, DATASET* ds, int num, condition_t predicate, v
  * @param set2 Conjunto de dados onde serão adicionados elementos
  */
 void separateAVL (AVL tree, DATASET set1, DATASET set2, compare_t compare, void* arg);
+
+/**
+ * Extrai o conteúdo de cada nodo, usando a função dumper dada. O conteúdo extraido será
+ * guardado na estrutura data fornecida.
+ * 
+ * @param tree Árvore com a informação a ser extraida
+ * @param data Local onde a informação será guardada
+ * @param dumper Função responsável por extrair o conteúdo dos nodos. O primeiro argumento
+ * corresponde à estrutura de dados onde vai ser guardada a informação (data). O segundo
+ * argumento corresponde à estrutura de dados presente no conteúdo de cada nodo
+ * @return Estrutura de dados com toda a informação
+ */
+void* dumpDataAVL(AVL tree, void* data, void* (*dumper)(void*, void*));
 
 /**
  * Constrói dois conjuntos de dados a partir do resultado da função comparação. A função
@@ -187,36 +196,63 @@ void condSeparateAVL (AVL tree, DATASET set1, DATASET set2,
 /**
  * Reordena o conteúdo de um conjunto de dados usando o comparador dado.
  * @param set Conjunto de dados a ser ordenado
+ * @param begin Posição a partir da qual o set deve ser ordenado
+ * @param end Posição até que o set deve ser ordenado
  * @param comparator Função que define como comparar dois elementos
- * @return Conjunto de dados ordenado pelos parâmetros dados
  */ 
-DATASET sortDataSet (DATASET set, compare_t comparator);
+void sortDataSet (DATASET set, int begin, int end, compare_t comparator);
 
 /**
  * Concatena os dois conjuntos de dados, acrescentado os elementos do set2 ao fim do set1
- * @return Retorna o set1, agora com os elementos do set2 acrescentados
  */
 DATASET concatDataSet (DATASET set1, DATASET set2);
 
+/**
+ * Dado dois conjuntos previamente ordenados, une-se os dois sets, eliminando elementos
+ * repetidos. O resultado é também um conjunto ordenado.
+ * @param dest Conjunto que será alterado
+ * @param src Conjunto cujos dados serão agregados ao conjunto dest
+ * @return Apontador para o inicio do conjunto com todos os dados agregados (dest)
+ */
 DATASET unionDataSets (DATASET dest, DATASET src);
 
-DATASET diffDataSets (DATASET dest, DATASET src);
 /**
- * Cria um novo dataSet com a interseção de d1 e d2
- * d1 e d2 devem já estar ordenados para usar esta função.
+ * Dado dois conjuntos previamente ordenados, une-se os dois sets, eliminando todos os
+ * elementos em comum. O resultado é também um conjunto ordenado.
+ * @param dest Conjunto que será alterado
+ * @param src Conjunto cujos dados serão agregados ao conjunto dest
+ * @return Apontador para o inicio do conjunto com todos os dados agregados (dest)
+ */
+DATASET diffDataSets (DATASET dest, DATASET src);
+
+/**
+ * Dado dois conjuntos previeamente ordenados, une-se os dois sets, mantendo apenas os
+ * elementos em comum. O resultado será também um set ordenado.
+ * @return Conjunto de dados resultante
  */
 DATASET intersectDataSet (DATASET d1, DATASET d2);
 
-void*   getDataPos     (DATASET ds, int pos);
-char*   getHashPos     (DATASET ds, int pos);
-int     getDataSetSize (DATASET ds);
-
+/**
+ * Devolve o conteúdo do elemento na posição indicada. Este conteúdo corresponde ao 
+ * existente na árvore no nodo com o mesmo identificador.  Se a posição não for válida é
+ * devolvido NULL.
+ */
 void* getDataPos (DATASET ds, int pos);
 
+/** 
+ * Devolve uma cópia do identificado do elemento na posição indicada. Se a posição não
+ * for válida é devolvido NULL.
+ */
 char* getHashPos (DATASET ds, int pos);
 
+/**
+ * Determina o tamanho de um conjunto de dados.
+ */
 int getDataSetSize (DATASET ds);
 
+/**
+ * Liberta o espaço ocupado pelo conjunto de dados dado.
+ */
 void freeDataSet (DATASET set);
 
 #endif
