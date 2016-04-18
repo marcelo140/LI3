@@ -85,6 +85,60 @@ PRINTSET query3(FATGLOBAL fat, PRODUCT product, int month) {
 	return print;
 }
 
+PRINTSET query4(FATGLOBAL fat) {
+	PRINTSET print = initPrintSet(MAX_SIZE);
+	PRODUCTGROUP *pgroupB, pgroupT;
+	char buff[MAX_SIZE], *product;
+	int i, j, op, n=0;
+
+	printf("\n  ::::::::::::::::::::::::::::::\n\n");
+	printf("   1• Total\n");
+	printf("   2• Todas as Filiais\n");
+	printf("\n  ::::::::::::::::::::::::::::::\n");
+	
+	while(1) {
+		printf("  Escolha um modo: ");
+		fgets(buff, MAX_SIZE, stdin);
+		op = atoi(buff);
+		if (op == 1 || op == 2) break;
+		if (UPPER(buff[0]) == 'Q') return NULL;
+	    printf("Por favor escolha entre 1 e 2.\n");	
+	}
+
+	if (op == 1) {
+		pgroupT = getProductsNotSold(fat);
+		
+		for (i=0; (product = getProductCode(pgroupT, i)) ; i++) {
+			sprintf(buff, "\t\t\t%s", product);
+			print = addToPrintSet(print, buff);
+		}
+
+		freeProductGroup(pgroupT);
+	} else {
+		pgroupB = getProductsNotSoldByBranch(fat);
+		
+		sprintf(buff, "\tFilial 1\tFilial 2\tFilial 3");
+		print = setPrintHeader(print, buff);
+
+		for (i=0;  ; i++){
+			n = 0;
+			sprintf(buff, "");
+			for (j=0; j < BRANCHES; j++) {
+				product = getProductCode(pgroupB[j], i);
+				if (product) sprintf(buff, "%s\t%s", buff, product);
+				else { sprintf(buff,"%s\t\t", buff); n++;}
+			}
+			if (n==3) break;
+			print = addToPrintSet(print, buff);
+		}
+		
+		for (i=0; i < BRANCHES; i++)
+			freeProductGroup(pgroupB[i]);
+	}
+
+	return print;
+}
+
 PRINTSET query5(BRANCHSALES bs, CLIENT client) {
 	PRINTSET print = initPrintSet(12);
 	char str[MAX_SIZE];

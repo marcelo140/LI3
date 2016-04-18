@@ -264,7 +264,8 @@ CATSET contcpy(CATSET dest, CATSET src, int pos) {
 	return dest;
 }
 
-char *getKeyPos(CATSET cs, int pos) {
+char *getKeyPos(CATSET cs, int pos){
+	if (!cs || !cs->set) return NULL;
 	return getHashPos(cs->set, pos);
 }
 
