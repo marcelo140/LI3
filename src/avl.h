@@ -10,13 +10,14 @@ typedef struct data_set *DATASET;
  * Inicia uma AVL com as funções auxiliares dadas.
  * @param init Inicia o conteúdo quando necessário
  * @param equals Verifica se dois conteúdos são iguais
- * @param clone Função capaz de clonar o conteúdo de uma árvore
- * @param free Responsável por libertar toda a memória ocupada pelo conteúdo
+ * @param clone Função capaz de clonar o conteúdo de um element da árvore
+ * @param free Responsável por libertar toda a memória ocupada pelo conteúdo de um elemento
  */
 AVL initAVL (init_t init, condition_t equals, clone_t clone, free_t free);
 
 /**
- * Altera as operações com que a árvore foi inicializada para as funções dadas.
+ * Altera as operações com que a árvore foi inicializada.
+ * @param tree Árvore cujas operações serão mudadas
  * @param init Inicia o conteúdo quando necessário
  * @param equals Verifica se dois conteúdos são iguais
  * @param clone Função capaz de clonar o conteúdo de uma árvore
@@ -45,7 +46,7 @@ void* replaceAVL (AVL tree, char *hash, void *content);
 
 /**
  * Clona a árvore dada, incluindo as suas operações. Se a função auxiliar clone existir,
- * o conteúdo é também clonado.
+ * o conteúdo dos elementos é também clonado.
  */
 AVL cloneAVL (AVL tree);
 
@@ -53,13 +54,13 @@ AVL cloneAVL (AVL tree);
  * Devolve o conteúdo do nodo com a hash dada. Se o nodo não tiver conteúdo mas existir
  * uma função init, o conteúdo é inicializado antes de ser devolvido.
  */
-void*  getAVLcontent (AVL tree, char *hash);
+void* getAVLcontent (AVL tree, char *hash);
 
 /**
  * Adiciona um nodo com a hash dada à árvore, inicializando o conteúdo com a função init
  * (requerida) existente nas operações. Se o nodo já existir apenas devolve o conteúdo,
  * inicializando-o se necessário.
- * @param tree Árvore a ser procurada
+ * @param tree Árvore onde se pretende inserir o elemento
  * @param hash Identificador do nodo
  * @return Conteúdo do nodo com a hash dada
  */ 
@@ -68,8 +69,7 @@ void* addAVL (AVL tree, char *hash);
 /**
  * Verifica se existe um nodo com o identificador hash.
  * @param tree Árvore a ser verificada
- * @param hash Identificador dado
- * @return Retorna true se existir, false caso contrário
+ * @param hash Identificador do elemento procurado
  */
 bool lookUpAVL (AVL tree, char *hash);
 
@@ -91,7 +91,7 @@ bool isEmptyAVL (AVL tree);
 int countNodes (AVL tree);
 
 /**
- * Liberta o espaço ocupado pelos nodos da árvore. Se existir uma função free no set de
+ * Liberta o espaço ocupado pelos nodos da árvore. Se existir uma função free no conjunto de
  * operações da árvore, o conteúdo de cada nodo é também libertado.
  */
 void freeAVL (AVL n);
@@ -147,8 +147,7 @@ DATASET filterAVL (AVL tree, DATASET ds, condition_t condition, void* arg);
  * Caso o resultado da comparação seja igual a zero, o nodo é acrescentado aos dois sets.
  *
  * @param tree Árvore onde será aplicado o separate
- * @param compare Função usada para indentificar o conjunto de dados onde será acrescentao
- * o nodo
+ * @param compare Função usada para indentificar o set onde será acrescentao  o nodo
  * @param arg Argumento opcional para o comparador
  * @param set1 Conjunto de dados onde serão adicionados elementos
  * @param set2 Conjunto de dados onde serão adicionados elementos
@@ -185,8 +184,8 @@ void* dumpDataAVL(AVL tree, void* data, void* (*dumper)(void*, void*));
  * @param set2 Conjunto de dados onde serão adicionados elementos
  * @param condition Condição aplicada ao conteúdo de cada nodo
  * @param cond_arg Argumento opcional para a condição
- * @param comparator Função usada para indentificar o conjunto de dados onde 
- * será acrescentao o nodo
+ * @param comparator Função usada para indentificar o conjunto de dados onde será
+ * acrescentado o nodo
  * @param comp_arg Argumento opcional para a condição
  */
 void condSeparateAVL (AVL tree, DATASET set1, DATASET set2,
@@ -228,13 +227,13 @@ DATASET diffDataSets (DATASET dest, DATASET src);
 /**
  * Dado dois conjuntos previeamente ordenados, une-se os dois sets, mantendo apenas os
  * elementos em comum. O resultado será também um set ordenado.
- * @return Conjunto de dados resultante
+ * @return Novo conjunto de dados
  */
 DATASET intersectDataSet (DATASET d1, DATASET d2);
 
 /**
  * Devolve o conteúdo do elemento na posição indicada. Este conteúdo corresponde ao 
- * existente na árvore no nodo com o mesmo identificador.  Se a posição não for válida é
+ * existente na árvore no nodo com o mesmo identificador. Se a posição não for válida é
  * devolvido NULL.
  */
 void* getDataPos (DATASET ds, int pos);

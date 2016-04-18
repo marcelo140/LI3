@@ -40,25 +40,23 @@ static NODE balanceRight (NODE node);
 static NODE balanceLeft  (NODE node);
 static NODE rotateRight  (NODE node);
 static NODE rotateLeft   (NODE node);
+static NODE cloneNode    (NODE n, clone_t clone);
 
-static NODE cloneNode  (NODE n, clone_t clone);
-static bool equalsNode (NODE a, NODE b, condition_t equals);
-static void freeNode   (NODE node, free_t free);
+static bool equalsNode   (NODE a, NODE b, condition_t equals);
+static void freeNode     (NODE node, free_t free);
 
-static DATASET insertDataSet    (DATASET ds, NODE n);
-static DATASET addDataSetAux    (DATASET ds, NODE node);
-static void    swapData         (DATASET ds, int i, int j);
-static int     partitionDataSet (DATASET ds, int begin, int end, compare_t comparator);
+static DATASET insertDataSet  (DATASET ds, NODE n);
+static DATASET addDataSetAux  (DATASET ds, NODE node);
+static DATASET filterNode     (NODE n, DATASET ds, condition_t predicate, void* arg);
 
-static DATASET filterNode   (NODE n, DATASET ds, condition_t predicate, void* arg);
-static void*   dumpDataNode (NODE n, void* data, void* (*dumper) (void*, void*));
+static int  partitionDataSet (DATASET ds, int begin, int end, compare_t comparator);
+static void swapData         (DATASET ds, int i, int j);
 
-static void    separateNode (NODE n, DATASET set1, DATASET set2, compare_t comparator,
-                             void* arg);
-                                 
-static void    condSeparateNode(NODE n, DATASET set1, DATASET set2, 
-                                        condition_t cond, void* cond_arg,
-                                        compare_t comp,   void* comp_arg);
+static void* dumpDataNode  (NODE n, void* data, void* (*dumper) (void*, void*));
+static void  separateNode  (NODE n, DATASET set1, DATASET set2, compare_t comp,void* arg);
+
+static void  condSeparateNode (NODE n, DATASET set1, DATASET set2, condition_t pred,
+                               void* p_arg, compare_t comp, void* c_arg);
 
 
 AVL initAVL(init_t init, condition_t equals, clone_t clone, free_t free){
@@ -76,7 +74,6 @@ AVL initAVL(init_t init, condition_t equals, clone_t clone, free_t free){
 }
 
 AVL changeOps (AVL tree, init_t init, condition_t equals, clone_t clone, free_t free){
-
 	tree->init = init;
 	tree->equals = equals;
 	tree->clone = clone;
@@ -87,9 +84,7 @@ AVL changeOps (AVL tree, init_t init, condition_t equals, clone_t clone, free_t 
 
 AVL insertAVL(AVL tree, char *hash, void *content) {
 	NODE last;
-	int update;
-
-	update = 0;
+	int update = 0;
 
 	tree->head = insertNode(tree->head, hash, content, &update, &last);
 
@@ -100,8 +95,8 @@ AVL insertAVL(AVL tree, char *hash, void *content) {
 }
 
 AVL cloneAVL(AVL tree) {
-
 	AVL new = initAVL(tree->init, tree->equals, tree->clone, tree->free);
+
 	new->size = tree->size;
 	new->head = cloneNode(tree->head, tree->clone);
 
@@ -109,14 +104,10 @@ AVL cloneAVL(AVL tree) {
 }
 
 void* replaceAVL(AVL tree, char* hash, void* content) {
-	void* oldContent;
-	NODE p;
+	void* oldContent = NULL;
+	NODE p = tree->head;
 	int res;
-	bool stop;
-
-	p = tree->head;
-	oldContent = NULL;
-	stop = false;
+	bool stop = false;
 
 	while(p && !stop) {
 		res = strcmp(hash, p->hash);
@@ -158,9 +149,7 @@ void *getAVLcontent(AVL tree, char *hash) {
 
 void* addAVL(AVL tree, char* hash) {
 	NODE last;
-	int update;
-
-	update = 0;
+	int update = 0;
 
 	tree->head = insertNode(tree->head, hash, NULL, &update, &last);
 
@@ -225,6 +214,7 @@ DATASET initDataSet(int n) {
 
 DATASET addDataSet(DATASET ds, AVL tree) {
 	ds = addDataSetAux(ds, tree->head);
+
 	return ds;	
 }
 
@@ -238,10 +228,9 @@ void separateAVL(AVL tree, DATASET set1, DATASET set2, compare_t comparator, voi
 	separateNode(tree->head, set1, set2, comparator, arg);
 }
 
-void condSeparateAVL (AVL tree, DATASET set1, DATASET set2,
-                                condition_t condition, void* cond_arg,
-                                compare_t comparator, void* comp_arg) {
-
+void condSeparateAVL (AVL tree, DATASET set1, DATASET set2, condition_t condition,
+                      void* cond_arg, compare_t comparator, void* comp_arg)
+{
 	condSeparateNode(tree->head, set1, set2, condition, cond_arg, comparator, comp_arg);
 }
 
@@ -265,9 +254,7 @@ void sortDataSet (DATASET set, int begin, int end, compare_t comparator) {
 }
 
 DATASET concatDataSet(DATASET set1, DATASET set2) {
-	int i, size;
-	
-	size = set2->pos;
+	int i, size = set2->pos;
 	
 	for(i = 0; i < size; i++)
 		insertDataSet(set1, set2->set[i]);
@@ -354,7 +341,7 @@ DATASET diffDataSets(DATASET dest, DATASET source) {
 	return new;
 }
 
-DATASET intersectDataSet (DATASET d1, DATASET d2) {
+DATASET intersectDataSet(DATASET d1, DATASET d2) {
 	DATASET new;
 	int i, j, size;
 
@@ -378,6 +365,7 @@ DATASET intersectDataSet (DATASET d1, DATASET d2) {
 
 void* dumpDataAVL (AVL tree, void* data, void* (*dumper)(void*, void*)){
 	data = dumpDataNode(tree->head, data, dumper);
+
 	return data;
 }
 
@@ -566,7 +554,6 @@ static NODE insertLeft(NODE node, char* hash, void* content, int *update, NODE *
 	return node;
 }
 
-/* Insere o novo Nodo na AVL.*/
 static NODE insertNode(NODE node, char* hash, void* content, int *update, NODE *last) {
 	NODE new;
 	int res;
@@ -670,11 +657,14 @@ static DATASET filterNode(NODE n, DATASET ds, condition_t condition, void* arg) 
 	
 		ds = filterNode(n->right, ds, condition, arg);
 	}
+
 	return ds;
 }
 
 static void swapData(DATASET ds, int i, int j) {
-	NODE tmp = ds->set[i];
+	NODE tmp;
+
+	tmp = ds->set[i];
 	ds->set[i] = ds->set[j];
 	ds->set[j] = tmp;
 }
@@ -693,14 +683,13 @@ static int partitionDataSet (DATASET ds, int begin, int end, compare_t comparato
 	return lim+1;
 }
 
-static void separateNode(NODE n, DATASET set1, DATASET set2, compare_t comparator,
-                         void* arg) { 
+static void separateNode(NODE n, DATASET set1, DATASET set2, compare_t comp, void* arg) { 
 	int res;
 	
 	if (n) {
-		separateNode(n->left, set1, set2, comparator, arg);
+		separateNode(n->left, set1, set2, comp, arg);
 
-		res = comparator(n->content, arg);
+		res = comp(n->content, arg);
 
 		if (res < 0)
 			insertDataSet(set1, n);
@@ -711,21 +700,21 @@ static void separateNode(NODE n, DATASET set1, DATASET set2, compare_t comparato
 			insertDataSet(set2, n);
 		}
 
-		separateNode(n->right, set1, set2, comparator, arg); 
+		separateNode(n->right, set1, set2, comp, arg); 
 	}
 
 }
 
-static void condSeparateNode(NODE n, DATASET set1, DATASET set2, 
-                                     condition_t cond, void* cond_arg,
-                                     compare_t comp, void* comp_arg) {
+static void condSeparateNode(NODE n, DATASET set1, DATASET set2, condition_t pred,
+                             void* p_arg, compare_t comp, void* c_arg)
+ {
 	int res;
 
 	if (n) {
-		condSeparateNode(n->left, set1, set2, cond, cond_arg, comp, comp_arg);
+		condSeparateNode(n->left, set1, set2, pred, p_arg, comp, c_arg);
 
-		if (cond(n->content, cond_arg)){
-			res = comp(n->content, comp_arg);
+		if (pred(n->content, p_arg)){
+			res = comp(n->content, c_arg);
 
 			if (res < 0)
 				insertDataSet(set1, n);
@@ -737,7 +726,7 @@ static void condSeparateNode(NODE n, DATASET set1, DATASET set2,
 			}
 		}
 
-		condSeparateNode(n->right, set1, set2, cond, cond_arg, comp, comp_arg);
+		condSeparateNode(n->right, set1, set2, pred, p_arg, comp, c_arg);
 	}
 }
 

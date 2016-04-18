@@ -12,27 +12,8 @@ struct catalog_set {
 	DATASET set;
 };
 
-void* dumpDataCat(CATALOG cat, void* data, void* (*dumper)(void*, void*)) {
-	int i, size;
 
-	size = cat->size;
-
-	for (i = 0; i < size; i++)
-		data = dumpDataAVL(cat->root[i], data, dumper);
-
-	return data;
-}
-
-/**
- * Inicia um novo Catálogo
- * @param n Número de índices do catálogo
- * @return O novo Catálogo
- */
-CATALOG initCatalog(int n, void* (*init)   (), 
-                           bool  (*equals) (void*, void*),
-                           void* (*clone)  (void*),
-                           void  (*free)   (void *)) {
-
+CATALOG initCatalog(int n, init_t init, clone_t clone, free_t free) {
 	CATALOG c;
 	int i;
 
@@ -41,157 +22,117 @@ CATALOG initCatalog(int n, void* (*init)   (),
 	c->size = n;
 
 	for (i=0; i < n; i++)
-		c->root[i] = initAVL(init, equals, clone, free);
+		c->root[i] = initAVL(init, NULL, clone, free);
 
 	return c;
 }
 
-CATALOG changeCatalogOps (CATALOG cat, init_t init, condition_t equals,
-                                       clone_t clone, free_t free){
-
-	int i, size;
+CATALOG changeCatalogOps (CATALOG cat, init_t init, clone_t clone, free_t free){
+	int i, size = cat->size;
 	
-	size = cat->size;
 	for(i = 0; i < size; i++)
-		changeOps(cat->root[i], init, equals, clone, free);
+		changeOps(cat->root[i], init, NULL, clone, free);
 
 	return cat;
 }
 
+CATALOG insertCatalog(CATALOG cat, int i, char *hash, void *content) {
+	cat->root[i] = insertAVL(cat->root[i], hash, content);
 
-/**
- * Insere conteúdo num dado Catálogo com a respetica Hash
- * @param c Catálogo
- * @param i Índice onde inserir
- * @param s String a inserir
- * @param content Conteúdo do catálogo
- * @return Catálogo novo
- */
-CATALOG insertCatalog(CATALOG c, int i, char *hash, void *content) {
-	c->root[i] = insertAVL(c->root[i], hash, content);
-
-	return c;
+	return cat;
 }
 
-/**
- * Atualiza o conteúdo de um elemento de um catálogo caracterizado por uma hash
- * @param c Catálogo
- * @param i Índice onde atualizar
- * @param hash Hash do elemento
- * @param cntt Conteúdo novo
- * @return Catálogo com o conteúdo atualizado
- */
-void* addCatalog(CATALOG c, int i, char *hash) {
-	return addAVL(c->root[i], hash);
-}
-
-void *replaceCatalog(CATALOG c, int i, char *hash, void *cntt) {
-	AVL p = c->root[i];
-
-	return replaceAVL(p, hash, cntt);
+void *replaceCatalog(CATALOG cat, int i, char *hash, void *content) {
+	return replaceAVL(cat->root[i], hash, content);
 }
 
 CATALOG cloneCatalog(CATALOG cat){
 	CATALOG c;
-	int i;
+	int i, size = cat->size;
 
 	c = malloc(sizeof(*c));
-	c->root = malloc(sizeof(*c->root) * cat->size);
-	c->size = cat->size;
+	c->root = malloc(sizeof(*c->root) * size);
+	c->size = size;
 
-	for (i = 0; i < cat->size; i++)
+	for (i = 0; i < size; i++)
 		c->root[i] = cloneAVL(cat->root[i]);
 
 	return c;
 }
 
-/**
- * Devolve o conteúdo de um elemento caracterizado por uma hash
- * @param c Catálogo
- * @param i Índice do conteúdo a devolver
- * @param hash Hash do elemento
- * @return Conteúdo do elemento
- */
-void* getCatContent(CATALOG c, int i, char *hash) {
-	return getAVLcontent(c->root[i], hash);
+void* getCatContent(CATALOG c, int index, char *hash) {
+	return getAVLcontent(c->root[index], hash);
 }
 
-/**
- * Dado um Catálogo e uma String localiza essa string no catálogo.
- * @param c Catálogo
- * @param i Índice onde procurar
- * @param s String a procurar
- * @return true caso encontre, false caso contrário
- */
-bool lookUpCatalog(CATALOG c, int i, char *s) {
-	AVL p = c->root[i];
-
-	return lookUpAVL(p, s);
+void* addCatalog(CATALOG c, int index, char *hash) {
+	return addAVL(c->root[index], hash);
 }
 
-
-int countPosElems(CATALOG c, int i){
-	return countNodes(c->root[i-'A']);
+bool lookUpCatalog(CATALOG cat, int index, char *hash) {
+	return lookUpAVL(cat->root[index], hash);
 }
 
-int countAllElems(CATALOG c) {
-	int i, size;
+int countAllElems(CATALOG cat) {
+	int i, size = 0, catSize = cat->size;
 
-	size = 0;
-	for(i = 0; i < c->size; i++)
-		size += countNodes(c->root[i]);
+	for(i = 0; i < catSize; i++)
+		size += countNodes(cat->root[i]);
 
 	return size;
 }
 
-/**
- * Liberta todo o espaço ocupado pelo catálogo
- * @param c Catálogo a libertar
- * @return void
- */
-void freeCatalog(CATALOG c){
+int countPosElems(CATALOG c, int index){
+	return countNodes(c->root[index]);
+}
+
+void freeCatalog(CATALOG cat){
 	int i, size;
 
-	if (c){
-		size = c->size;
-		for (i=0; i < size; i++)
-			freeAVL(c->root[i]);
+	if (cat){
+		size = cat->size;
 
-		free(c->root);
-		free(c);
+		for (i=0; i < size; i++)
+			freeAVL(cat->root[i]);
+
+		free(cat->root);
+		free(cat);
 	}
 }
 
-CATSET initCatalogSet(int n) {
+CATSET initCatSet(int n) {
 	CATSET cs = malloc(sizeof(*cs));
 	cs->set = initDataSet(n);
 
 	return cs;
 }
 
-CATSET fillCatalogSet(CATALOG cat, CATSET cs, int i) {
-	cs->set = addDataSet(cs->set, cat->root[i]);
+CATSET fillCatSet(CATALOG cat, CATSET cs, int index) {
+	cs->set = addDataSet(cs->set, cat->root[index]);
+
 	return cs;
 }
 
-CATSET allCatalogSet(CATALOG cat, CATSET cs) {
-	int i;
+CATSET fillAllCatSet(CATALOG cat, CATSET cs) {
+	int i, size = cat->size;
 
-	if (cat->size == 0)
+	if (size == 0)
 		return NULL;
 
-	for(i = 0; i < cat->size; i++)
+	for(i = 0; i < size; i++)
 		cs->set = addDataSet(cs->set, cat->root[i]);
 
 	return cs;
 }
 
-CATSET filterCat (CATALOG cat, condition_t condition, void* arg) {
-	CATSET cs;
-	int i, size;
+CATSET contcpy(CATSET dest, CATSET src, int pos) {
+	dest->set = datacpy(dest->set, src->set, pos);
 
-	size = cat->size;
-	cs = initCatalogSet(size);
+	return dest;
+}
+
+CATSET filterCat (CATALOG cat, condition_t condition, void* arg) {
+	int i, size = cat->size;
+	CATSET cs = initCatSet(size);
 
 	for(i = 0; i < size; i++)
 		cs->set = filterAVL(cat->root[i], cs->set, condition, arg);
@@ -199,85 +140,77 @@ CATSET filterCat (CATALOG cat, condition_t condition, void* arg) {
 	return cs;
 }
 
-CATSET* massFilterCat (CATALOG cat, int num, condition_t predicate, void** args){
-	DATASET* ds;
-	CATSET* cs;
-	int i, size;
-
-	size = cat->size;
-	cs = malloc(sizeof(CATSET)*num);
-	ds = malloc(sizeof(DATASET)*num);
-
-	for(i = 0; i < num; i++)
-		ds[i] = initDataSet(1000);
-
-	for(i = 0; i < size; i++)
-		ds = massFilterAVL(cat->root[i], ds, num, predicate, args);
-
-	for(i = 0; i < num; i++){
-		cs[i] = malloc(sizeof(struct catalog_set));
-		cs[i]->set = ds[i];
-	}
-
-	return cs;
-}
-
 void separateCat (CATALOG cat, compare_t comp, void* arg, CATSET set1, CATSET set2) {
-	int i, size;
-
-	size = cat->size;
+	int i, size = cat->size;
 
 	for(i = 0; i < size; i++)
 		separateAVL(cat->root[i], set1->set, set2->set, comp, arg);
 }
 
+void* dumpDataCat(CATALOG cat, void* data, void* (*dumper)(void*, void*)) {
+	int i, size = cat->size;
+
+	for (i = 0; i < size; i++)
+		data = dumpDataAVL(cat->root[i], data, dumper);
+
+	return data;
+}
+
 void condSeparateCat (CATALOG cat, CATSET set1, CATSET set2,
                                    condition_t predicate, void* predicateArg,
                                    compare_t  comparator, void* comparatorArg) {
-	int i, size;
-
-	size = cat->size;
+	int i, size = cat->size;
 
 	for(i = 0; i < size; i++)
 		condSeparateAVL(cat->root[i], set1->set, set2->set, predicate, predicateArg,
                                                             comparator, comparatorArg);
 }
 
-CATSET sortCatSet(CATSET cs, compare_t comp) {
-	cs->set = sortDataSet(cs->set, comp);
+void sortCatSet(CATSET cs, compare_t comp) {
+	sortDataSet(cs->set, 0, getCatSetSize(cs)-1, comp);
+}
 
-	return cs;
+CATSET concatCatSet(CATSET set1, CATSET set2) {
+	set1->set = concatDataSet(set1->set, set2->set);
+
+	return set1;	
 }
 
 CATSET unionCatalogDataSets(CATSET dest, CATSET source) {
 	dest->set = unionDataSets(dest->set, source->set);
+
 	return dest;
 }
 
 CATSET diffCatalogDataSets(CATSET dest, CATSET source) {
 	dest->set = diffDataSets(dest->set, source->set);
+
 	return dest;
 }
 
-CATSET contcpy(CATSET dest, CATSET src, int pos) {
-	dest->set = datacpy(dest->set, src->set, pos);
-	return dest;
-}
+CATSET intersectCatSets(CATSET set1, CATSET set2) {
+	CATSET new = malloc(sizeof(*new));
 
-char *getKeyPos(CATSET cs, int pos){
-	if (!cs || !cs->set) return NULL;
-	return getHashPos(cs->set, pos);
+	new->set = intersectDataSet(set1->set, set2->set);
+	return new;
 }
 
 void *getContPos(CATSET cs, int pos) {
 	return getDataPos(cs->set, pos);
 }
 
-int getCatalogSetSize(CATSET cs) {
+char *getKeyPos(CATSET cs, int pos){
+	if (!cs || !cs->set) 
+		return NULL;
+
+	return getHashPos(cs->set, pos);
+}
+
+int getCatSetSize(CATSET cs) {
 	return getDataSetSize(cs->set);
 }
 
-void freeCatalogSet(CATSET cs) {
+void freeCatSet(CATSET cs) {
 	freeDataSet(cs->set);
 	free(cs);
 }
