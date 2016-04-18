@@ -9,9 +9,6 @@ typedef void* (*ht_init_t) ();
 typedef void* (*ht_add_t)  (void*, void*);
 typedef void  (*ht_free_t) (void*);
 
-HASHTSET initHashTSet(int size); 
-int getHashTsize(HASHTSET set);
-void sortHashTByName(HASHTSET hts, int begin, int end);
 /**
  * Inicializa uma nova tabela de Hash 
  * @return Nova tabela de Hash
@@ -35,6 +32,18 @@ HASHT insertHashT(HASHT ht, char* key, void* content);
  * @return Conteúdo da chave
  */
 void* getHashTcontent(HASHT ht, char* key);
+
+/**
+ * Inicia um conjunto de dados com o tamanho especificado
+ */
+HASHTSET initHashTSet(int size); 
+
+/**
+ * Calcula o tamanho de um conjunto de dados
+ * @param set Conjunto de dados cujo tamanho será calculado
+ * @return Tamanho do conjunto de dados
+ */
+int getHashTSetSize(HASHTSET set);
 
 /**
  * Devolve um conjunto com todo o conteúdo da Tabela de Hash
@@ -64,6 +73,14 @@ char* getHashTSetKey(HASHTSET hts, int pos);
  * @return Concatenação dos dois HashSets
  */
 HASHTSET concatHashTSet(HASHTSET h1, HASHTSET h2);
+
+/**
+ * Ordena um segmento do conjunto de dados por ordem alfabética da hash
+ * @param hts Conjunto de dados a ser ordenado
+ * @param begin Posição inicial do segmento
+ * @param end Posição final do segmento
+ */
+void sortHashTByName(HASHTSET hts, int begin, int end);
 
 /**
  * Ordena um hashSet segundo um dado comparador
