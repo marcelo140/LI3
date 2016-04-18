@@ -6,12 +6,12 @@
 typedef struct hasht *HASHT;
 typedef struct hashtSet *HASHTSET;
 typedef void* (*ht_init_t) ();
-typedef void* (*ht_add_t) (void*, void*);
+typedef void* (*ht_add_t)  (void*, void*);
 typedef void  (*ht_free_t) (void*);
 
 HASHTSET initHashTSet(int size); 
 int getHashTsize(HASHTSET set);
-HASHTSET sortHashTByName(HASHTSET hts);
+void sortHashTByName(HASHTSET hts, int begin, int end);
 /**
  * Inicializa uma nova tabela de Hash 
  * @return Nova tabela de Hash

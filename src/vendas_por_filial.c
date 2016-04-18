@@ -22,6 +22,7 @@
 
 struct branch {
 	CATALOG clients;
+	HASHT products;
 };
 
 struct client_list {
@@ -145,52 +146,64 @@ int toProductData(HASHTSET set, PRODUCTDATA* pd) {
 	return j;
 }
 
-PRODUCTDATA* sortProductData(PRODUCTDATA* pd, int size) {
-	PRODUCTDATA *below, *above;
-	PRODUCTDATA pivot;
-	int i, belowSize, aboveSize;
-
-	belowSize = 0;
-	aboveSize = 0;
-
-
-	if (size > 0){
-		pivot = pd[size-1];
-		below = malloc(sizeof(PRODUCTDATA) * size);
-		above = malloc(sizeof(PRODUCTDATA) * size);
-
-		for(i = 0; i < size-1; i++) {
-			if (pivot->quantity < pd[i]->quantity)
-				below[belowSize++] = pd[i];
-			else
-				above[aboveSize++] = pd[i];	
-		}
-
-		below = sortProductData(below, belowSize);
-		above = sortProductData(above, aboveSize);
-
-		below[belowSize++] = pivot;
-		memcpy(below+belowSize, above, aboveSize*sizeof(PRODUCTDATA));
-		
-		return below;
-	}
-
-	return pd;
+void swapPData(PRODUCTDATA* pd, int i, int j) {
+	PRODUCTDATA tmp = pd[i];
+	pd[i] = pd[j];
+	pd[j] = tmp;
 }
 
+int partitionPData(PRODUCTDATA *pd, int begin, int end) {
+	PRODUCTDATA pivot = pd[end];
+	int i = begin-1, j;
+	
+	for(j = begin; j < end; j++) {
+		if (pd[j]->quantity < pivot->quantity) {
+			i++;
+			swapPData(pd, i, j);
+		}
+	}
+
+	swapPData(pd, i+1, end);
+	return i+1;
+}
+
+void sortProductData(PRODUCTDATA* pd, int begin, int end) {
+	if (begin < end) {
+		int q = partitionPData(pd,begin, end);
+		
+		sortProductData(pd, begin, q-1);
+		sortProductData(pd, q+1, end);
+	}
+}
+
+#include <time.h>
+#include <stdio.h>
 PRODUCTDATA* getAllContent(BRANCHSALES bs, int *cenas) {
 	HASHTSET hashSet;
 	PRODUCTDATA* pd;
 	int size;
+	clock_t inicio, fim;
 
 	hashSet = initHashTSet(50000);
 	pd = malloc(sizeof(PRODUCTDATA) * 200000);
 
+	inicio = clock();
 	hashSet = dumpDataCat(bs->clients, hashSet, (void* (*) (void*, void*)) dumpContent);
+	fim = clock();
 
-	hashSet = sortHashTByName(hashSet);
+	printf("%f\n", (double)(fim-inicio)/CLOCKS_PER_SEC);
+	inicio = clock();
+	sortHashTByName(hashSet, 0, getHashTsize(hashSet)-1);
+	fim = clock();
+	printf("%f\n", (double)(fim-inicio)/CLOCKS_PER_SEC);
+	inicio = clock();
 	size = toProductData(hashSet, pd);
-	pd = sortProductData(pd, size);
+	fim = clock();
+	printf("%f\n", (double)(fim-inicio)/CLOCKS_PER_SEC);
+	inicio = clock();
+	sortProductData(pd, 0, size-1);
+	fim = clock();
+	printf("%f\n", (double)(fim-inicio)/CLOCKS_PER_SEC);
 
 	*cenas = size;
 	return pd;	

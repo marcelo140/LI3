@@ -111,35 +111,34 @@ HASHTSET concatHashTSet(HASHTSET h1, HASHTSET h2) {
 	return h1;
 }
 
-HASHTSET sortHashTByName(HASHTSET hts) {
-	HASHTSET below, above;
-	HASHTCNTT pivot;
-	int i, pos;
+void swapHTS(HASHTSET hts, int i, int j) {
+	HASHTCNTT tmp = hts->set[i];
+	hts->set[i] = hts->set[j];
+	hts->set[j] = tmp;
+}
 
-	if (hts->size > 0) {
-		pos = hts->size;
-		below = initHashTSet(pos);
-		above = initHashTSet(pos);
+int partitionNameSort(HASHTSET hts, int begin, int end) {
+	HASHTCNTT pivot = hts->set[end];
+	int i = begin-1, j;
 
-		pivot = hts->set[pos-1];
-
-		for(i = 0; i < pos-1; i++) {
-			if (strcmp(pivot.key, hts->set[i].key) < 0)
-				insertHashTSet(above, hts->set[i]);
-			else 
-				insertHashTSet(below, hts->set[i]);
+	for(j = begin; j < end; j++) {
+		if (strcmp(hts->set[j].key, pivot.key) <= 0) {
+			i++;
+			swapHTS(hts, i, j);
 		}
-
-		below = sortHashTByName(below);
-		above = sortHashTByName(above);
-
-		below = insertHashTSet(below, pivot);
-		below = concatHashTSet(below, above);
-
-		return below;
 	}
-	
-	return hts;
+
+	swapHTS(hts, i+1, end);
+	return i+1;
+}
+
+void sortHashTByName(HASHTSET hts, int begin, int end) {
+	if (begin < end) {
+		int q = partitionNameSort(hts, begin, end);
+		
+		sortHashTByName(hts, begin, q-1);
+		sortHashTByName(hts, q+1, end);
+	}
 }
 
 HASHTSET sortHashTSet(HASHTSET hts, compare_t comparator) {
