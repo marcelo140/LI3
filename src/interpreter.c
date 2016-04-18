@@ -154,7 +154,7 @@ PRINTSET addToPrintSet(PRINTSET ps, char* str) {
 	
 	if (ps->size >= ps->capacity) {
 		ps->capacity *= 2;
-		ps->list = realloc(ps->list, ps->capacity);
+		ps->list = realloc(ps->list, ps->capacity * sizeof(char*));
 	}
 
 	ps->list[ps->size] = calloc(STR_SIZE, sizeof(char)); 
@@ -195,7 +195,7 @@ static void presentList(PRINTSET ps) {
 	totalPages = (total / LINES_NUM) + (total % LINES_NUM != 0);
 
 	while (cpage <= totalPages) {
-
+		
 		system("clear");
 		putchar('\n');
 
