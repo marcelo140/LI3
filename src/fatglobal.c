@@ -62,6 +62,7 @@ FATGLOBAL addFat(FATGLOBAL fat, SALE s) {
 }
 
 char* getProductCode(PRODUCTGROUP pg, int pos) {
+	if (!pg || !pg->products) return NULL;
 	return getKeyPos(pg->products, pos);
 }
 
