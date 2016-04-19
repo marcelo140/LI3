@@ -56,8 +56,23 @@ FATGLOBAL addFat(FATGLOBAL fat, SALE s) {
 
 	fromProduct(getProduct(s), prod);
 
+	r = getCatContent(fat->cat, INDEX(prod), prod);
+	addSaleToRev(r, s);
+
+	return fat;
+}
+
+FATGLOBAL addSaleToFat(FATGLOBAL fat, SALE s) {
+	REVENUE rev;
+	PRODUCT product;
+	char prod[PRODUCT_LENGTH];
+
+	product = getProduct(s);
+	fromProduct(product, prod);
 	rev = getCatContent(fat->cat, INDEX(prod), prod);
 	addSaleToRev(rev, s);
+
+	/* TODO se getProduct alocar memória. dar free*/
 
 	return fat;
 }
