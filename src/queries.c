@@ -33,8 +33,9 @@ PRINTSET query2(PRODUCTCAT pcat, char index) {
 
 PRINTSET query3(FATGLOBAL fat, PRODUCT product, int month) {
 	PRINTSET print = initPrintSet(10);
+	PRODUCTFAT pfat;
 	char answ[MAX_SIZE];
-	int i, mode=0, quantT, quantity[BRANCHES][NP];
+	int i, mode=0, quantT, quantity[BRANCHES][NP]; 
 	double billedT, billed[BRANCHES][NP];
 
 	printf("\n::::::::::::::::::::::::::::::\n\n");
@@ -49,16 +50,14 @@ PRINTSET query3(FATGLOBAL fat, PRODUCT product, int month) {
 		if (UPPER(answ[0]) == 'Q') return NULL;
 	}
 
-	getProductDataByMonth(fat, product, month, billed, quantity);
+	pfat = getProductDataByMonth(fat, product, month);
 
 	if (mode == 1) {
 		quantT  = 0;
 		billedT = 0;
 		for (i=0; i < BRANCHES; i++) {
-			quantT += quantity[i][0];
-			quantT += quantity[i][1];
-			billedT += billed[i][0];
-			billedT += billed[i][1];
+			quantT  += getProductFatQuant(pfat, i, NULL, NULL);
+	   		billedT += getProductFatQuant(pfat, i, NULL, NULL); 		
 		}	
 		sprintf(answ, "Quantidade Total: \t%d", quantT);
 		print = addToPrintSet(print, answ);	
@@ -67,7 +66,12 @@ PRINTSET query3(FATGLOBAL fat, PRODUCT product, int month) {
 	} else {
 		print = setPrintHeader(print, "\t\tFilial 1\tFilial 2\tFilial 3");
 		print = addToPrintSet(print, "");
-		
+	
+		for(i=0; i < BRANCHES; i++) { 
+			getProductFatQuant(pfat, i, &quantity[i][0], &quantity[i][1]);
+			getProductFatBilled(pfat, i, &billed[i][0], &billed[i][1]);
+		}
+
 		sprintf(answ, "Quantidade N:\t%d\t\t%d\t\t%d", quantity[0][0], quantity[1][0], quantity[2][0]);
 		print = addToPrintSet(print, answ);
 		sprintf(answ, "Quantidade P:\t%d\t\t%d\t\t%d", quantity[0][1], quantity[1][1], quantity[2][1]);

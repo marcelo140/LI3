@@ -340,17 +340,27 @@ static PRODUCTFAT newProductFat() {
 }
 
 int getProductFatQuant(PRODUCTFAT pf, int branch, int* normal, int* promo) {
-	*normal = pf->quant[branch][MODE_N];
-	*promo = pf->quant[branch][MODE_P];
+	int n, p;
 
-	return (*normal + *promo);
+	n = pf->quant[branch][MODE_N];
+	p = pf->quant[branch][MODE_P];
+
+	if (normal) *normal = n;
+	if (promo)  *promo  = p;
+
+	return n+p;
 }
 
 double getProductFatBilled(PRODUCTFAT pf, int branch, double* normal, double* promo) {
-	*normal = pf->billed[branch][MODE_N];
-	*promo = pf->billed[branch][MODE_P];
+	double n, p;
+	
+	n = pf->billed[branch][MODE_N];
+	p = pf->billed[branch][MODE_P];
 
-	return (*normal + *promo);
+	if (normal) *normal = n;
+	if (promo) *promo = p;
+
+	return n+p;
 }
 
 static void addProductFatBilled(PRODUCTFAT pf, int branch, double normal, double promo) {
