@@ -22,11 +22,13 @@ PRINTSET query2(PRODUCTCAT pcat, char index) {
 	
 	ps = fillProductSet(pcat, ps, index);
 
-	for(i=0; (product = getProductByPos(ps, i)) ; i++) {
+	product = getProductByPos(ps, 0);
+	for(i=0; product ; i++) {
 		fromProduct(product, buff);
 		sprintf(aux, "\t\t\t%s", buff);
 		print = addToPrintSet(print, aux);
 		freeProduct(product);
+		product = getProductByPos(ps,i+1);
 	}
 
 	return print;
@@ -153,6 +155,23 @@ PRINTSET query5(BRANCHSALES bs, CLIENT client) {
 	}
 
 	free(quantity);
+	return print;
+}
+
+PRINTSET query6(FATGLOBAL fat, int initialMonth, int finalMonth) {
+	PRINTSET print = initPrintSet(2);
+	double billed;
+	int quantity;
+	char buff[MAX_SIZE];
+
+	quantity = getQuantByMonthRange(fat, initialMonth, finalMonth);
+	billed   = getBilledByMonthRange(fat, initialMonth, finalMonth);
+	
+	sprintf(buff, "Quantidade:\t%d", quantity);
+	print = addToPrintSet(print, buff);
+	sprintf(buff, "Faturado:\t%f", billed);
+	print = addToPrintSet(print, buff);
+
 	return print;
 }
 
