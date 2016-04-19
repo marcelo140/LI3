@@ -1,13 +1,17 @@
-#ifndef __FATGLOBAL_H__
-#define __FATGLOBAL_H__
+#ifndef __FATGLOBAL__
+#define __FATGLOBAL__
 
+#include "generic.h"
 #include "sales.h"
 #include "products.h"
-#include "generic.h"
+#include "set.h"
+
+typedef struct faturacao *FATGLOBAL;
 
 #define MONTHS 12
 #define BRANCHES 3
 #define SALEMODE 2
+
 
 #define BY_QUANTITY 0
 #define BY_BILLING  1
@@ -17,29 +21,21 @@ typedef struct product_group *PRODUCTGROUP;
 
 FATGLOBAL initFat ();
 
-FATGLOBAL fillFat (FATGLOBAL fat, PRODUCTCAT p);
 
-FATGLOBAL addFat  (FATGLOBAL fat, SALE s);
+FATGLOBAL initFat (PRODUCTCAT p);
 
-int getProductDataByMonth(FATGLOBAL fat, PRODUCT prod, int month, double billed[][2],
-                                                                      int quant[][2]);
+FATGLOBAL addSaleToFat  (FATGLOBAL fat, SALE s);
+
+int getProductDataByMonth(FATGLOBAL fat, PRODUCT p, int month, double b[][2], int q[][2]);
 
 double getBilledByMonthRange(FATGLOBAL fat, int initialMonth, int finalMonth);
 
 int getQuantByMonthRange(FATGLOBAL fat, int initialMonth, int finalMonth);
 
-PRODUCTGROUP getProductsSold(FATGLOBAL fat);
+SET getProductsNotSold(FATGLOBAL fat);
 
-PRODUCTGROUP getProductsNotSold(FATGLOBAL fat);
-
-PRODUCTGROUP* getProductsNotSoldByBranch(FATGLOBAL);
-
-PRODUCTGROUP sortProductGroup(PRODUCTGROUP pg, int mode);
+SET* getProductsNotSoldByBranch(FATGLOBAL);
 
 void freeFat(FATGLOBAL fat);
-
-void freeProductGroup(PRODUCTGROUP pg);
-
-char* getProductCode(PRODUCTGROUP pg, int pos);
 
 #endif

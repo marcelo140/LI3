@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <string.h>
+
 #include "hashT.h"
+#include "set.h"
 
 #define KEY_SIZE 10
 #define BASE_CAPACITY 64
@@ -25,23 +27,17 @@ struct hasht {
 	int size;
 	int maxSize;
 	int capacity;
-	ht_init_t init;
-	ht_add_t add;
-	ht_free_t free;
-};
 
-struct hashtSet {
-	struct hashCntt* set;
- 	int size;
-	int capacity;
+	init_t init;
+	add_t add;
+	clone_t clone;
+	free_t free;
 };
 
 static int Hash(char *key);
 static HASHT resizeHashT(HASHT ht);
-static HASHTSET insertHashTSet(HASHTSET hts, HASHTCNTT newCntt); 
-static HASHTSET resizeHashTSet(HASHTSET hts);
 
-HASHT initHashT(ht_init_t init, ht_add_t add, ht_free_t free) {
+HASHT initHashT(init_t init, add_t add, clone_t clone, free_t free) {
 	HASHT new = malloc(sizeof(*new));
 
 	new->table    = calloc(BASE_CAPACITY, sizeof(HASHTCNTT));
@@ -50,13 +46,10 @@ HASHT initHashT(ht_init_t init, ht_add_t add, ht_free_t free) {
 	new->maxSize  = new->capacity * 0.8;
 	new->init 	  = init;
 	new->add  	  = add;
+	new->clone    = clone;
 	new->free 	  = free;
 
 	return new;
-}
-
-int getHashTsize(HASHTSET set) {
-	return set->size;
 }
 
 HASHT insertHashT(HASHT ht, char* key, void* content) {
@@ -80,96 +73,18 @@ HASHT insertHashT(HASHT ht, char* key, void* content) {
 	return ht;
 }
 
-HASHTSET dumpHashT(HASHT ht, HASHTSET set) {
-	
+SET dumpHashT(HASHT ht, SET set) {
+	void *contCopy;
 	int i;
 
-	for (i=0; i < CAPACITY; i++) 
-		if (STATUS(i) == BUSY) set = insertHashTSet(set, ht->table[i]);
+	for (i=0; i < CAPACITY; i++) {
+		if (STATUS(i) == BUSY){
+			contCopy = ht->clone(CONTENT(i));
+			set = insertElement(set, KEY(i), contCopy);
+		}
+	}
 
 	return set;
-}
-
-void* getHashTSetContent(HASHTSET hts, int pos) {
-	return hts->set[pos].content;
-}
-
-char* getHashTSetKey(HASHTSET hts, int pos) {
-	char ret[KEY_SIZE];
-
-	strncpy(ret, hts->set[pos].key, KEY_SIZE);
-
-	return hts->set[pos].key;
-}
-
-HASHTSET concatHashTSet(HASHTSET h1, HASHTSET h2) {
-	int i;
-
-	for(i=0; i < h2->size; i++)
-		insertHashTSet(h1, h2->set[i]);
-
-	return h1;
-}
-
-void swapHTS(HASHTSET hts, int i, int j) {
-	HASHTCNTT tmp = hts->set[i];
-	hts->set[i] = hts->set[j];
-	hts->set[j] = tmp;
-}
-
-int partitionNameSort(HASHTSET hts, int begin, int end) {
-	HASHTCNTT pivot = hts->set[end];
-	int i = begin-1, j;
-
-	for(j = begin; j < end; j++) {
-		if (strcmp(hts->set[j].key, pivot.key) <= 0) {
-			i++;
-			swapHTS(hts, i, j);
-		}
-	}
-
-	swapHTS(hts, i+1, end);
-	return i+1;
-}
-
-void sortHashTByName(HASHTSET hts, int begin, int end) {
-	if (begin < end) {
-		int q = partitionNameSort(hts, begin, end);
-		
-		sortHashTByName(hts, begin, q-1);
-		sortHashTByName(hts, q+1, end);
-	}
-}
-
-HASHTSET sortHashTSet(HASHTSET hts, compare_t comparator) {
-	HASHTSET below, above;
-	HASHTCNTT pivot;
-	int i, pos;
-
-	if (hts->size > 0) {
-		pos = hts->size;
-		below = initHashTSet(pos/2+1);
-		above = initHashTSet(pos/2+1);
-
-		pivot = hts->set[pos-1];
-
-		for(i = 0; i < pos-2; i++) {
-			if (comparator(pivot.content, hts->set[i].content) > 0)
-				insertHashTSet(above, hts->set[i]);
-			else 
-				insertHashTSet(below, hts->set[i]);
-		}
-
-		below = sortHashTSet(below, comparator);
-		above = sortHashTSet(above, comparator);
-
-		below = insertHashTSet(below, pivot);
-		below = concatHashTSet(below, above);
-
-		return below;
-	}
-	
-	return hts;
 }
 
 void freeHashT(HASHT ht) {
@@ -225,37 +140,4 @@ static HASHT resizeHashT(HASHT ht){
 
 	freeHashT(ht);
 	return new;
-}
-
-/* ***************** FUNÇÕES AUXILIARES DO HASHTSET ************************** */
-
-HASHTSET initHashTSet(int size) {
-	HASHTSET new = malloc(sizeof(*new));
-	new->size = 0;
-	new->set  = calloc(size, sizeof(HASHTCNTT));
-	new->capacity = size;
-
-	return new;
-} 
-
-static HASHTSET insertHashTSet(HASHTSET hts, HASHTCNTT newCntt) {
-	HASHTCNTT new;
-	strcpy(new.key, newCntt.key);
-	new.status  = newCntt.status;
-	new.content = newCntt.content;
-	
-	if (hts->size >= hts->capacity) 
-		hts = resizeHashTSet(hts);
-
-	hts->set[hts->size] = new;
-	hts->size++;
-
-	return hts;
-}
-
-static HASHTSET resizeHashTSet(HASHTSET hts) {
-	hts->capacity *= 2;
-	hts->set = realloc(hts->set, hts->capacity * sizeof(struct hashCntt) );
-
-	return hts;
 }
