@@ -24,9 +24,9 @@ struct printset{
 	int capacity;
 };
 
-void    loader (BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat);
 static void    presentList(PRINTSET ps);
 static void    printMainMenu();
+static void    printLogo();
 static int     askBranch();
 static PRODUCT askProduct();
 static int     askMonth();
@@ -43,6 +43,8 @@ int interpreter(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat) {
 	fgets(answ, BUFF_SIZE, stdin);
 
 	if (answ[0] == 'q') return KILL;
+
+	printLogo();
 
 	qnum = atoi(answ);
 
@@ -167,58 +169,58 @@ void freePrintSet(PRINTSET ps) {
 
 void loader(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat ) {
 	int i, success, failed;
-	char buff[BUFF_SIZE];
+	char clientsPath[BUFF_SIZE], productsPath[BUFF_SIZE], salesPath[BUFF_SIZE];
 	FILE *clients, *products, *sales;
 
 	putchar('\n');
 
 	while(1) {
 		printf("Ficheiro de clientes: ");
-		buff[0] = getchar();
-		if (buff[0] == '\n') strcpy(buff, CLIENTS_PATH);
-		else fgets(buff+1, BUFF_SIZE-1, stdin);
-		clients = fopen(buff, "r");
+		clientsPath[0] = getchar();
+		if (clientsPath[0] == '\n') strcpy(clientsPath, CLIENTS_PATH);
+		else fgets(clientsPath+1, BUFF_SIZE-1, stdin);
+		clients = fopen(clientsPath, "r");
 		if (clients) break;
-		printf("Ficheiro inválido ou inexistente!\n");
+		printf("Ficheiro %s inválido ou inexistente!\n", clientsPath);
 	}
 
 	while(1) {
 		printf("Ficheiro de produtos: ");
-		buff[0] = getchar();
-		if (buff[0] == '\n') strcpy(buff, PRODUCTS_PATH);
-		else fgets(buff+1, BUFF_SIZE-1, stdin);
-		products = fopen(buff, "r");
+		productsPath[0] = getchar();
+		if (productsPath[0] == '\n') strcpy(productsPath, PRODUCTS_PATH);
+		else fgets(productsPath+1, BUFF_SIZE-1, stdin);
+		products = fopen(productsPath, "r");
 		if (products) break;
-		printf("Ficheiro inválido ou inexistente!\n");
+		printf("Ficheiro %s inválido ou inexistente!\n", productsPath);
 	}
 
 	while(1) {
 		printf("Ficheiro de vendas: ");
-		buff[0] = getchar();
-		if (buff[0] == '\n') strcpy(buff, SALES_PATH);
-		else fgets(buff+1, BUFF_SIZE-1, stdin);
-		sales = fopen(buff, "r");
+		salesPath[0] = getchar();
+		if (salesPath[0] == '\n') strcpy(salesPath, SALES_PATH);
+		else fgets(salesPath+1, BUFF_SIZE-1, stdin);
+		sales = fopen(salesPath, "r");
 		if (sales) break;
-		printf("Ficheiro inválido ou inexistente!\n");
+		printf("Ficheiro %s inválido ou inexistente!\n", salesPath);
 	}
 
 	putchar('\n');
 
-	printf("A carregar clientes... ");
+	printf("A carregar clientes de %s... ", clientsPath);
 	fflush(stdout);
 	success = loadClients(clients, ccat);
 	printf("\nClientes carregados: %d\n", success);
 
 	putchar('\n');
 
-	printf("A carregar produtos... ");
+	printf("A carregar produtos de %s... ", productsPath);
 	fflush(stdout);
 	success = loadProducts(products, pcat);
 	printf("\nProdutos carregados: %d\n", success);
 
 	putchar('\n');
 
-	printf("A carregar vendas... ");
+	printf("A carregar vendas de %s... ", salesPath);
 	fflush(stdout);
 	for(i=0; i < 3; i++)
 		bs[i] = fillBranchSales(bs[i], ccat);
@@ -295,17 +297,9 @@ static void presentList(PRINTSET ps) {
 }
 
 static void printMainMenu() {
-	
-	system("clear");
-	putchar('\n');
-	printf("           _____            __      __            _               \n");
-	printf("          / ____|           \\ \\    / /           | |              \n");
-	printf("         | |  __  ___ _ __ __\\ \\  / /__ _ __   __| | __ _ ___     \n");
-	printf("         | | |_ |/ _ \\ '__/ _ \\ \\/ / _ \\ '_ \\ / _` |/ _` / __|    \n");
-	printf("         | |__| |  __/ | |  __/\\  /  __/ | | | (_| | (_| \\__ \\    \n");
-	printf("          \\_____|\\___|_|  \\___| \\/ \\___|_| |_|\\__,_|\\__,_|___/  \n\n");
-	printf("  :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\n");
-	
+
+	printLogo();	
+
 	printf("      1 • Leitura de Dados                                \n");
 	printf("      2 • Listar Produtos                                 \n");
 	printf("      3 • Receita do Produto por Mês                      \n");
@@ -325,6 +319,16 @@ static void printMainMenu() {
 }
 
 static void printLogo() {
+
+	system("clear");
+	putchar('\n');
+	printf("           _____            __      __            _               \n");
+	printf("          / ____|           \\ \\    / /           | |              \n");
+	printf("         | |  __  ___ _ __ __\\ \\  / /__ _ __   __| | __ _ ___     \n");
+	printf("         | | |_ |/ _ \\ '__/ _ \\ \\/ / _ \\ '_ \\ / _` |/ _` / __|    \n");
+	printf("         | |__| |  __/ | |  __/\\  /  __/ | | | (_| | (_| \\__ \\    \n");
+	printf("          \\_____|\\___|_|  \\___| \\/ \\___|_| |_|\\__,_|\\__,_|___/  \n\n");
+	printf("  :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\n");
 	
 }
 

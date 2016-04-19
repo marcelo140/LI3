@@ -7,6 +7,7 @@
 #include "set.h"
 
 typedef struct faturacao *FATGLOBAL;
+typedef struct product_group *PRODUCTGROUP;
 
 #define MONTHS 12
 #define BRANCHES 3
@@ -16,13 +17,10 @@ typedef struct faturacao *FATGLOBAL;
 #define BY_QUANTITY 0
 #define BY_BILLING  1
 
-typedef struct faturacao *FATGLOBAL;
-typedef struct product_group *PRODUCTGROUP;
 
 FATGLOBAL initFat ();
 
-
-FATGLOBAL initFat (PRODUCTCAT p);
+FATGLOBAL fillFat (FATGLOBAL fat, PRODUCTCAT p);
 
 FATGLOBAL addSaleToFat  (FATGLOBAL fat, SALE s);
 
