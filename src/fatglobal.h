@@ -29,7 +29,7 @@ LIST getProductsNotSold(FATGLOBAL fat);
 
 LIST* getProductsNotSoldByBranch(FATGLOBAL);
 
-int getProductsFatQuant(PRODUCTFAT, int branch, int* normal, int* promo);
+int getProductFatQuant(PRODUCTFAT, int branch, int* normal, int* promo);
 
 double getProductFatBilled(PRODUCTFAT, int branch, double* normal, double* promo);
 
