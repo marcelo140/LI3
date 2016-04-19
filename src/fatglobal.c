@@ -66,7 +66,7 @@ FATGLOBAL fillFat (FATGLOBAL fat, PRODUCTCAT p) {
 }
 
 FATGLOBAL addFat(FATGLOBAL fat, SALE s) {
-	REVENUE r;
+	REVENUE rev;
 	char prod[PRODUCT_LENGTH];
 
 	fromProduct(getProduct(s), prod);
