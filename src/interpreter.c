@@ -49,7 +49,7 @@ int interpreter(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat) {
 	qnum = atoi(answ);
 
 	switch(qnum) {
-		case 1 : return LOAD; 
+		case 1 : return LOAD;
 		case 2 : printf("  Letra: ");
 				 fgets(answ, BUFF_SIZE, stdin);
 				 ps = query2(pcat, answ[0]);
@@ -112,7 +112,7 @@ int interpreter(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat) {
 				  break;
 	}
 
-	return CONT; 
+	return CONT;
 }
 
 PRINTSET initPrintSet(int n) {
@@ -298,7 +298,7 @@ static void presentList(PRINTSET ps) {
 
 static void printMainMenu() {
 
-	printLogo();	
+	printLogo();
 
 	printf("      1 • Leitura de Dados                                \n");
 	printf("      2 • Listar Produtos                                 \n");
@@ -329,7 +329,7 @@ static void printLogo() {
 	printf("         | |__| |  __/ | |  __/\\  /  __/ | | | (_| | (_| \\__ \\    \n");
 	printf("          \\_____|\\___|_|  \\___| \\/ \\___|_| |_|\\__,_|\\__,_|___/  \n\n");
 	printf("  :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\n");
-	
+
 }
 
 static int askBranch() {
