@@ -175,11 +175,11 @@ HASHTSET sortHashTSet(HASHTSET hts, compare_t comparator) {
 void freeHashT(HASHT ht) {
 	int i;
 
+	if (!ht) return;
+
 	for(i=0; i < ht->capacity; i++)
-		if (STATUS(i) == BUSY) {
-			free(KEY(i));
+		if (STATUS(i) == BUSY) 
 			ht->free(CONTENT(i));
-		}
 	
 	free(ht->table);
 	free(ht);

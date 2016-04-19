@@ -34,6 +34,11 @@ HASHT insertHashT(HASHT ht, char* key, void* content);
 void* getHashTcontent(HASHT ht, char* key);
 
 /**
+ * Devolve o tamanho da tabela de hash
+ */
+int getHashTsize(HASHTSET set);
+
+/**
  * Inicia um conjunto de dados com o tamanho especificado
  */
 HASHTSET initHashTSet(int size); 

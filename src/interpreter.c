@@ -204,15 +204,17 @@ static void loader(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT cc
 		printf("Ficheiro inválido ou inexistente!\n");
 	}
 
+	/* TODO fazer um freeAll e nao alocar na main */
+	freeClientCat(ccat);
 	for(i=0; i < BRANCHES; i++)
 		freeBranchSales(bs[i]);
 	freeFat(fat);
 	freeProductCat(pcat);
-	freeClientCat(ccat);
 
 	putchar('\n');
 
 	printf("A carregar clientes... ");
+	fflush(stdout);
 	ccat = initClientCat();
 	success = loadClients(clients, ccat);
 	printf("\nClientes carregados: %d\n", success);
@@ -220,6 +222,7 @@ static void loader(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT cc
 	putchar('\n');
 
 	printf("A carregar produtos... ");
+	fflush(stdout);
 	pcat = initProductCat();
 	success = loadProducts(products, pcat);
 	printf("\nProdutos carregados: %d\n", success);
@@ -235,6 +238,9 @@ static void loader(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT cc
 	printf("\nVendas analisadas: %d\n", success+failed);
 	printf("Vendas corretas: %d\n", success);
 	printf("Vendas incorretas: %d\n", failed);
+
+	printf("Pressione qualquer tecla para continuar. ");
+	getchar();
 
 	fclose(products);
 	fclose(clients);
