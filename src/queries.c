@@ -3,7 +3,7 @@
 #include <string.h>
 #include "queries.h"
 #include <time.h>
-
+#include "set.h"
 #define UPPER(a) (('a' <= (a) && (a) <= 'z') ? ((a - 'a') + 'A') : (a))
 #define MAX_SIZE 128
 #define BRANCHES 3
@@ -36,7 +36,7 @@ PRINTSET query3(FATGLOBAL fat, PRODUCT product, int month) {
 	PRINTSET print = initPrintSet(10);
 	char answ[MAX_SIZE];
 	int i, mode=0, quantT, quantity[BRANCHES][NP];
-	double billedT, billed[BRANCHES][NP];	
+	double billedT, billed[BRANCHES][NP];
 
 	printf("\n::::::::::::::::::::::::::::::\n\n");
 	printf(" 1• Total\n");
@@ -87,7 +87,7 @@ PRINTSET query3(FATGLOBAL fat, PRODUCT product, int month) {
 
 PRINTSET query4(FATGLOBAL fat) {
 	PRINTSET print = initPrintSet(MAX_SIZE);
-	PRODUCTGROUP *pgroupB, pgroupT;
+	SET *pgroupB, pgroupT;
 	char buff[MAX_SIZE], *product;
 	int i, j, op, n=0;
 
@@ -107,13 +107,13 @@ PRINTSET query4(FATGLOBAL fat) {
 
 	if (op == 1) {
 		pgroupT = getProductsNotSold(fat);
-		product = getProductCode(pgroupT, 0);
+		product = getSetHash(pgroupT, 0);
 
 		for (i=0; product ; i++) {
 			sprintf(buff, "\t\t\t%s", product);
 			print = addToPrintSet(print, buff);
 			free(product);
-			product = getProductCode(pgroupT, i+1);
+			product = getSetHash(pgroupT, i+1);
 		}
 
 /*		freeProductGroup(pgroupT); */
@@ -127,7 +127,7 @@ PRINTSET query4(FATGLOBAL fat) {
 			n = 0;
 			buff[0] = '\0';
 			for (j=0; j < BRANCHES; j++) {
-				product = getProductCode(pgroupB[j], i);
+				product = getSetHash(pgroupB[j], i);
 				if (product) sprintf(buff, "%s\t%s", buff, product);
 				else { sprintf(buff,"%s\t\t", buff); n++;}
 			}
@@ -135,8 +135,6 @@ PRINTSET query4(FATGLOBAL fat) {
 			print = addToPrintSet(print, buff);
 		}
 		
-		for (i=0; i < BRANCHES; i++)
-			freeProductGroup(pgroupB[i]);
 	}
 
 	return print;
@@ -160,15 +158,15 @@ PRINTSET query5(BRANCHSALES bs, CLIENT client) {
 
 PRINTSET query8(BRANCHSALES bs, PRODUCT product){
 	PRINTSET print = initPrintSet(MAX_SIZE);
-	CLIENTLIST n = newClientList(), p = newClientList(), toPrint;
+	SET n = initSet(1024), p = initSet(1024), toPrint;
 	char answ[MAX_SIZE], *buff;
 	int mode = 0, i;
 
 	filterClientsByProduct(bs, product, n, p);
 	
 	printf("\n::::::::::::::::::::::::::::::\n\n");
-	printf(" 1• Clientes em modo N (%d)\n", clientListSize(n));
-	printf(" 2• Clientes em modo P (%d)\n", clientListSize(p));
+	printf(" 1• Clientes em modo N (%d)\n", getSetSize(n));
+	printf(" 2• Clientes em modo P (%d)\n", getSetSize(p));
 	printf("\n::::::::::::::::::::::::::::::\n");
 
 	while ((mode <= 0 || mode >= 3) && UPPER(answ[0]) != 'Q') {
@@ -185,14 +183,12 @@ PRINTSET query8(BRANCHSALES bs, PRODUCT product){
 	
 	toPrint = (mode == 1) ? n : p;
 
-	for(i=0; (buff = getClientListPos(toPrint, i)) ; i++) {
+	for(i=0; (buff = getSetHash(toPrint, i)) ; i++) {
 		sprintf(answ, "\t\t%s",buff);
 		print = addToPrintSet(print, answ);
 		free(buff);
 	}
 	
-	freeClientList(n);
-	freeClientList(p);
 	return print;
 }
 

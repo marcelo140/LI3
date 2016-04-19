@@ -4,7 +4,7 @@
 #include "sales.h"
 #include "products.h"
 #include "generic.h"
-
+#include "set.h"
 #define MONTHS 12
 #define BRANCHES 3
 #define SALEMODE 2
@@ -13,7 +13,6 @@
 #define BY_BILLING  1
 
 typedef struct faturacao *FATGLOBAL;
-typedef struct product_group *PRODUCTGROUP;
 
 FATGLOBAL initFat (PRODUCTCAT p);
 
@@ -26,18 +25,18 @@ double getBilledByMonthRange(FATGLOBAL fat, int initialMonth, int finalMonth);
 
 int getQuantByMonthRange(FATGLOBAL fat, int initialMonth, int finalMonth);
 
-PRODUCTGROUP getProductsSold(FATGLOBAL fat);
+SET getProductsSold(FATGLOBAL fat);
 
-PRODUCTGROUP getProductsNotSold(FATGLOBAL fat);
+SET getProductsNotSold(FATGLOBAL fat);
 
-PRODUCTGROUP* getProductsNotSoldByBranch(FATGLOBAL);
+SET* getProductsNotSoldByBranch(FATGLOBAL);
 
-PRODUCTGROUP sortProductGroup(PRODUCTGROUP pg, int mode);
+SET sortProductGroup(SET pg, int mode);
 
 void freeFat(FATGLOBAL fat);
 
-void freeProductGroup(PRODUCTGROUP pg);
+void freeProductGroup(SET pg);
 
-char* getProductCode(PRODUCTGROUP pg, int pos);
+char* getProductCode(SET pg, int pos);
 
 #endif

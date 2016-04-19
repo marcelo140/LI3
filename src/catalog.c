@@ -8,11 +8,6 @@ struct catalog{
 	int size;
 };
 
-struct catalog_set {
-	DATASET set;
-};
-
-
 CATALOG initCatalog(int n, init_t init, clone_t clone, free_t free) {
 	CATALOG c;
 	int i;
@@ -99,52 +94,39 @@ void freeCatalog(CATALOG cat){
 	}
 }
 
-CATSET initCatSet(int n) {
-	CATSET cs = malloc(sizeof(*cs));
-	cs->set = initDataSet(n);
+SET fillSet(CATALOG cat, SET cs, int index) {
+	cs = addAVLtoSet(cs, cat->root[index]);
 
 	return cs;
 }
 
-CATSET fillCatSet(CATALOG cat, CATSET cs, int index) {
-	cs->set = addDataSet(cs->set, cat->root[index]);
-
-	return cs;
-}
-
-CATSET fillAllCatSet(CATALOG cat, CATSET cs) {
+SET fillAllSet(CATALOG cat, SET cs) {
 	int i, size = cat->size;
 
 	if (size == 0)
 		return NULL;
 
 	for(i = 0; i < size; i++)
-		cs->set = addDataSet(cs->set, cat->root[i]);
+		cs = addAVLtoSet(cs, cat->root[i]);
 
 	return cs;
 }
 
-CATSET contcpy(CATSET dest, CATSET src, int pos) {
-	dest->set = datacpy(dest->set, src->set, pos);
-
-	return dest;
-}
-
-CATSET filterCat (CATALOG cat, condition_t condition, void* arg) {
+SET filterCat (CATALOG cat, condition_t condition, void* arg) {
 	int i, size = cat->size;
-	CATSET cs = initCatSet(size);
+	SET cs = initSet(size);
 
 	for(i = 0; i < size; i++)
-		cs->set = filterAVL(cat->root[i], cs->set, condition, arg);
+		cs = filterAVL(cat->root[i], cs, condition, arg);
 
 	return cs;
 }
 
-void separateCat (CATALOG cat, compare_t comp, void* arg, CATSET set1, CATSET set2) {
+void separateCat (CATALOG cat, compare_t comp, void* arg, SET set1, SET set2) {
 	int i, size = cat->size;
 
 	for(i = 0; i < size; i++)
-		separateAVL(cat->root[i], set1->set, set2->set, comp, arg);
+		separateAVL(cat->root[i], set1, set2, comp, arg);
 }
 
 void* dumpDataCat(CATALOG cat, void* data, void* (*dumper)(void*, void*)) {
@@ -156,61 +138,12 @@ void* dumpDataCat(CATALOG cat, void* data, void* (*dumper)(void*, void*)) {
 	return data;
 }
 
-void condSeparateCat (CATALOG cat, CATSET set1, CATSET set2,
+void condSeparateCat (CATALOG cat, SET set1, SET set2,
                                    condition_t predicate, void* predicateArg,
                                    compare_t  comparator, void* comparatorArg) {
 	int i, size = cat->size;
 
 	for(i = 0; i < size; i++)
-		condSeparateAVL(cat->root[i], set1->set, set2->set, predicate, predicateArg,
-                                                            comparator, comparatorArg);
-}
-
-void sortCatSet(CATSET cs, compare_t comp) {
-	sortDataSet(cs->set, 0, getCatSetSize(cs)-1, comp);
-}
-
-CATSET concatCatSet(CATSET set1, CATSET set2) {
-	set1->set = concatDataSet(set1->set, set2->set);
-
-	return set1;	
-}
-
-CATSET unionCatalogDataSets(CATSET dest, CATSET source) {
-	dest->set = unionDataSets(dest->set, source->set);
-
-	return dest;
-}
-
-CATSET diffCatalogDataSets(CATSET dest, CATSET source) {
-	dest->set = diffDataSets(dest->set, source->set);
-
-	return dest;
-}
-
-CATSET intersectCatSets(CATSET set1, CATSET set2) {
-	CATSET new = malloc(sizeof(*new));
-
-	new->set = intersectDataSet(set1->set, set2->set);
-	return new;
-}
-
-void *getContPos(CATSET cs, int pos) {
-	return getDataPos(cs->set, pos);
-}
-
-char *getKeyPos(CATSET cs, int pos){
-	if (!cs || !cs->set) 
-		return NULL;
-
-	return getHashPos(cs->set, pos);
-}
-
-int getCatSetSize(CATSET cs) {
-	return getDataSetSize(cs->set);
-}
-
-void freeCatSet(CATSET cs) {
-	freeDataSet(cs->set);
-	free(cs);
+		condSeparateAVL(cat->root[i], set1, set2, predicate, predicateArg,
+                                                  comparator, comparatorArg);
 }
