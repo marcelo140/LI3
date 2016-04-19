@@ -101,16 +101,17 @@ SET fillSet(CATALOG cat, int index) {
 	return s;
 }
 
-SET fillAllSet(CATALOG cat, SET cs) {
+SET fillAllSet(CATALOG cat) {
+	SET s = initSet(countAllElems(cat));
 	int i, size = cat->size;
 
 	if (size == 0)
-		return cs;
+		return NULL;
 
 	for(i = 0; i < size; i++)
-		cs = addAVLtoSet(cs, cat->root[i]);
+		s = addAVLtoSet(s, cat->root[i]);
 
-	return cs;
+	return s;
 }
 
 SET filterCat (CATALOG cat, condition_t condition, void* arg) {

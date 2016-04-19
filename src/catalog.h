@@ -113,7 +113,7 @@ SET fillSet (CATALOG cat, int index);
  * @param cs Conjunto de dados onde serão inseridos os elementos pretendidos
  * @return Conjunto de dados com os novos elementos adicionados
  */
-SET fillAllSet (CATALOG cat, SET cs);
+SET fillAllSet (CATALOG cat);
 
 /**
  * Cria um conjunto de dados com todos os elementos do catálogo para os quais a condição

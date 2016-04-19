@@ -24,14 +24,14 @@ struct printset{
 	int capacity;
 };
 
-static void    loader (BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat);
+void    loader (BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat);
 static void    presentList(PRINTSET ps);
 static void    printMainMenu();
 static int     askBranch();
 static PRODUCT askProduct();
 static int     askMonth();
 
-int interpreter(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat) {
+int interpreter(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat) {
 	PRODUCT p;
 	PRINTSET ps;
 	char answ[BUFF_SIZE];
@@ -42,13 +42,17 @@ int interpreter(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat)
 
 	fgets(answ, BUFF_SIZE, stdin);
 
-	if (answ[0] == 'q') return 0;
+	if (answ[0] == 'q') return KILL;
 
 	qnum = atoi(answ);
 
 	switch(qnum) {
-		case 1 : loader(bs, fat,pcat, ccat);
+<<<<<<< Updated upstream
+		case 1 : return LOAD; 
+=======
+		case 1 : loader(bs, fat, pcat, ccat);
 				 break;
+>>>>>>> Stashed changes
 		case 2 : printf("  Letra: ");
 				 fgets(answ, BUFF_SIZE, stdin);
 				 ps = query2(pcat, answ[0]);
@@ -109,10 +113,9 @@ int interpreter(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat)
 		 		  break;
 		case 12 :
 				  break;
-		default : return interpreter(bs, fat, pcat, ccat);
 	}
 
-	return interpreter(bs, fat, pcat, ccat) + 1;
+	return CONT; 
 }
 
 PRINTSET initPrintSet(int n) {
@@ -167,7 +170,7 @@ void freePrintSet(PRINTSET ps) {
 	free(ps);
 }
 
-static void loader(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat ) {
+void loader(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat ) {
 	int i, success, failed;
 	char buff[BUFF_SIZE];
 	FILE *clients, *products, *sales;
@@ -204,18 +207,10 @@ static void loader(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT cc
 		printf("Ficheiro inválido ou inexistente!\n");
 	}
 
-	/* TODO fazer um freeAll e nao alocar na main */
-	freeClientCat(ccat);
-	for(i=0; i < BRANCHES; i++)
-		freeBranchSales(bs[i]);
-	freeFat(fat);
-	freeProductCat(pcat);
-
 	putchar('\n');
 
 	printf("A carregar clientes... ");
 	fflush(stdout);
-	ccat = initClientCat();
 	success = loadClients(clients, ccat);
 	printf("\nClientes carregados: %d\n", success);
 
@@ -223,7 +218,6 @@ static void loader(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT cc
 
 	printf("A carregar produtos... ");
 	fflush(stdout);
-	pcat = initProductCat();
 	success = loadProducts(products, pcat);
 	printf("\nProdutos carregados: %d\n", success);
 
@@ -231,9 +225,9 @@ static void loader(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT cc
 
 	printf("A carregar vendas... ");
 	fflush(stdout);
-	for(i = 0; i < 3; i++)
-		bs[i] = initBranchSales(ccat);
-	fat = initFat(pcat);
+	for(i=0; i < 3; i++)
+		bs[i] = fillBranchSales(bs[i], ccat);
+	fat = fillFat(fat, pcat);
 	success = loadSales(sales, fat, bs, pcat, ccat, &failed);
 	printf("\nVendas analisadas: %d\n", success+failed);
 	printf("Vendas corretas: %d\n", success);
@@ -306,7 +300,7 @@ static void presentList(PRINTSET ps) {
 }
 
 static void printMainMenu() {
-
+	
 	system("clear");
 	putchar('\n');
 	printf("           _____            __      __            _               \n");
@@ -315,17 +309,17 @@ static void printMainMenu() {
 	printf("         | | |_ |/ _ \\ '__/ _ \\ \\/ / _ \\ '_ \\ / _` |/ _` / __|    \n");
 	printf("         | |__| |  __/ | |  __/\\  /  __/ | | | (_| | (_| \\__ \\    \n");
 	printf("          \\_____|\\___|_|  \\___| \\/ \\___|_| |_|\\__,_|\\__,_|___/  \n\n");
-	printf("  :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n");
-	printf("                                                         \n");
-	printf("      1 • Leitura                                         \n");
+	printf("  :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\n");
+	
+	printf("      1 • Leitura de Dados                                \n");
 	printf("      2 • Listar Produtos                                 \n");
 	printf("      3 • Receita do Produto por Mês                      \n");
 	printf("      4 • Produtos Não Comprados                          \n");
 	printf("      5 • Gastos de um Cliente                            \n");
-	printf("      6 • Vendas de Meses                                 \n");
+	printf("      6 • Vendas no Intervalo de Meses                    \n");
 	printf("      7 • Clientes Que Compraram em Todas as Filiais      \n");
 	printf("      8 • Clientes Que Compraram Produto em Filial        \n");
-	printf("      9 • Produto Mais Compardo por Cliente em Mês        \n");
+	printf("      9 • Produto Mais Comprado por Cliente em Mês        \n");
 	printf("     10 • Produtos Mais Vendidos em Todo o Ano            \n");
 	printf("     11 • Três Produtos em que o Cliente mais gastou      \n");
 	printf("     12 • Clientes sem Compras & Produtos não Vendidos    \n");
@@ -333,6 +327,10 @@ static void printMainMenu() {
 	printf("      q • Sair                                            \n");
 	printf("                                                         \n");
 	printf("  :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\n");
+}
+
+static void printLogo() {
+	
 }
 
 static int askBranch() {

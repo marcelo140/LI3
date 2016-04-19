@@ -62,12 +62,19 @@ static void        freeProductSale  (PRODUCTSALE ps);
 
 PRODUCTDATA newProductData(char *productName, int quantity, int clients);
 
-BRANCHSALES initBranchSales (CLIENTCAT clientCat) {
-	BRANCHSALES bs = malloc(sizeof(*bs));
+BRANCHSALES initBranchSales () {
+	BRANCHSALES new = malloc(sizeof(*new));
 
-	bs->clients = getClientCat(clientCat);
-	bs->clients = changeCatalogOps(bs->clients, (init_t) initClientSale, NULL,
-                                                (free_t) freeClientSale);
+	new->clients = NULL;
+
+	return new;
+}
+
+BRANCHSALES fillBranchSales (BRANCHSALES bs, CLIENTCAT client){
+
+	bs->clients = getClientCat(client);
+	bs->clients = changeCatalogOps(bs->clients, (init_t) initClientSale,  NULL,
+	                                                (free_t) freeClientSale);
 
 	return bs;
 }
@@ -127,7 +134,7 @@ int toProductData(SET set, PRODUCTDATA* pd) {
 
 		for(clients = 0; i < size && !strcmp(productName, getSetHash(set, i)); clients++, i++){
 			ps = getSetData(set, i);
-			
+
 			for(month = 0; month < MONTHS; month++)
 				quant += ps->quantity[month];
 		}
@@ -210,16 +217,16 @@ bool isNotEmptyClientSale(CLIENTSALE cs) {
 }
 
 SET getClientsWhoBought (BRANCHSALES bs) {
-	SET set;	
+	SET set;
 
 	set = filterCat(bs->clients, (condition_t) isNotEmptyClientSale, NULL);
-	
+
 	return set;
 }
 
 SET getClientsWhoHaveNotBought(BRANCHSALES bs) {
 	SET cl;
-	
+
 	cl = filterCat(bs->clients, (condition_t) isEmptyClientSale, NULL);
 
 	return cl;
@@ -274,7 +281,7 @@ void filterClientsByProduct(BRANCHSALES bs, PRODUCT prod, SET n, SET p){
 	fromProduct(prod, product);
 
 	condSeparateCat(bs->clients, p, n,(condition_t) existInProductList, product,
-                                                (compare_t) clientIsShopAholic, product); 
+                                                (compare_t) clientIsShopAholic, product);
 }
 
 PRODUCTDATA newProductData(char *productName, int quantity, int clients) {
@@ -392,7 +399,7 @@ void freeBranchSales (BRANCHSALES bs) {
 
 PRODUCTSALE cloneProductSale(PRODUCTSALE ps) {
 	PRODUCTSALE new = malloc(sizeof(*new));
-	
+
 	memcpy(new->billed, ps->billed, sizeof(double) * MONTHS);
 	memcpy(new->quantity, ps->quantity, sizeof(int) * MONTHS);
 	new->saleType = ps->saleType;

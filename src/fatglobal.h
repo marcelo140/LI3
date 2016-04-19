@@ -7,16 +7,19 @@
 #include "set.h"
 
 typedef struct faturacao *FATGLOBAL;
+typedef struct product_fat *PRODUCTFAT;
 
 #define MONTHS 12
 #define BRANCHES 3
 #define SALEMODE 2
 
+FATGLOBAL initFat ();
+
 FATGLOBAL initFat (PRODUCTCAT p);
 
 FATGLOBAL addSaleToFat  (FATGLOBAL fat, SALE s);
 
-int getProductDataByMonth(FATGLOBAL fat, PRODUCT p, int month, double b[][2], int q[][2]);
+PRODUCTFAT getProductDataByMonth(FATGLOBAL fat, PRODUCT p, int month);
 
 double getBilledByMonthRange(FATGLOBAL fat, int initialMonth, int finalMonth);
 
@@ -26,6 +29,12 @@ LIST getProductsNotSold(FATGLOBAL fat);
 
 LIST* getProductsNotSoldByBranch(FATGLOBAL);
 
+int getProductsFatQuant(PRODUCTFAT, int branch, int* normal, int* promo);
+
+double getProductFatBilled(PRODUCTFAT, int branch, double* normal, double* promo);
+
 void freeFat(FATGLOBAL fat);
+
+void freeProductFat(PRODUCTFAT pf);
 
 #endif
