@@ -153,7 +153,7 @@ int getQuantByMonthRange(FATGLOBAL fat, int initialMonth, int finalMonth) {
 LIST getProductsNotSold(FATGLOBAL fat) {
 	SET set;
 
-	set = filterCat(fat->cat, (condition_t) isEmptyRev, NULL);	
+	set = filterCat(fat->cat, (condition_t) isEmptyRev, NULL);
 
 	return toList(set);
 }
@@ -353,7 +353,7 @@ int getProductFatQuant(PRODUCTFAT pf, int branch, int* normal, int* promo) {
 
 double getProductFatBilled(PRODUCTFAT pf, int branch, double* normal, double* promo) {
 	double n, p;
-	
+
 	n = pf->billed[branch][MODE_N];
 	p = pf->billed[branch][MODE_P];
 
