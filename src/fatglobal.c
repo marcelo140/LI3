@@ -137,27 +137,21 @@ int getQuantByMonthRange(FATGLOBAL fat, int initialMonth, int finalMonth) {
 	return res;
 }
 
-SET getProductsSold(FATGLOBAL fat) {
+LIST getProductsNotSold(FATGLOBAL fat) {
 	SET set;
 
-	set = filterCat(fat->cat, (condition_t) isNotEmptyRev, NULL);
+	set = filterCat(fat->cat, (condition_t) isEmptyRev, NULL);	
 
-	return set;
+	return toList(set);
 }
 
-SET getProductsNotSold(FATGLOBAL fat) {
-	SET set;
-
-	set = filterCat(fat->cat, (condition_t) isEmptyRev, NULL);
-
-	return set;
-}
-
-SET* getProductsNotSoldByBranch(FATGLOBAL fat) {
+LIST* getProductsNotSoldByBranch(FATGLOBAL fat) {
 	SET *res, set;
+	LIST *lists;
 	REVENUE rev;
 	int i, branch, size;
 
+	lists = malloc(sizeof(LIST) * BRANCHES);
 	res = malloc(sizeof(SET) * BRANCHES);
 
 	size = countAllElems(fat->cat);
@@ -177,7 +171,10 @@ SET* getProductsNotSoldByBranch(FATGLOBAL fat) {
 		}
 	}
 
-	return res;
+	for(i = 0; i < BRANCHES; i++)
+		lists[0] = toList(res[0]);
+
+	return lists;
 }
 
 void freeFat(FATGLOBAL fat) {

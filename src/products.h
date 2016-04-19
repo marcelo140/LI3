@@ -8,7 +8,6 @@
 
 typedef struct product         *PRODUCT;
 typedef struct product_catalog *PRODUCTCAT;
-typedef struct product_set     *PRODUCTSET;
 
 /**
  * Inicializa um catálogo de produtos. Esta estrutura lista todos os produtos existentes
@@ -87,28 +86,24 @@ void freeProduct (PRODUCT p);
 /**
  * Aloca espaço para um conjunto de produtos com tamanho inicial n.
  */
-PRODUCTSET initProductSet (int n);
 
 /**
  * Preenche o conjunto indicado com todos os produtos começados pela letra dada 
  * existentes no catálogo de produtos. Se o conjunto não tiver espaço suficiente para
  * acatar todos os produtos, este será redimensionado para o tamnha necessário.
  */
-PRODUCTSET fillProductSet (PRODUCTCAT cat, PRODUCTSET ps, char index);
+LIST fillProductSet (PRODUCTCAT cat, char index);
 
 /**
  * Calcula o tamanho de um conjunto de produtos.
  */
-int getProductSetSize (PRODUCTSET ps);
 
 /**
  * Retorna o produto na posição dada do conjunto.
  */
-PRODUCT getProductByPos (PRODUCTSET ps, int pos);
 
 /**
  * Liberta todo o espaço ocupado por um conjunto de produtos.
  */
-void freeProductSet (PRODUCTSET ps);
 
 #endif

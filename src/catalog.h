@@ -105,7 +105,7 @@ void freeCatalog (CATALOG cat);
  * @param index Índice do catálogo cujos elementos serão inseridos
  * @return Conjunto de dados com os novos elementos adicionados
  */
-SET fillSet (CATALOG cat, SET cs, int index);
+SET fillSet (CATALOG cat, int index);
 
 /**
  * Adiciona a um conjunto de dados todos os elementos existentes num catálogo.
