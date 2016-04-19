@@ -94,17 +94,17 @@ void freeCatalog(CATALOG cat){
 	}
 }
 
-SET fillSet(CATALOG cat, SET cs, int index) {
-	cs = addAVLtoSet(cs, cat->root[index]);
+SET fillSet(CATALOG cat, SET s, int index) {
+	s = addAVLtoSet(s, cat->root[index]);
 
-	return cs;
+	return s;
 }
 
 SET fillAllSet(CATALOG cat, SET cs) {
 	int i, size = cat->size;
 
 	if (size == 0)
-		return NULL;
+		return cs;
 
 	for(i = 0; i < size; i++)
 		cs = addAVLtoSet(cs, cat->root[i]);

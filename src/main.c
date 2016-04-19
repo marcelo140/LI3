@@ -6,8 +6,6 @@
 #include "clients.h"
 #include "products.h"
 
-
-
 int main() {
 	FATGLOBAL fat;
 	BRANCHSALES branchSales[3];
