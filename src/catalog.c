@@ -94,7 +94,8 @@ void freeCatalog(CATALOG cat){
 	}
 }
 
-SET fillSet(CATALOG cat, SET s, int index) {
+SET fillSet(CATALOG cat, int index) {
+	SET s = initSet(countPosElems(cat, index));
 	s = addAVLtoSet(s, cat->root[index]);
 
 	return s;

@@ -7,6 +7,13 @@
 
 typedef struct element* ELEMENT;
 typedef struct set *SET;
+typedef struct list *LIST;
+
+char* getListElement(LIST l, int pos);
+
+int getListSize(LIST l);
+
+LIST toList(SET s);
 
 SET initSet(int capacity);
 

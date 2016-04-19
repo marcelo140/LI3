@@ -110,33 +110,10 @@ void freeClient(CLIENT client) {
 	free(client);
 }
  
-CLIENTSET initClientSet(int n) {
-	CLIENTSET new = malloc (sizeof (*new));
-	new->set = initSet(n);
+LIST fillClientSet(CLIENTCAT catProd, char index) {
+	SET set;
+	set = fillSet(catProd->cat, index - 'A');
 
-	return new;
+	return toList(set);
 }
 
-CLIENTSET fillClientSet(CLIENTCAT catProd, CLIENTSET cs, char index) {
-	cs->set = fillSet(catProd->cat, cs->set, index - 'A');
-
-	return cs;
-}
-
-int getClientSetSize(CLIENTSET cs) {
-	return getSetSize(cs->set);
-}
-
-CLIENT getClientByPos(CLIENTSET cs, int pos) {
-	char *str = getSetHash(cs->set, pos);
-
-	if (str == NULL)
-		return NULL;
-	
-	return toClient(str);
-}
-
-void freeClientSet(CLIENTSET cs) {
-	freeSet(cs->set);
-	free(cs);	
-}

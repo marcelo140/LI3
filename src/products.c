@@ -103,34 +103,9 @@ bool isProduct (char *str){
 void freeProduct(PRODUCT product) {
 	free(product);
 }
+LIST fillProductSet(PRODUCTCAT productCat, char index) {
+	SET set;
+	set = fillSet(productCat->cat, index - 'A');
 
-PRODUCTSET initProductSet(int n) {
-	PRODUCTSET new = malloc (sizeof (*new));
-	new->set = initSet(n);
-
-	return new;
-}
-
-PRODUCTSET fillProductSet(PRODUCTCAT productCat, PRODUCTSET ps, char index) {
-	ps->set = fillSet(productCat->cat, ps->set, index - 'A');
-
-	return ps;
-}
-
-int getProductSetSize(PRODUCTSET ps) {
-	return getSetSize(ps->set);
-}
-
-PRODUCT getProductByPos(PRODUCTSET ps, int pos) {
-	char *str = getSetHash(ps->set, pos);
-	
-	if (str == NULL) 
-		return NULL;
-
-	return toProduct(str);
-}
-
-void freeProductSet(PRODUCTSET ps) {
-	freeSet(ps->set);
-	free(ps);
+	return toList(set);
 }

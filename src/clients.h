@@ -3,12 +3,12 @@
 
 #include "catalog.h"
 #include "generic.h"
+#include "set.h"
 
 #define CLIENT_LENGTH 6
 
 typedef struct client         *CLIENT;
 typedef struct client_catalog *CLIENTCAT;
-typedef struct client_set     *CLIENTSET;
 
 /**
  * Inicializa o catálogo de clientes. Esta estrutura lista todos os clientes existentes
@@ -83,31 +83,11 @@ bool isClient (char* str);
  */
 void freeClient (CLIENT c);
 
-/**
- * Aloca espaço para um conjunto de clientes com tamanho inicial n.
- */
-CLIENTSET initClientSet (int n);
 
 /**
  * Preenche o conjunto indicado com todos os clientes começados pela letra dada 
  * existentes no catálogo de clientes. Se o conjunto não tiver espaço suficiente para
  * acatar todos os clientes, este será redimensionado para o tamnha necessário.
  */
-CLIENTSET fillClientSet (CLIENTCAT clientCat, CLIENTSET cs, char index);
-
-/**
- * Calcula o tamanho de um conjunto de clientes.
- */
-int clientSetSize (CLIENTSET cs);
-
-/**
- * Retorna o cliente na posição dada do conjunto.
- */
-CLIENT getClientByPos (CLIENTSET cs, int pos);
-
-/**
- * Liberta todo o espaço ocupado por um conjunto de clientes.
- */
-void freeClientSet (CLIENTSET cs);
-
+LIST fillClientSet (CLIENTCAT clientCat, char index);
 #endif

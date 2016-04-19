@@ -18,12 +18,30 @@ struct set {
 	int capacity;
 };
 
+struct list {
+	struct set* list;
+};
+
 static ELEMENT newElement      (char* hash, void* content);
 static void    swapData        (SET set, int i, int j);
 static int     partitionByName (SET set, int begin, int end);
 static int     partition       (SET set, int begin, int end, compare_t comparator);
 static void    quicksortByName (SET set, int begin, int end);
 static void    quicksort       (SET set, int begin, int end, compare_t comparator);
+
+LIST toList(SET s) {
+	LIST new = malloc(sizeof(*new));
+	new->list = s;
+	
+	return new;
+}
+
+char* getListElement(LIST l, int pos) {
+	if (pos < 0 || pos >= l->list->size)
+		return NULL;
+
+	return l->list->list[pos]->hash;
+}
 
 SET initSet(int capacity) {
 	SET new = malloc(sizeof(*new));

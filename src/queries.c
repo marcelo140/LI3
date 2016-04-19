@@ -11,24 +11,21 @@
 
 PRINTSET query2(PRODUCTCAT pcat, char index) {
 	PRINTSET print;
-	PRODUCTSET ps;
-	PRODUCT product;
+	LIST l;
+	char* product;
 	int i, size;
 	char buff[MAX_SIZE], aux[MAX_SIZE];
 
 	size  = countProducts(pcat, index);
 	print = initPrintSet(size);
-	ps    = initProductSet(size);
 	
-	ps = fillProductSet(pcat, ps, index);
+	l = fillProductSet(pcat, index);
 
-	product = getProductByPos(ps, 0);
+	product = getListElement(l, 0);
 	for(i=0; product ; i++) {
-		fromProduct(product, buff);
 		sprintf(aux, "\t\t\t%s", buff);
 		print = addToPrintSet(print, aux);
-		freeProduct(product);
-		product = getProductByPos(ps,i+1);
+		product = getListElement(l,i+1);
 	}
 
 	return print;
@@ -89,7 +86,7 @@ PRINTSET query3(FATGLOBAL fat, PRODUCT product, int month) {
 
 PRINTSET query4(FATGLOBAL fat) {
 	PRINTSET print = initPrintSet(MAX_SIZE);
-	SET *pgroupB, pgroupT;
+	LIST *pgroupB, pgroupT;
 	char buff[MAX_SIZE], *product;
 	int i, j, op, n=0;
 
@@ -109,13 +106,12 @@ PRINTSET query4(FATGLOBAL fat) {
 
 	if (op == 1) {
 		pgroupT = getProductsNotSold(fat);
-		product = getSetHash(pgroupT, 0);
+		product = getListElement(pgroupT, 0);
 
 		for (i=0; product ; i++) {
 			sprintf(buff, "\t\t\t%s", product);
 			print = addToPrintSet(print, buff);
-			free(product);
-			product = getSetHash(pgroupT, i+1);
+			product = getListElement(pgroupT, i+1);
 		}
 
 /*		freeProductGroup(pgroupT); */
@@ -129,7 +125,7 @@ PRINTSET query4(FATGLOBAL fat) {
 			n = 0;
 			buff[0] = '\0';
 			for (j=0; j < BRANCHES; j++) {
-				product = getSetHash(pgroupB[j], i);
+				product = getListElement(pgroupB[j], i);
 				if (product) sprintf(buff, "%s\t%s", buff, product);
 				else { sprintf(buff,"%s\t\t", buff); n++;}
 			}
