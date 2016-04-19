@@ -23,7 +23,6 @@ struct printset{
 }; 
 	
 static void presentList(PRINTSET ps);
-static void presentCatalogSet (CATSET* cs,int branches, int page, int total, int* cont);
 static void presentProductSet (PRODUCTSET ps, int page, int total, int* cont);
 static int askBranch(); 
 static PRODUCT askProduct();

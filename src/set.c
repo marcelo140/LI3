@@ -201,8 +201,8 @@ static int partitionByName(SET set, int begin, int end) {
 	char* pivot = HASH(set, end);
 	int i, lim = begin-1;
 
-	for(i = 0; i < end; i++) {
-		if (strcmp(pivot, HASH(set,i)) <= 0){
+	for(i = begin; i < end; i++) {
+		if (strcmp(HASH(set,i), pivot) <= 0){
 			lim++;
 			swapData(set, lim, i);
 		}
@@ -216,8 +216,8 @@ static int partition(SET set, int begin, int end, compare_t comparator) {
 	char* pivot = CONTENT(set, end);
 	int i, lim = begin-1;
 
-	for(i = 0; i < end; i++) {
-		if (comparator(pivot, CONTENT(set,i)) <= 0){
+	for(i = begin; i < end; i++) {
+		if (comparator(CONTENT(set,i), pivot) <= 0){
 			lim++;
 			swapData(set, lim, i);
 		}
@@ -233,7 +233,7 @@ static void quicksort(SET set, int begin, int end, compare_t comparator) {
 	if (begin < end) {
 		lim = partition(set, begin, end, comparator);
 		
-		quicksort(set, begin, lim+1, comparator);
+		quicksort(set, begin, lim-1, comparator);
 		quicksort(set, lim+1, end, comparator);
 	}	
 }
@@ -244,7 +244,7 @@ static void quicksortByName(SET set, int begin, int end) {
 	if (begin < end) {
 		lim = partitionByName(set, begin, end);
 		
-		quicksortByName(set, begin, lim+1);
+		quicksortByName(set, begin, lim-1);
 		quicksortByName(set, lim+1, end);
 	}
 }

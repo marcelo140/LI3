@@ -8,132 +8,88 @@
 
 #define INDEX(p) (p[0] - 'A')
 
-struct faturacao {
-	CATALOG cat;
-};
-
-REVENUE cloneRevenue(REVENUE r);
-REVENUE initRevenue ();
-REVENUE addSale       (REVENUE r, SALE s);
-REVENUE addBilled     (REVENUE r, int month, int branch, int MODE, double value);
-REVENUE addQuantity   (REVENUE r, int month, int branch, int MODE, int value);
-REVENUE updateRevenue (REVENUE r, int month, int branch, int MODE, 
-                       double billed, int quantity); 
-int compareByQuant(REVENUE rev1, REVENUE rev2);
-int compareByBilling(REVENUE rev1, REVENUE rev2);
-bool isNotEmptyRev (REVENUE r);
-bool isEmptyRev (REVENUE r);
-double  getMonthBilled  (REVENUE r, int month,  double *normal, double *promo);
-double  getBranchBilled (REVENUE r, int branch, double *normal, double *promo);
-double getBilledRev(REVENUE r, int branch, int month, double *normal, double* promo);
-int getQuantRev(REVENUE r, int branch, int month, int* normal, int* promo);
-int     getMonthQuant   (REVENUE r, int month,  int *normal, int *promo);
-int     getBranchQuant  (REVENUE r, int branch, int *normal, int *promo);
-void freeRevenue (REVENUE r);
-
 struct revenue{
 	double billed[MONTHS][BRANCHES][SALEMODE];
 	int  quantity[MONTHS][BRANCHES][SALEMODE];
 };
 
-FATGLOBAL initFat(PRODUCTCAT p) {
+struct faturacao {
+	CATALOG cat;
+};
+
+static REVENUE initRevenue  ();
+static REVENUE addSaleToRev (REVENUE r, SALE s);
+static REVENUE cloneRevenue (REVENUE r);
+
+static void freeRevenue   (REVENUE r);
+
+static bool isEmptyRev    (REVENUE r);
+static bool isNotEmptyRev (REVENUE r);
+
+static double getMonthBilled  (REVENUE r, int month,  double *normal, double *promo);
+static double getBranchBilled (REVENUE r, int branch, double *normal, double *promo);
+static double getBilledRev    (REVENUE r, int b, int m, double* normal, double* promo);
+
+static int getQuantRev   (REVENUE r, int branch, int month, int* normal, int* promo);
+static int getBranchQuant(REVENUE r, int branch, int *normal, int *promo);
+static int getMonthQuant (REVENUE r, int month,  int *normal, int *promo);
+
+FATGLOBAL initFat(PRODUCTCAT prodCatalog) {
 	FATGLOBAL new = malloc(sizeof (*new));
-	new->cat = getProductCat(p);
+
+	new->cat = getProductCat(prodCatalog);
 	new->cat = changeCatalogOps(new->cat, (init_t) initRevenue, (clone_t) cloneRevenue, 
                                           (free_t) freeRevenue);
 
 	return new;
 }
 
-FATGLOBAL addFat(FATGLOBAL fat, SALE s) {
-	REVENUE r;
+FATGLOBAL addSaleToFat(FATGLOBAL fat, SALE s) {
+	REVENUE rev;
 	char prod[PRODUCT_LENGTH];
 
 	fromProduct(getProduct(s), prod);
-	r = getCatContent(fat->cat, INDEX(prod), prod);
-	addSale(r, s);
+
+	rev = getCatContent(fat->cat, INDEX(prod), prod);
+	addSaleToRev(rev, s);
 
 	return fat;
 }
 
-int getProductDataByMonth(FATGLOBAL fat, PRODUCT prod, int month, double billed[][2], 
-                                                                     int quant[][2]){
+int getProductDataByMonth(FATGLOBAL fat, PRODUCT p, int month, double b[][2], int q[][2]){
+
 	REVENUE rev;
 	char product[PRODUCT_LENGTH];
 	double billedN = 0, billedP = 0;
 	int branch, quantN = 0, quantP = 0;
 
-	fromProduct(prod, product);
+	fromProduct(p, product);
 	rev = getCatContent(fat->cat, INDEX(product), product);
 
 	for(branch = 0; branch < BRANCHES; branch++) {
 		getBilledRev(rev, branch, month, &billedN, &billedP);
 		getQuantRev(rev, branch, month, &quantN, &quantP);
 
-		billed[branch][MODE_N] = billedN;
-		billed[branch][MODE_P] = billedP;
-		quant[branch][MODE_N] = quantN;
-		quant[branch][MODE_P] = quantP;
+		b[branch][MODE_N] = billedN;
+		b[branch][MODE_P] = billedP;
+		q[branch][MODE_N] = quantN;
+		q[branch][MODE_P] = quantP;
 	}
 
 	return BRANCHES;
 }
 
-SET getProductsSold(FATGLOBAL fat) {
-	SET pg;
-
-	pg = filterCat(fat->cat, (condition_t) isNotEmptyRev, NULL);
-
-	return pg;
-}
-
-SET getProductsNotSold(FATGLOBAL fat) {
-	SET pg;
-
-	pg = filterCat(fat->cat, (condition_t) isEmptyRev, NULL);	
-	
-	return pg;
-}
-
-SET* getProductsNotSoldByBranch(FATGLOBAL fat) {
-	SET *res, cs;
-	REVENUE rev;
-	int i, branch, size;
-
-	res = malloc(sizeof(SET) * BRANCHES);
-
-	size = countAllElems(fat->cat);
-	cs = initSet(size);
-	cs = fillAllSet(fat->cat, cs);
-
-	for(branch = 0; branch < BRANCHES; branch++){
-		res[branch] = initSet(10000);
-	}
-
-	for(i = 0; i < size; i++) {
-		rev = getSetData(cs, i);
-
-		for(branch = 0; branch < BRANCHES; branch++){
-			if (!getBranchQuant(rev, branch, NULL, NULL))
-				datacpy(res[branch], cs, i);
-		}
-	}
-
-	return res;
-}
-
 double getBilledByMonthRange(FATGLOBAL fat, int initialMonth, int finalMonth) {
-	SET cs;
+	SET set;
 	REVENUE rev;
 	int i, month, size;
-	double res;
+	double res = 0;
 
-	res = 0;
-	cs = filterCat(fat->cat, (condition_t) isNotEmptyRev, NULL);
-	size = getSetSize(cs);
+	set = filterCat(fat->cat, (condition_t) isNotEmptyRev, NULL);
+	size = getSetSize(set);
 
 	for(i = 0; i < size; i++){
-		rev = getSetData(cs, i);
+		rev = getSetData(set, i);
 
 		for(month = initialMonth; month <= finalMonth; month++)
 			res += getMonthBilled(rev, month, NULL, NULL);	
@@ -143,16 +99,15 @@ double getBilledByMonthRange(FATGLOBAL fat, int initialMonth, int finalMonth) {
 }
 
 int getQuantByMonthRange(FATGLOBAL fat, int initialMonth, int finalMonth) {
-	SET cs;
+	SET set;
 	REVENUE rev;
-	int i, month, size, res;
+	int i, month, size, res = 0;
 
-	res = 0;
-	cs = filterCat(fat->cat, (condition_t) isNotEmptyRev, NULL);
-	size = getSetSize(cs);
+	set = filterCat(fat->cat, (condition_t) isNotEmptyRev, NULL);
+	size = getSetSize(set);
 
 	for(i = 0; i < size; i++){
-		rev = getSetData(cs, i);
+		rev = getSetData(set, i);
 
 		for(month = initialMonth; month <= finalMonth; month++)
 			res += getMonthQuant(rev, month, NULL, NULL);	
@@ -161,26 +116,63 @@ int getQuantByMonthRange(FATGLOBAL fat, int initialMonth, int finalMonth) {
 	return res;
 }
 
+SET getProductsSold(FATGLOBAL fat) {
+	SET set;
+
+	set = filterCat(fat->cat, (condition_t) isNotEmptyRev, NULL);
+
+	return set;
+}
+
+SET getProductsNotSold(FATGLOBAL fat) {
+	SET set;
+
+	set = filterCat(fat->cat, (condition_t) isEmptyRev, NULL);	
+	
+	return set;
+}
+
+SET* getProductsNotSoldByBranch(FATGLOBAL fat) {
+	SET *res, set;
+	REVENUE rev;
+	int i, branch, size;
+
+	res = malloc(sizeof(SET) * BRANCHES);
+
+	size = countAllElems(fat->cat);
+	set = initSet(size);
+	set = fillAllSet(fat->cat, set);
+
+	for(branch = 0; branch < BRANCHES; branch++){
+		res[branch] = initSet(10000);
+	}
+
+	for(i = 0; i < size; i++) {
+		rev = getSetData(set, i);
+
+		for(branch = 0; branch < BRANCHES; branch++){
+			if (!getBranchQuant(rev, branch, NULL, NULL))
+				datacpy(res[branch], set, i);
+		}
+	}
+
+	return res;
+}
+
 void freeFat(FATGLOBAL fat) {
-	freeCatalog(fat->cat);
-	free(fat);
-}
-
-int compareByQuant(REVENUE rev1, REVENUE rev2) {
-	return (rev1->quantity - rev2->quantity);
-}
-
-int compareByBilling(REVENUE rev1, REVENUE rev2) {
-	return (rev1->billed - rev2->billed);
+	if (fat){
+		freeCatalog(fat->cat);
+		free(fat);
+	}
 }
 
 /************************** REVENUE *****************************/
 
-REVENUE initRevenue() {
+static REVENUE initRevenue() {
 	return calloc (1, sizeof(struct revenue));
 }
 
-REVENUE addSale(REVENUE r, SALE s) {
+static REVENUE addSaleToRev(REVENUE r, SALE s) {
 	int quant  = getQuant(s);
 	int month  = getMonth(s); 
 	int branch = getBranch(s);
@@ -193,31 +185,29 @@ REVENUE addSale(REVENUE r, SALE s) {
 	return r;
 }
 
-REVENUE cloneRevenue(REVENUE r) {
+static REVENUE cloneRevenue(REVENUE r) {
 	REVENUE new = malloc(sizeof(*new));
 	
-	memcpy(new->billed, r->billed, MONTHS*BRANCHES*SALEMODE*sizeof(double));
 	memcpy(new->quantity, r->quantity, MONTHS*BRANCHES*SALEMODE*sizeof(int));
+	memcpy(new->billed, r->billed,     MONTHS*BRANCHES*SALEMODE*sizeof(double));
 
 	return new;
 }
 
-bool isEmptyRev (REVENUE r) {
+static bool isEmptyRev (REVENUE r) {
 	return (r == NULL);
 }
 
-bool isNotEmptyRev (REVENUE r) {
+static bool isNotEmptyRev (REVENUE r) {
 	return (r != NULL);
 }
 
-double getMonthBilled(REVENUE r, int month, double *normal, double *promo) {
-	double n, p;
+static double getMonthBilled(REVENUE r, int month, double *normal, double *promo) {
+	double n = 0, p = 0;
 	int branch;
 
 	if (!r)
 		return 0;
-
-	n = p = 0;
 
 	for(branch = 0; branch < BRANCHES; branch++) {
 		n += r->billed[month][branch][MODE_N];
@@ -230,14 +220,12 @@ double getMonthBilled(REVENUE r, int month, double *normal, double *promo) {
 	return n+p;		
 }
 
-double getBranchBilled(REVENUE r, int branch, double *normal, double *promo) {
-	double n, p;
+static double getBranchBilled(REVENUE r, int branch, double *normal, double *promo) {
+	double n = 0, p = 0;
 	int  month;
 
 	if (!r)
 		return 0;
-
-	n = p = 0;
 
 	for(month = 0; month < MONTHS; month++){
 		n += r->billed[month][branch][MODE_N];
@@ -250,7 +238,7 @@ double getBranchBilled(REVENUE r, int branch, double *normal, double *promo) {
 	return n+p;
 }
 
-int getQuantRev(REVENUE r, int branch, int month, int* normal, int* promo) {
+static int getQuantRev(REVENUE r, int branch, int month, int* normal, int* promo) {
 	int n, p;
 
 	if (!r)
@@ -265,14 +253,14 @@ int getQuantRev(REVENUE r, int branch, int month, int* normal, int* promo) {
 	return n+p;	
 }
 
-double getBilledRev(REVENUE r, int branch, int month, double* normal, double* promo) {
+static double getBilledRev(REVENUE r, int b, int m, double* normal, double* promo) {
 	double n, p;
 
 	if (!r)
 		return 0;
 
-	n = r->billed[month][branch][MODE_N];
-	p = r->billed[month][branch][MODE_P];
+	n = r->billed[m][b][MODE_N];
+	p = r->billed[m][b][MODE_P];
 
 	if (normal) *normal = n;
 	if (promo) *promo = p;
@@ -280,13 +268,11 @@ double getBilledRev(REVENUE r, int branch, int month, double* normal, double* pr
 	return n+p;
 }
 
-int getMonthQuant(REVENUE r, int month, int *normal, int *promo) {
-	int n, p, branch;
+static int getMonthQuant(REVENUE r, int month, int *normal, int *promo) {
+	int n = 0, p = 0, branch;
 
 	if (!r)
 		return 0;
-
-	n = p = 0;
 
 	for(branch = 0; branch < BRANCHES; branch++) {
 		n += r->quantity[month][branch][MODE_N];
@@ -299,7 +285,7 @@ int getMonthQuant(REVENUE r, int month, int *normal, int *promo) {
 	return n+p;
 }
 
-int getBranchQuant(REVENUE r, int branch, int *normal, int *promo) {
+static int getBranchQuant(REVENUE r, int branch, int *normal, int *promo) {
 	int n = 0, p = 0, month;
 
 	if (!r)
@@ -316,6 +302,6 @@ int getBranchQuant(REVENUE r, int branch, int *normal, int *promo) {
 	return n+p;
 }
 
-void freeRevenue(REVENUE r) {
+static void freeRevenue(REVENUE r) {
 	free(r);
 }

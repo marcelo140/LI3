@@ -35,6 +35,7 @@ typedef struct month_list {
 	int quant[MONTHS];	
 } *MONTHLIST;
 
+
 typedef struct product_sale {
 	double billed[MONTHS];
 	int quantity[MONTHS];
@@ -46,6 +47,7 @@ typedef struct client_sale {
 	HASHT products;
 } *CLIENTSALE;
 
+PRODUCTSALE cloneProductSale(PRODUCTSALE ps);
 static CLIENTSALE initClientSale  ();
 static CLIENTSALE addToClientSale (CLIENTSALE cs, SALE sale);
 static void       freeClientSale  (CLIENTSALE cs);
@@ -64,7 +66,7 @@ BRANCHSALES initBranchSales (CLIENTCAT clientCat) {
 	BRANCHSALES bs = malloc(sizeof(*bs));
 
 	bs->clients = getClientCat(clientCat);
-	bs->clients = changeCatalogOps(bs->clients, (init_t) initClientSale,  NULL,
+	bs->clients = changeCatalogOps(bs->clients, (init_t) initClientSale, NULL,
                                                 (free_t) freeClientSale);
 
 	return bs;
@@ -146,7 +148,7 @@ int partitionPData(PRODUCTDATA *pd, int begin, int end) {
 	int i = begin-1, j;
 	
 	for(j = begin; j < end; j++) {
-		if (pd[j]->quantity < pivot->quantity) {
+		if (pd[j]->quantity >= pivot->quantity) {
 			i++;
 			swapPData(pd, i, j);
 		}
@@ -317,7 +319,7 @@ static CLIENTSALE initClientSale() {
 	new->months = initMonthList();
 	new->products = initHashT((init_t) initProductSale,
                               (add_t)  addToProductSale,
-                              NULL,
+                              (clone_t) cloneProductSale,
                               (free_t) freeProductSale);
 
 	return new;
@@ -381,4 +383,14 @@ static PRODUCTSALE addToProductSale(PRODUCTSALE ps, SALE sale) {
 
 static void freeProductSale(PRODUCTSALE ps) {
 	free(ps);
+}
+
+PRODUCTSALE cloneProductSale(PRODUCTSALE ps) {
+	PRODUCTSALE new = malloc(sizeof(*new));
+	
+	memcpy(new->billed, ps->billed, sizeof(double) * MONTHS);
+	memcpy(new->quantity, ps->quantity, sizeof(int) * MONTHS);
+	new->saleType = ps->saleType;
+
+	return new;
 }
