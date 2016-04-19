@@ -2,9 +2,9 @@
 #define __CATALOG__
 
 #include "generic.h"
+#include "set.h"
 
 typedef struct catalog      *CATALOG;
-typedef struct catalog_set  *CATSET;
 
 /**
  * Inicia um catálogo com o tamanho e funções auxiliares dadas.
@@ -98,12 +98,6 @@ int countPosElems (CATALOG cat, int index);
 void freeCatalog (CATALOG cat);
 
 /**
- * Inicia um conjunto de dados com o tamanho dado.
- * @param n Tamanho inicial do conjunto de dados
- */
-CATSET initCatSet (int n);
-
-/**
  * Adiciona a um conjunto de dados todos os elementos existentes num dado índice do
  * catálogo.
  * @param cat Catálogo com os elementos pretendidos
@@ -111,7 +105,7 @@ CATSET initCatSet (int n);
  * @param index Índice do catálogo cujos elementos serão inseridos
  * @return Conjunto de dados com os novos elementos adicionados
  */
-CATSET fillCatSet (CATALOG cat, CATSET cs, int index);
+SET fillSet (CATALOG cat, SET cs, int index);
 
 /**
  * Adiciona a um conjunto de dados todos os elementos existentes num catálogo.
@@ -119,16 +113,7 @@ CATSET fillCatSet (CATALOG cat, CATSET cs, int index);
  * @param cs Conjunto de dados onde serão inseridos os elementos pretendidos
  * @return Conjunto de dados com os novos elementos adicionados
  */
-CATSET fillAllCatSet (CATALOG cat, CATSET cs);
-
-/**
- * Copia um elemento de um conjunto de dados para outro.
- * @param dest Conjunto de dados para onde será copiado o novo elemento
- * @param src Conjunto de dados para de onde é copiado o elemento
- * @param pos Posição do elemento no conjunto de dados fonte
- * @return Conjunto de dados com o novo elemento
- */
-CATSET contcpy (CATSET dest, CATSET src, int pos);
+SET fillAllSet (CATALOG cat, SET cs);
 
 /**
  * Cria um conjunto de dados com todos os elementos do catálogo para os quais a condição
@@ -142,7 +127,7 @@ CATSET contcpy (CATSET dest, CATSET src, int pos);
  * @param arg Argumento adiciona para a condição
  * @return Conjunto de dados com os elementos filtrados
  */
-CATSET filterCat(CATALOG cat, condition_t condition, void* arg);
+SET filterCat(CATALOG cat, condition_t condition, void* arg);
 
 /**
  * Constrói dois conjuntos de dados a partir do resultado da função comparação dada que
@@ -161,7 +146,7 @@ CATSET filterCat(CATALOG cat, condition_t condition, void* arg);
  * @param set1 Conjunto de dados onde serão adicionados elementos
  * @param set2 Conjunto de dados onde serão adicionados elementos
  */
-void separateCat(CATALOG cat, compare_t compare, void* arg, CATSET set1, CATSET set2);
+void separateCat(CATALOG cat, compare_t compare, void* arg, SET set1, SET set2);
 
 /**
  * Extrai o conteúdo de cada elemento, usando a função dumper dada. O conteúdo extraido será
@@ -197,70 +182,9 @@ void* dumpDataCat(CATALOG cat, void* data, void* (*dumper)(void*, void*));
  * acrescentado o elemento
  * @param comp_arg Argumento opcional para a condição
  */
-void condSeparateCat(CATALOG cat, CATSET set1, CATSET set2,
+void condSeparateCat(CATALOG cat, SET set1, SET set2,
                                   condition_t condition, void* cond_arg,
                                   compare_t   comparator, void* comp_arg);
 
-/**
- * Reordena o conteúdo de um conjunto de dados usando o comparador dado.
- * @param set Conjunto de dados a ser ordenado
- * @param begin Posição a partir da qual o set deve ser ordenado
- * @param end Posição até que o set deve ser ordenado
- * @param comparator Função que define como comparar dois elementos
- */ 
-void sortCatSet(CATSET set, compare_t comparator);
-
-/**
- * Concatena os dois conjuntos de dados, acrescentado os elementos do set2 ao fim do set1
- */
-CATSET concatCatSet (CATSET set1, CATSET set2);
-
-/**
- * Dado dois conjuntos previamente ordenados, une-se os dois sets, eliminando elementos
- * repetidos. O resultado é também um conjunto ordenado.
- * @param dest Conjunto que será alterado
- * @param src Conjunto cujos dados serão agregados ao conjunto dest
- * @return Apontador para o inicio do conjunto com todos os dados agregados (dest)
- */
-CATSET unionCatSets (CATSET dest, CATSET source);
-
-/**
- * Dado dois conjuntos previamente ordenados, une-se os dois sets, eliminando todos os
- * elementos em comum. O resultado é também um conjunto ordenado.
- * @param dest Conjunto que será alterado
- * @param src Conjunto cujos dados serão agregados ao conjunto dest
- * @return Apontador para o inicio do conjunto com todos os dados agregados (dest)
- */
-CATSET diffCatSets (CATSET dest, CATSET source);
-
-/**
- * Dado dois conjuntos previeamente ordenados, une-se os dois sets, mantendo apenas os
- * elementos em comum. O resultado será também um set ordenado.
- * @return Novo conjunto de dados
- */
-CATSET intersectCatSets (CATSET set1, CATSET set2);
-
-/**
- * Devolve o conteúdo do elemento na posição indicada. Este conteúdo corresponde ao 
- * existente no catálogo no elemento com o mesmo identificador. Se a posição não for válida
- * é devolvido NULL.
- */
-void* getContPos (CATSET cs, int pos);
-
-/** 
- * Devolve uma cópia do identificado do elemento na posição indicada. Se a posição não
- * for válida é devolvido NULL.
- */
-char* getKeyPos (CATSET cs, int pos);
-
-/**
- * Determina o tamanho de um conjunto de dados.
- */
-int getCatSetSize (CATSET cs); 
-
-/**
- * Liberta o espaço ocupado pelo conjunto de dados dado.
- */
-void freeCatSet (CATSET cs);
 
 #endif

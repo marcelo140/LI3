@@ -17,7 +17,7 @@ struct product_catalog {
 };
 
 struct product_set {
-	CATSET set;	
+	SET set;	
 }; 
 
 PRODUCTCAT initProductCat(){
@@ -106,23 +106,23 @@ void freeProduct(PRODUCT product) {
 
 PRODUCTSET initProductSet(int n) {
 	PRODUCTSET new = malloc (sizeof (*new));
-	new->set = initCatSet(n);
+	new->set = initSet(n);
 
 	return new;
 }
 
 PRODUCTSET fillProductSet(PRODUCTCAT productCat, PRODUCTSET ps, char index) {
-	ps->set = fillCatSet(productCat->cat, ps->set, index - 'A');
+	ps->set = fillSet(productCat->cat, ps->set, index - 'A');
 
 	return ps;
 }
 
 int getProductSetSize(PRODUCTSET ps) {
-	return getCatSetSize(ps->set);
+	return getSetSize(ps->set);
 }
 
 PRODUCT getProductByPos(PRODUCTSET ps, int pos) {
-	char *str = getKeyPos(ps->set, pos);
+	char *str = getSetHash(ps->set, pos);
 	
 	if (str == NULL) 
 		return NULL;
@@ -131,6 +131,6 @@ PRODUCT getProductByPos(PRODUCTSET ps, int pos) {
 }
 
 void freeProductSet(PRODUCTSET ps) {
-	freeCatSet(ps->set);
+	freeSet(ps->set);
 	free(ps);
 }

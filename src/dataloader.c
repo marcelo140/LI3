@@ -71,7 +71,7 @@ int loadSales(FILE *file, FATGLOBAL fat, BRANCHSALES* bs, PRODUCTCAT products,
 		total++;
 		
 		if (isSale(s, products, clients)) {
-			addFat(fat, s);	
+			addSaleToFat(fat, s);	
 			addSaleToBranch(bs[getBranch(s)], s);
 		 	success++;
 		}

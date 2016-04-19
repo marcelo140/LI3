@@ -22,7 +22,7 @@ struct client_catalog {
 };
 
 struct client_set {
-	CATSET set;
+	SET set;
 };
 
 CLIENTCAT initClientCat() {
@@ -112,23 +112,23 @@ void freeClient(CLIENT client) {
  
 CLIENTSET initClientSet(int n) {
 	CLIENTSET new = malloc (sizeof (*new));
-	new->set = initCatSet(n);
+	new->set = initSet(n);
 
 	return new;
 }
 
 CLIENTSET fillClientSet(CLIENTCAT catProd, CLIENTSET cs, char index) {
-	cs->set = fillCatSet(catProd->cat, cs->set, index - 'A');
+	cs->set = fillSet(catProd->cat, cs->set, index - 'A');
 
 	return cs;
 }
 
 int getClientSetSize(CLIENTSET cs) {
-	return getCatSetSize(cs->set);
+	return getSetSize(cs->set);
 }
 
 CLIENT getClientByPos(CLIENTSET cs, int pos) {
-	char *str = getKeyPos(cs->set, pos);
+	char *str = getSetHash(cs->set, pos);
 
 	if (str == NULL)
 		return NULL;
@@ -137,6 +137,6 @@ CLIENT getClientByPos(CLIENTSET cs, int pos) {
 }
 
 void freeClientSet(CLIENTSET cs) {
-	freeCatSet(cs->set);
+	freeSet(cs->set);
 	free(cs);	
 }
