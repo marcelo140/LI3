@@ -84,7 +84,7 @@ double* getClientExpenses (BRANCHSALES bs, CLIENT c);
 /**
  * Liberta toda a memória usada por uma filial.
  */
-void freeBranchSale (BRANCHSALES bs);
+void freeBranchSales (BRANCHSALES bs);
 
 /**
  * Liberta toda a memória usada por uma lista de clientes.

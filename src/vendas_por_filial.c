@@ -22,7 +22,6 @@
 
 struct branch {
 	CATALOG clients;
-	HASHT products;
 };
 
 struct client_list {
@@ -41,7 +40,7 @@ struct product_data {
 
 typedef struct month_list {
 	double billed[MONTHS];
-	int quant[MONTHS];	
+	int quant[MONTHS];
 } *MONTHLIST;
 
 typedef struct product_sale {
@@ -134,7 +133,7 @@ int toProductData(HASHTSET set, PRODUCTDATA* pd) {
 
 		for(clients = 0; i < size && !strcmp(productName, getHashTSetKey(set, i)); clients++, i++){
 			ps = getHashTSetContent(set, i);
-			
+
 			for(month = 0; month < MONTHS; month++)
 				quant += ps->quantity[month];
 		}
@@ -153,7 +152,7 @@ void swapPData(PRODUCTDATA* pd, int i, int j) {
 int partitionPData(PRODUCTDATA *pd, int begin, int end) {
 	PRODUCTDATA pivot = pd[end];
 	int i = begin-1, j;
-	
+
 	for(j = begin; j < end; j++) {
 		if (pd[j]->quantity < pivot->quantity) {
 			i++;
@@ -168,7 +167,7 @@ int partitionPData(PRODUCTDATA *pd, int begin, int end) {
 void sortProductData(PRODUCTDATA* pd, int begin, int end) {
 	if (begin < end) {
 		int q = partitionPData(pd,begin, end);
-		
+
 		sortProductData(pd, begin, q-1);
 		sortProductData(pd, q+1, end);
 	}
@@ -204,7 +203,7 @@ PRODUCTDATA* getAllContent(BRANCHSALES bs, int *cenas) {
 	printf("%f\n", (double)(fim-inicio)/CLOCKS_PER_SEC);
 
 	*cenas = size;
-	return pd;	
+	return pd;
 }
 
 
@@ -220,13 +219,13 @@ CLIENTLIST getClientsWhoBought (BRANCHSALES bs) {
 	CLIENTLIST cl = newClientList();
 
 	cl->set = filterCat(bs->clients, (condition_t) isNotEmptyClientSale, NULL);
-	
+
 	return cl;
 }
 
 CLIENTLIST getClientsWhoHaveNotBought(BRANCHSALES bs) {
 	CLIENTLIST cl = newClientList();
-	
+
 	cl->set = filterCat(bs->clients, (condition_t) isEmptyClientSale, NULL);
 
 	return cl;
@@ -245,7 +244,7 @@ int* getClientQuant(BRANCHSALES bs, CLIENT c) {
 	for(i = 0; i < MONTHS; i++)
 		quant[i] = content->months->quant[i];
 
-	return quant;	
+	return quant;
 }
 
 double *getClientExpenses(BRANCHSALES bs, CLIENT c) {
@@ -253,7 +252,7 @@ double *getClientExpenses(BRANCHSALES bs, CLIENT c) {
 	char client[CLIENT_LENGTH];
 	double *expenses;
 	int i;
-	
+
 	fromClient(c, client);
 	expenses = malloc(sizeof(double) * MONTHS);
 
@@ -262,7 +261,7 @@ double *getClientExpenses(BRANCHSALES bs, CLIENT c) {
 	for(i = 0; i < MONTHS; i++)
 		expenses[i] = content->months->billed[i];
 
-	return expenses;	
+	return expenses;
 }
 
 bool existInProductList(CLIENTSALE cs, char* product) {
@@ -270,7 +269,7 @@ bool existInProductList(CLIENTSALE cs, char* product) {
 }
 
 int clientIsShopAholic(CLIENTSALE cs, char* product) {
-	PRODUCTSALE ps = getHashTcontent(cs->products, product);	
+	PRODUCTSALE ps = getHashTcontent(cs->products, product);
 
 	return (NP - ps->saleType);
 }
@@ -281,7 +280,7 @@ void filterClientsByProduct(BRANCHSALES bs, PRODUCT prod, CLIENTLIST n, CLIENTLI
 	fromProduct(prod, product);
 
 	condSeparateCat(bs->clients, p->set, n->set,(condition_t) existInProductList, product,
-                                                (compare_t) clientIsShopAholic, product); 
+                                                (compare_t) clientIsShopAholic, product);
 }
 
 PRODUCTDATA newProductData(char *productName, int quantity, int clients) {
@@ -309,7 +308,7 @@ int clientListSize(CLIENTLIST cl) {
 }
 
 char* getClientListPos(CLIENTLIST cl, int pos){
-	return getKeyPos(cl->set, pos);	
+	return getKeyPos(cl->set, pos);
 }
 
 void freeClientList(CLIENTLIST cl) {
@@ -329,7 +328,7 @@ static MONTHLIST addToMonthList(MONTHLIST ml, SALE s) {
 
 	ml->billed[month] += billed;
 	ml->quant[month]  += quant;
-	
+
 	return ml;
 }
 
@@ -341,7 +340,7 @@ static void freeMonthList(MONTHLIST m) {
 
 static CLIENTSALE initClientSale() {
 	CLIENTSALE new = malloc(sizeof(*new));
-	
+
 	new->months = initMonthList();
 	new->products = initHashT((ht_init_t) initProductSale,
                               (ht_add_t)  addToProductSale,
@@ -353,11 +352,11 @@ static CLIENTSALE initClientSale() {
 static CLIENTSALE addToClientSale(CLIENTSALE cs, SALE sale) {
 	char product[PRODUCT_LENGTH];
 
-	fromProduct(getProduct(sale), product);	
+	fromProduct(getProduct(sale), product);
 
 	cs->months = addToMonthList(cs->months, sale);
 	cs->products = insertHashT(cs->products, product, sale);
-	
+
 	return cs;
 }
 
@@ -366,7 +365,7 @@ static void freeClientSale(CLIENTSALE cs) {
 		freeMonthList(cs->months);
 		freeHashT(cs->products);
 		free(cs);
-	}	
+	}
 }
 
 
@@ -408,4 +407,9 @@ static PRODUCTSALE addToProductSale(PRODUCTSALE ps, SALE sale) {
 
 static void freeProductSale(PRODUCTSALE ps) {
 	free(ps);
+}
+
+void freeBranchSales (BRANCHSALES bs) {
+	freeCatalog(bs->clients);
+	free(bs);
 }
