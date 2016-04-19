@@ -22,7 +22,9 @@ PRODUCTDATA* getAllContent(BRANCHSALES bs, int*cenas);
  * Inicia uma filial com os clientes dados. Esta esturutra relaciona os clientes de
  * uma filial com as compras efetuadas na mesma.
  */
-BRANCHSALES initBranchSales (CLIENTCAT client);
+BRANCHSALES initBranchSales ();
+
+BRANCHSALES fillBranchSales (BRANCHSALES bs, CLIENTCAT client);
 
 /**
  * Adiciona os dados da compra ao registo do cliente.

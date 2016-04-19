@@ -6,10 +6,16 @@
 #include "products.h"
 #include "clients.h"
 
+#define KILL 0
+#define CONT 1
+#define LOAD 2
+
 typedef struct printset *PRINTSET;
 
+void loader (BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat);
+
 /* void present(PRODUCTSET ps); */
-int interpreter(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat); 
+int interpreter(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat);
 
 /** 
  * Inicializa um novo PrintSet de tamanho n

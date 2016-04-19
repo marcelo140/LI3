@@ -68,10 +68,17 @@ static void        freeProductSale  (PRODUCTSALE ps);
 
 PRODUCTDATA newProductData(char *productName, int quantity, int clients);
 
-BRANCHSALES initBranchSales (CLIENTCAT clientCat) {
-	BRANCHSALES bs = malloc(sizeof(*bs));
+BRANCHSALES initBranchSales () {
+	BRANCHSALES new = malloc(sizeof(*new));
 
-	bs->clients = getClientCat(clientCat);
+	new->clients = NULL;
+
+	return new;
+}
+
+BRANCHSALES fillBranchSales (BRANCHSALES bs, CLIENTCAT client){
+
+	bs->clients = getClientCat(client);
 	bs->clients = changeCatalogOps(bs->clients, (init_t) initClientSale,  NULL,
                                                 (free_t) freeClientSale);
 

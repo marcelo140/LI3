@@ -41,13 +41,20 @@ struct product_group {
 	CATSET products;
 };
 
-FATGLOBAL initFat(PRODUCTCAT p) {
-	FATGLOBAL new = malloc(sizeof (*new));
-	new->cat = getProductCat(p);
-	new->cat = changeCatalogOps(new->cat, (init_t) initRevenue, NULL, 
-                                          (free_t) freeRevenue);
+FATGLOBAL initFat(){
+	FATGLOBAL new = malloc(sizeof(*new));
+
+	new->cat = NULL;
 
 	return new;
+}
+
+FATGLOBAL fillFat (FATGLOBAL fat, PRODUCTCAT p) {
+	fat->cat = getProductCat(p);
+	fat->cat = changeCatalogOps(fat->cat, (init_t) initRevenue, NULL, 
+                                          (free_t) freeRevenue);
+
+	return fat;
 }
 
 FATGLOBAL addFat(FATGLOBAL fat, SALE s) {
