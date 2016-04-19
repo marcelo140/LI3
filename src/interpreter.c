@@ -13,7 +13,7 @@
 #define STR_SIZE 128
 #define BUFF_SIZE 255
 
-#define SALES_PATH "Vendas_1M.txt"
+#define SALES_PATH "Vendas_5M.txt"
 #define CLIENTS_PATH "Clientes.txt"
 #define PRODUCTS_PATH "Produtos.txt"
 
@@ -167,10 +167,13 @@ void freePrintSet(PRINTSET ps) {
 	free(ps);
 }
 
+#include <time.h>
 void loader(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat ) {
 	int i, success, failed;
 	char clientsPath[BUFF_SIZE], productsPath[BUFF_SIZE], salesPath[BUFF_SIZE];
 	FILE *clients, *products, *sales;
+
+	time_t inicio, fim;
 
 	putchar('\n');
 
@@ -205,11 +208,12 @@ void loader(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat ) {
 	}
 
 	putchar('\n');
-
+	
+	inicio = time(NULL);	
 	printf("A carregar clientes de %s... ", clientsPath);
 	fflush(stdout);
 	success = loadClients(clients, ccat);
-	printf("\nClientes carregados: %d\n", success);
+	printf("\nClientes carregados: %d\n", success); 
 
 	putchar('\n');
 
@@ -229,7 +233,9 @@ void loader(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat ) {
 	printf("\nVendas analisadas: %d\n", success+failed);
 	printf("Vendas corretas: %d\n", success);
 	printf("Vendas incorretas: %d\n", failed);
-
+	fim = time(NULL); 
+	
+	printf("Tudo carregado em %f segundos.\n", difftime(fim, inicio));
 	printf("Pressione qualquer tecla para continuar. ");
 	getchar();
 

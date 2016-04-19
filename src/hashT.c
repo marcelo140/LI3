@@ -5,7 +5,7 @@
 #include "set.h"
 
 #define KEY_SIZE 10
-#define BASE_CAPACITY 64
+#define BASE_CAPACITY 512
 #define EMPTY   0
 #define BUSY    1
 #define REMOVED 2
