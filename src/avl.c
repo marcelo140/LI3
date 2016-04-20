@@ -25,12 +25,6 @@ struct avl {
 	free_t free;
 };
 
-struct data_set {
-	int size;
-	int pos;
-	NODE* set;
-};
-
 static NODE newNode      (char* hash, void* content, NODE left, NODE right);
 static NODE insertNode   (NODE node, char* hash, void* content, int* update, NODE* last);
 static NODE insertRight  (NODE node, char* hash, void* content, int* update, NODE* last);
