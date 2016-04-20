@@ -67,9 +67,9 @@ FATGLOBAL fillFat (FATGLOBAL fat, PRODUCTCAT p) {
 
 FATGLOBAL addFat(FATGLOBAL fat, SALE s) {
 	REVENUE r;
-	char prod[PRODUCT_LENGTH];
+	char *prod;
 
-	fromProduct(getProduct(s), prod);
+	prod = fromProduct(getProduct(s));
 
 	r = getCatContent(fat->cat, INDEX(prod), prod);
 	addSaleToRev(r, s);
@@ -80,10 +80,10 @@ FATGLOBAL addFat(FATGLOBAL fat, SALE s) {
 FATGLOBAL addSaleToFat(FATGLOBAL fat, SALE s) {
 	REVENUE rev;
 	PRODUCT product;
-	char prod[PRODUCT_LENGTH];
+	char *prod;
 
 	product = getProduct(s);
-	fromProduct(product, prod);
+	prod = fromProduct(product);
 	rev = getCatContent(fat->cat, INDEX(prod), prod);
 	addSaleToRev(rev, s);
 
@@ -95,11 +95,11 @@ FATGLOBAL addSaleToFat(FATGLOBAL fat, SALE s) {
 PRODUCTFAT getProductDataByMonth(FATGLOBAL fat, PRODUCT p, int month) {
 	REVENUE rev;
 	PRODUCTFAT pf = newProductFat();
-	char product[PRODUCT_LENGTH];
+	char *product;
 	double billedN = 0, billedP = 0;
 	int branch, quantN = 0, quantP = 0;
 
-	fromProduct(p, product);
+	product = fromProduct(p);
 	rev = getCatContent(fat->cat, INDEX(product), product);
 
 	for(branch = 0; branch < BRANCHES; branch++) {
