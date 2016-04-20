@@ -17,7 +17,7 @@ int getClientsFromProductData(PRODUCTDATA pd);
 PRODUCTDATA* getAllContent(BRANCHSALES bs, int*cenas);
 
 /**
- * Inicia uma filial com os clientes dados. Esta esturutra relaciona os clientes de
+ * Inicia uma filial. Esta esturutra relaciona os clientes de
  * uma filial com as compras efetuadas na mesma.
  */
 BRANCHSALES initBranchSales ();
