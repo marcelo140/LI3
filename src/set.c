@@ -104,6 +104,12 @@ void sortSet(SET list, compare_t comparator) {
 	quicksort(list, 0, list->size-1, comparator);
 }
 
+LIST intersectLists(LIST l1, LIST l2){
+	SET new = intersectSet(l1->list, l2->list);
+
+	return toList(new);
+}
+
 SET unionSets(SET s1, SET s2) {
 	SET new = initSet(100);
 	int res, sizeS2 = 0, sizeS1 = 0, maxSizeS2 = s2->size, maxSizeS1 = s1->size;
@@ -169,7 +175,7 @@ SET diffDataSets(SET s1, SET s2) {
 	return new;
 }
 
-SET intersectDataSet(SET s1, SET s2) {
+SET intersectSet(SET s1, SET s2) {
 	SET new;
 	int i, j, size;
 
