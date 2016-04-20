@@ -8,7 +8,7 @@
 #include "queries.h"
 
 #define UPPER(a) (('a' <= a && a <= 'z') ? (a - 'a' + 'A') : a)
-#define PRODUCT_SIZE 6
+#define PRODUCT_SIZE s
 #define LINES_NUM 20
 #define STR_SIZE 128
 #define BUFF_SIZE 255
@@ -86,7 +86,7 @@ int interpreter(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat) {
 				 ps = query6(fat, x, y);
 				 if (ps) presentList(ps);
 		  		 break;
-		case 7 : 
+		case 7 :
 				 break;
 		case 8 : x = askBranch();
 				 printf("Produto: ");
@@ -116,137 +116,6 @@ int interpreter(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat) {
 	return CONT;
 }
 
-PRINTSET initPrintSet(int n) {
-	PRINTSET new = malloc(sizeof(*new));
-
-	new->capacity = n;
-	new->size = 0;
-	new->list = calloc(n, sizeof(char*));
-	new->header[0] = '\0';
-
-	return new;
-}
-
-PRINTSET setPrintHeader(PRINTSET ps, char *header) {
-	strncpy(ps->header, header, STR_SIZE);
-
-	return ps;
-}
-
-PRINTSET addToPrintSet(PRINTSET ps, char* str) {
-
-	if (ps->size >= ps->capacity -1) {
-		ps->capacity *= 2;
-		ps->list = realloc(ps->list, ps->capacity * sizeof(char*));
-		memset(ps->list + ps->size , 0, (ps->capacity - ps->size) * sizeof(char*));
-	}
-
-	ps->list[ps->size] = calloc(STR_SIZE+1, sizeof(char));
-	strncpy(ps->list[ps->size], str, STR_SIZE);
-	ps->size++;
-
-	return ps;
-}
-
-char** getPage(PRINTSET ps, int page) {
-	int p;
-
-	p = (page-1) * LINES_NUM;
-
-	if (p >= ps->size) return NULL;
-
-	return ps->list + p;
-}
-
-void freePrintSet(PRINTSET ps) {
-	int i;
-
-	for(i=0; ps->list[i] && i < ps->capacity; i++)
-		free(ps->list[i]);
-	free(ps->list);
-	free(ps);
-}
-
-#include <time.h>
-void loader(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat ) {
-	int i, success, failed;
-	char clientsPath[BUFF_SIZE], productsPath[BUFF_SIZE], salesPath[BUFF_SIZE];
-	FILE *clients, *products, *sales;
-
-	time_t inicio, fim;
-
-	putchar('\n');
-
-	while(1) {
-		printf("Ficheiro de clientes: ");
-		clientsPath[0] = getchar();
-		if (clientsPath[0] == '\n') strcpy(clientsPath, CLIENTS_PATH);
-		else fgets(clientsPath+1, BUFF_SIZE-1, stdin);
-		strtok(clientsPath, "\n\r");
-		clients = fopen(clientsPath, "r");
-		if (clients) break;
-		printf("Ficheiro %s inválido ou inexistente!\n", clientsPath);
-	}
-
-	while(1) {
-		printf("Ficheiro de produtos: ");
-		productsPath[0] = getchar();
-		if (productsPath[0] == '\n') strcpy(productsPath, PRODUCTS_PATH);
-		else fgets(productsPath+1, BUFF_SIZE-1, stdin);
-		strtok(productsPath, "\n\r");
-		products = fopen(productsPath, "r");
-		if (products) break;
-		printf("Ficheiro %s inválido ou inexistente!\n", productsPath);
-	}
-
-	while(1) {
-		printf("Ficheiro de vendas: ");
-		salesPath[0] = getchar();
-		if (salesPath[0] == '\n') strcpy(salesPath, SALES_PATH);
-		else fgets(salesPath+1, BUFF_SIZE-1, stdin);
-		strtok(salesPath, "\n\r");
-		sales = fopen(salesPath, "r");
-		if (sales) break;
-		printf("Ficheiro %s inválido ou inexistente!\n", salesPath);
-	}
-
-	putchar('\n');
-	
-	inicio = time(NULL);	
-	printf("A carregar clientes de %s... ", clientsPath);
-	fflush(stdout);
-	success = loadClients(clients, ccat);
-	printf("\nClientes carregados: %d\n", success); 
-
-	putchar('\n');
-
-	printf("A carregar produtos de %s... ", productsPath);
-	fflush(stdout);
-	success = loadProducts(products, pcat);
-	printf("\nProdutos carregados: %d\n", success);
-
-	putchar('\n');
-
-	printf("A carregar vendas de %s... ", salesPath);
-	fflush(stdout);
-	for(i=0; i < 3; i++)
-		bs[i] = fillBranchSales(bs[i], ccat);
-	fat = fillFat(fat, pcat);
-	success = loadSales(sales, fat, bs, pcat, ccat, &failed);
-	printf("\nVendas analisadas: %d\n", success+failed);
-	printf("Vendas corretas: %d\n", success);
-	printf("Vendas incorretas: %d\n", failed);
-	fim = time(NULL); 
-	
-	printf("Tudo carregado em %f segundos.\n", difftime(fim, inicio));
-	printf("Pressione qualquer tecla para continuar. ");
-	getchar();
-
-	fclose(products);
-	fclose(clients);
-	fclose(sales);
-}
-
 static void presentList(PRINTSET ps) {
 	char nav, onav, option[BUFF_SIZE], **print;
 	int i, cpage = 1, totalPages, o, total = ps->size;
@@ -258,7 +127,7 @@ static void presentList(PRINTSET ps) {
 
 	while (cpage <= totalPages) {
 
-		/* system("clear"); */
+		system("clear");
 		putchar('\n');
 
 		printf("::::::::::::::::::::: PÁGINA %d de %d :::::::::::::::::::::\n\n", cpage, totalPages);
@@ -305,6 +174,230 @@ static void presentList(PRINTSET ps) {
 	}
 }
 
+void loader(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat ) {
+	int i, success, failed;
+	char clientsPath[BUFF_SIZE], productsPath[BUFF_SIZE], salesPath[BUFF_SIZE];
+	FILE *clients, *products, *sales;
+
+	time_t inicio, fim;
+
+	putchar('\n');
+
+	while(1) {
+		printf("Ficheiro de clientes: ");
+		clientsPath[0] = getchar();
+		if (clientsPath[0] == '\n') strcpy(clientsPath, CLIENTS_PATH);
+		else fgets(clientsPath+1, BUFF_SIZE-1, stdin);
+		strtok(clientsPath, "\n\r");
+		clients = fopen(clientsPath, "r");
+		if (clients) break;
+		printf("Ficheiro %s inválido ou inexistente!\n", clientsPath);
+	}
+
+	while(1) {
+		printf("Ficheiro de produtos: ");
+		productsPath[0] = getchar();
+		if (productsPath[0] == '\n') strcpy(productsPath, PRODUCTS_PATH);
+		else fgets(productsPath+1, BUFF_SIZE-1, stdin);
+		strtok(productsPath, "\n\r");
+		products = fopen(productsPath, "r");
+		if (products) break;
+		printf("Ficheiro %s inválido ou inexistente!\n", productsPath);
+	}
+
+	while(1) {
+		printf("Ficheiro de vendas: ");
+		salesPath[0] = getchar();
+		if (salesPath[0] == '\n') strcpy(salesPath, SALES_PATH);
+		else fgets(salesPath+1, BUFF_SIZE-1, stdin);
+		strtok(salesPath, "\n\r");
+		sales = fopen(salesPath, "r");
+		if (sales) break;
+		printf("Ficheiro %s inválido ou inexistente!\n", salesPath);
+	}
+
+	putchar('\n');
+
+	inicio = time(NULL);
+	printf("A carregar clientes de %s... ", clientsPath);
+	fflush(stdout);
+	success = loadClients(clients, ccat);
+	printf("\nClientes carregados: %d\n", success);
+
+	putchar('\n');
+
+	printf("A carregar produtos de %s... ", productsPath);
+	fflush(stdout);
+	success = loadProducts(products, pcat);
+	printf("\nProdutos carregados: %d\n", success);
+
+	putchar('\n');
+
+	printf("A carregar vendas de %s... ", salesPath);
+	fflush(stdout);
+	for(i=0; i < 3; i++)
+		bs[i] = fillBranchSales(bs[i], ccat);
+	fat = fillFat(fat, pcat);
+	success = loadSales(sales, fat, bs, pcat, ccat, &failed);
+	printf("\nVendas analisadas: %d\n", success+failed);
+	printf("Vendas corretas: %d\n", success);
+	printf("Vendas incorretas: %d\n", failed);
+	fim = time(NULL);
+
+	printf("Tudo carregado em %f segundos.\n", difftime(fim, inicio));
+	printf("Pressione qualquer tecla para continuar. ");
+	getchar();
+
+	fclose(products);
+	fclose(clients);
+	fclose(sales);
+}
+
+/* ============= FUNÇÕES DO PRINTSET ============*/
+
+PRINTSET initPrintSet(int n) {
+	PRINTSET new = malloc(sizeof(*new));
+
+	new->capacity = n;
+	new->size = 0;
+	new->list = calloc(n, sizeof(char*));
+	new->header[0] = '\0';
+
+	return new;
+}
+
+char** getPage(PRINTSET ps, int page) {
+	int p;
+
+	p = (page-1) * LINES_NUM;
+
+	if (p >= ps->size) return NULL;
+
+	return ps->list + p;
+}
+
+void freePrintSet(PRINTSET ps) {
+	int i;
+
+	if (ps) {
+		for(i=0; ps->list[i] && i < ps->capacity; i++)
+			free(ps->list[i]);
+		free(ps->list);
+		free(ps);
+	}
+}
+
+PRINTSET setPrintHeader(PRINTSET ps, char *header) {
+	strncpy(ps->header, header, STR_SIZE);
+
+	return ps;
+}
+
+PRINTSET addToPrintSet(PRINTSET ps, char* str) {
+
+	if (ps->size >= ps->capacity -1) {
+		ps->capacity *= 2;
+		ps->list = realloc(ps->list, ps->capacity * sizeof(char*));
+		memset(ps->list + ps->size , 0, (ps->capacity - ps->size) * sizeof(char*));
+	}
+
+	ps->list[ps->size] = calloc(STR_SIZE+1, sizeof(char));
+	strncpy(ps->list[ps->size], str, STR_SIZE);
+	ps->size++;
+
+	return ps;
+}
+
+
+/* ================ ASKS ===================== */
+
+/* devolve -1 se o utilizador sair */
+static int askBranch() {
+	char buff[BUFF_SIZE];
+	int r=0;
+
+	printf("\n  ::::::::::::::::::::::::::::::\n");
+	printf("\t   1• Filial 1\n");
+	printf("\t   2• Filial 2\n");
+	printf("\t   3• Filial 3\n");
+	printf("  ::::::::::::::::::::::::::::::\n");
+
+	do {
+		printf("  Escolha uma filial: ");
+		fgets(buff, BUFF_SIZE, stdin);
+		r = atoi(buff);
+	} while(buff[0] != 'q' && (r < 1 || r > 3));
+
+	return r-1;
+}
+
+/* devovle NULL se o utilizador sair */
+static PRODUCT askProduct(PRODUCTCAT pcat) {
+	PRODUCT product;
+	char buff[BUFF_SIZE];
+	int stop=0;
+
+	while(!stop) {
+		printf("  Produto: ");
+		fgets(buff, BUFF_SIZE, stdin);
+		product = toProduct(product);
+
+		if (lookUpProduct(pcat, product)) stop=1;
+		else if (buff[0] == 'q') {
+			stop=-1;
+			freeProduct(product);
+		} else if (buff[0] != '\n') printf("Produto Inválido!\n");
+	}
+
+	return product;
+}
+
+/* devolve -1 se o utilizador sair*/
+static int askMonth() {
+	char buff[BUFF_SIZE];
+	int mes;
+
+	while(1) {
+		printf("  Mês (1-12): ");
+		fgets(buff, BUFF_SIZE, stdin);
+		mes = atoi(buff);
+		if (mes > 0 && mes < 13) break;
+		if (buff[0] == 'q') return -1;
+		printf("Um mês deve estar entre 1 e 12.");
+	}
+
+	return mes;
+}
+
+/* devolve -1 caso o utilizador sair */
+static int askMonthRange(int* begin, int* end) {
+	char buff[BUFF_SIZE];
+	int b,e, r = 0;
+
+	while(1) {
+		printf("  Mês incial (1-12): ");
+		fgets(buff, BUFF_SIZE, stdin);
+		if (buff[0] == 'q') return -1;
+		b = atoi(buff);
+		if (b >= 1 && b <= 12) break;
+		printf("Mês deve estar entre 1 e 12.\n");
+	}
+
+	while(1) {
+		printf("  Mês incial (%d-12): ", b);
+		fgets(buff, BUFF_SIZE, stdin);
+		if (buff[0] == 'q') return -1;
+		e = atoi(buff);
+		if (e >= b && e <= 12) break;
+		printf("Mês deve estar entre %d e 12.\n", b);
+	}
+
+	*begin = b;
+	*end   = e;
+
+	return r;
+}
+
 static void printMainMenu() {
 
 	printLogo();
@@ -329,7 +422,7 @@ static void printMainMenu() {
 
 static void printLogo() {
 
-	/* system("clear"); */
+	system("clear");
 	putchar('\n');
 	printf("           _____            __      __            _               \n");
 	printf("          / ____|           \\ \\    / /           | |              \n");
@@ -339,53 +432,4 @@ static void printLogo() {
 	printf("          \\_____|\\___|_|  \\___| \\/ \\___|_| |_|\\__,_|\\__,_|___/  \n\n");
 	printf("  :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\n");
 
-}
-
-static int askBranch() {
-	char buff[BUFF_SIZE];
-	int r=0;
-
-	printf("\n  ::::::::::::::::::::::::::::::\n");
-	printf("\t   1• Filial 1\n");
-	printf("\t   2• Filial 2\n");
-	printf("\t   3• Filial 3\n");
-	printf("  ::::::::::::::::::::::::::::::\n");
-
-	do {
-		printf("  Escolha uma filial: ");
-		fgets(buff, BUFF_SIZE, stdin);
-		r = atoi(buff);
-	} while(buff[0] != 'q' && (r < 1 || r > 3));
-
-	return r-1;
-}
-
-static PRODUCT askProduct() {
-	char buff[BUFF_SIZE];
-
-	while(1) {
-		printf("  Produto: ");
-		fgets(buff, BUFF_SIZE, stdin);
-		if (isProduct(buff)) break;
-		if (UPPER(buff[0]) == 'Q') return NULL;
-		if (buff[0] != '\n') printf("Produto Inválido!\n");
-	}
-
-	return toProduct(buff);
-}
-
-static int askMonth() {
-	char buff[BUFF_SIZE];
-	int mes;
-
-	while(1) {
-		printf("  Mês (1-12): ");
-		fgets(buff, BUFF_SIZE, stdin);
-		mes = atoi(buff);
-		if (mes > 0 && mes < 13) break;
-		if (UPPER(buff[0]) == 'Q') return -1;
-		printf("Um mês deve estar entre 1 e 12.");
-	}
-
-	return mes;
 }

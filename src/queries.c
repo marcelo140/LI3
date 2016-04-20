@@ -184,7 +184,7 @@ PRINTSET query6(FATGLOBAL fat, int initialMonth, int finalMonth) {
 }
 
 PRINTSET query8(BRANCHSALES bs, PRODUCT product){
-	PRINTSET print = initPrintSet(MAX_SIZE);
+	PRINTSET print = NULL;
 	SET n = initSet(1024), p = initSet(1024), toPrint;
 	char answ[MAX_SIZE], *buff;
 	int mode = 0, i;
@@ -196,26 +196,33 @@ PRINTSET query8(BRANCHSALES bs, PRODUCT product){
 	printf(" 2• Clientes em modo P (%d)\n", getSetSize(p));
 	printf("\n::::::::::::::::::::::::::::::\n");
 
-	while ((mode <= 0 || mode >= 3) && UPPER(answ[0]) != 'Q') {
+	while (mode <= 0 || mode >= 3) { 
 		printf("Escolha um modo: ");
 		fgets(answ, MAX_SIZE, stdin);
 		mode = atoi(answ);
+		
+		if (answ[0] == 'q') break; 
 		
 		if (UPPER(answ[0]) == 'N')
 			mode = 1;
 		else if (UPPER(answ[0]) == 'P')
 			mode = 2;
 	}
-	if (UPPER(answ[0]) == 'Q') return NULL;
 	
-	toPrint = (mode == 1) ? n : p;
-
-	for(i=0; (buff = getSetHash(toPrint, i)) ; i++) {
-		sprintf(answ, "\t\t%s",buff);
-		print = addToPrintSet(print, answ);
-		free(buff);
+	if (mode == 1 || mode == 2) {
+		toPrint = (mode == 1) ? n : p;
+		print = initPrintSet(MAX_SIZE);
+		
+		for(i=0; (buff = getSetHash(toPrint, i)) ; i++) {
+			sprintf(answ, "\t\t%s",buff);
+			print = addToPrintSet(print, answ);
+			free(buff);
+		}
 	}
-	
+
+	freeSet(n);
+	freeSet(p);
+
 	return print;
 }
 
