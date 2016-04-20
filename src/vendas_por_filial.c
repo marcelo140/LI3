@@ -47,11 +47,21 @@ typedef struct client_sale {
 	HASHT products;
 } *CLIENTSALE;
 
-PRODUCTSALE cloneProductSale(PRODUCTSALE ps);
+static PRODUCTDATA newProductData(char *productName, int quantity, int clients);
+static int toProductData(SET set, PRODUCTDATA* pd);
+static PRODUCTSALE cloneProductSale(PRODUCTSALE ps);
 static CLIENTSALE initClientSale  ();
 static CLIENTSALE addToClientSale (CLIENTSALE cs, SALE sale);
 static void       freeClientSale  (CLIENTSALE cs);
+static int clientIsShopAholic(CLIENTSALE cs, char* product);
+static bool existInProductList(CLIENTSALE cs, char* product);
 
+static bool isEmptyClientSale(CLIENTSALE cs);
+static bool isNotEmptyClientSale(CLIENTSALE cs);
+static int partitionPData(PRODUCTDATA *pd, int begin, int end);
+static void sortProductData(PRODUCTDATA* pd, int begin, int end);
+void swapPData(PRODUCTDATA* pd, int i, int j);
+static void* dumpContent(SET hs, CLIENTSALE cs);
 static MONTHLIST initMonthList  ();
 static MONTHLIST addToMonthList (MONTHLIST ml, SALE s);
 static void      freeMonthList  (MONTHLIST m);
@@ -60,7 +70,6 @@ static PRODUCTSALE initProductSale  ();
 static PRODUCTSALE addToProductSale (PRODUCTSALE ps, SALE sale);
 static void        freeProductSale  (PRODUCTSALE ps);
 
-PRODUCTDATA newProductData(char *productName, int quantity, int clients);
 
 BRANCHSALES initBranchSales () {
 	BRANCHSALES new = malloc(sizeof(*new));
@@ -70,35 +79,16 @@ BRANCHSALES initBranchSales () {
 	return new;
 }
 
+
 BRANCHSALES fillBranchSales (BRANCHSALES bs, CLIENTCAT client){
 
 	bs->clients = getClientCat(client);
 	bs->clients = changeCatalogOps(bs->clients, (init_t) initClientSale,  NULL,
-	                                                (free_t) freeClientSale);
+	                                            (free_t) freeClientSale);
 
 	return bs;
 }
 
-char* getNameFromProductData(PRODUCTDATA pd) {
-	if(pd)
-		return pd->productCode;
-
-	return NULL;
-}
-
-int getQuantFromProductData(PRODUCTDATA pd) {
-	if (pd)
-		return pd->quantity;
-
-	return 0;
-}
-
-int getClientsFromProductData(PRODUCTDATA pd) {
-	if (pd)
-		return pd->clients;
-
-	return 0;
-}
 
 BRANCHSALES addSaleToBranch (BRANCHSALES bs, SALE s) {
 	CLIENTSALE cs;
@@ -118,103 +108,24 @@ BRANCHSALES addSaleToBranch (BRANCHSALES bs, SALE s) {
 	return bs;
 }
 
-void* dumpContent(SET hs, CLIENTSALE cs) {
-	return dumpHashT(cs->products, hs);
-}
 
-int toProductData(SET set, PRODUCTDATA* pd) {
-	PRODUCTSALE ps;
-	int size = getSetSize(set);
-	int i, j, clients, quant, month;
-	char* productName;
-
-	for (i = 0, j = 0; i < size; j++) {
-		productName = getSetHash(set, i);
-		quant = 0;
-
-		for(clients = 0; i < size && !strcmp(productName, getSetHash(set, i)); clients++, i++){
-			ps = getSetData(set, i);
-
-			for(month = 0; month < MONTHS; month++)
-				quant += ps->quantity[month];
-		}
-		pd[j] = newProductData(productName, quant, clients);
-	}
-
-	return j;
-}
-
-void swapPData(PRODUCTDATA* pd, int i, int j) {
-	PRODUCTDATA tmp = pd[i];
-	pd[i] = pd[j];
-	pd[j] = tmp;
-}
-
-int partitionPData(PRODUCTDATA *pd, int begin, int end) {
-	PRODUCTDATA pivot = pd[end];
-	int i = begin-1, j;
-
-	for(j = begin; j < end; j++) {
-		if (pd[j]->quantity >= pivot->quantity) {
-			i++;
-			swapPData(pd, i, j);
-		}
-	}
-
-	swapPData(pd, i+1, end);
-	return i+1;
-}
-
-void sortProductData(PRODUCTDATA* pd, int begin, int end) {
-	if (begin < end) {
-		int q = partitionPData(pd,begin, end);
-
-		sortProductData(pd, begin, q-1);
-		sortProductData(pd, q+1, end);
-	}
-}
-
-#include <time.h>
-#include <stdio.h>
 PRODUCTDATA* getAllContent(BRANCHSALES bs, int *cenas) {
 	SET hashSet;
 	PRODUCTDATA* pd;
 	int size;
-	clock_t inicio, fim;
 
 	hashSet = initSet(50000);
 	pd = malloc(sizeof(PRODUCTDATA) * 200000);
 
-	inicio = clock();
 	hashSet = dumpDataCat(bs->clients, hashSet, (void* (*) (void*, void*)) dumpContent);
-	fim = clock();
-
-	printf("%f\n", (double)(fim-inicio)/CLOCKS_PER_SEC);
-	inicio = clock();
 	sortSetByName(hashSet);
-	fim = clock();
-	printf("%f\n", (double)(fim-inicio)/CLOCKS_PER_SEC);
-	inicio = clock();
 	size = toProductData(hashSet, pd);
-	fim = clock();
-	printf("%f\n", (double)(fim-inicio)/CLOCKS_PER_SEC);
-	inicio = clock();
 	sortProductData(pd, 0, size-1);
-	fim = clock();
-	printf("%f\n", (double)(fim-inicio)/CLOCKS_PER_SEC);
 
 	*cenas = size;
 	return pd;
 }
 
-
-bool isEmptyClientSale(CLIENTSALE cs) {
-	return (cs == NULL);
-}
-
-bool isNotEmptyClientSale(CLIENTSALE cs) {
-	return (cs != NULL);
-}
 
 SET getClientsWhoBought (BRANCHSALES bs) {
 	SET set;
@@ -224,6 +135,7 @@ SET getClientsWhoBought (BRANCHSALES bs) {
 	return set;
 }
 
+
 SET getClientsWhoHaveNotBought(BRANCHSALES bs) {
 	SET cl;
 
@@ -231,6 +143,7 @@ SET getClientsWhoHaveNotBought(BRANCHSALES bs) {
 
 	return cl;
 }
+
 
 int* getClientQuant(BRANCHSALES bs, CLIENT c) {
 	CLIENTSALE content;
@@ -247,6 +160,7 @@ int* getClientQuant(BRANCHSALES bs, CLIENT c) {
 
 	return quant;
 }
+
 
 double *getClientExpenses(BRANCHSALES bs, CLIENT c) {
 	CLIENTSALE content;
@@ -265,26 +179,19 @@ double *getClientExpenses(BRANCHSALES bs, CLIENT c) {
 	return expenses;
 }
 
-bool existInProductList(CLIENTSALE cs, char* product) {
-	return (cs && cs->products && getHashTcontent(cs->products, product) != NULL);
-}
-
-int clientIsShopAholic(CLIENTSALE cs, char* product) {
-	PRODUCTSALE ps = getHashTcontent(cs->products, product);
-
-	return (NP - ps->saleType);
-}
 
 void filterClientsByProduct(BRANCHSALES bs, PRODUCT prod, SET n, SET p){
 	char product[PRODUCT_LENGTH];
 
 	fromProduct(prod, product);
 
-	condSeparateCat(bs->clients, p, n,(condition_t) existInProductList, product,
-                                                (compare_t) clientIsShopAholic, product);
+	condSeparateCat(bs->clients, p, n, (condition_t) existInProductList, product,
+                                       (compare_t) clientIsShopAholic, product);
 }
 
-PRODUCTDATA newProductData(char *productName, int quantity, int clients) {
+
+
+static PRODUCTDATA newProductData(char *productName, int quantity, int clients) {
 	PRODUCTDATA new = malloc(sizeof(*new));
 
 	new->productCode = malloc(sizeof(char) * PRODUCT_LENGTH);
@@ -296,6 +203,9 @@ PRODUCTDATA newProductData(char *productName, int quantity, int clients) {
 	return new;
 }
 
+static void* dumpContent(SET hs, CLIENTSALE cs) {
+	return dumpHashT(cs->products, hs);
+}
 
 /*   =========  FUNÇÕES PARA MONTHLIST ========= */
 
@@ -351,7 +261,70 @@ static void freeClientSale(CLIENTSALE cs) {
 	}
 }
 
+char* getNameFromProductData(PRODUCTDATA pd) {
+	if(pd)
+		return pd->productCode;
 
+	return NULL;
+}
+
+static int toProductData(SET set, PRODUCTDATA* pd) {
+	PRODUCTSALE ps;
+	int size = getSetSize(set);
+	int i, j, clients, quant, month;
+	char* productName;
+
+	for (i = 0, j = 0; i < size; j++) {
+		productName = getSetHash(set, i);
+		quant = 0;
+
+		for(clients = 0; i < size && !strcmp(productName, getSetHash(set, i)); clients++, i++){
+			ps = getSetData(set, i);
+
+			for(month = 0; month < MONTHS; month++)
+				quant += ps->quantity[month];
+		}
+		pd[j] = newProductData(productName, quant, clients);
+	}
+
+	return j;
+}
+int getQuantFromProductData(PRODUCTDATA pd) {
+	if (pd)
+		return pd->quantity;
+
+	return 0;
+}
+
+int getClientsFromProductData(PRODUCTDATA pd) {
+	if (pd)
+		return pd->clients;
+
+	return 0;
+}
+
+void swapPData(PRODUCTDATA* pd, int i, int j) {
+	PRODUCTDATA tmp = pd[i];
+	pd[i] = pd[j];
+	pd[j] = tmp;
+}
+static bool isEmptyClientSale(CLIENTSALE cs) {
+	return (cs == NULL);
+}
+
+static bool isNotEmptyClientSale(CLIENTSALE cs) {
+	return (cs != NULL);
+}
+
+static bool existInProductList(CLIENTSALE cs, char* product) {
+	return (cs && cs->products && getHashTcontent(cs->products, product) != NULL);
+}
+
+static int clientIsShopAholic(CLIENTSALE cs, char* product) {
+	PRODUCTSALE ps = getHashTcontent(cs->products, product);
+
+	return (NP - ps->saleType);
+}
 /*  ==========  FUNÇÕES PARA PRODUCTSALE =========== */
 
 static PRODUCTSALE initProductSale() {
@@ -395,6 +368,30 @@ static void freeProductSale(PRODUCTSALE ps) {
 void freeBranchSales (BRANCHSALES bs) {
 	freeCatalog(bs->clients);
 	free(bs);
+}
+
+static int partitionPData(PRODUCTDATA *pd, int begin, int end) {
+	PRODUCTDATA pivot = pd[end];
+	int i = begin-1, j;
+
+	for(j = begin; j < end; j++) {
+		if (pd[j]->quantity >= pivot->quantity) {
+			i++;
+			swapPData(pd, i, j);
+		}
+	}
+
+	swapPData(pd, i+1, end);
+	return i+1;
+}
+
+static void sortProductData(PRODUCTDATA* pd, int begin, int end) {
+	if (begin < end) {
+		int q = partitionPData(pd,begin, end);
+
+		sortProductData(pd, begin, q-1);
+		sortProductData(pd, q+1, end);
+	}
 }
 
 PRODUCTSALE cloneProductSale(PRODUCTSALE ps) {
