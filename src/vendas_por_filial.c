@@ -94,15 +94,14 @@ BRANCHSALES fillBranchSales (BRANCHSALES bs, CLIENTCAT client){
 
 BRANCHSALES addSaleToBranch (BRANCHSALES bs, SALE s) {
 	CLIENTSALE cs;
-	CLIENT client;
 	char *c;
 
-	client  = getClient(s);
-	c = fromClient(client);
+	c = getClient(s);
 	
 	cs = getCatContent(bs->clients, INDEX(c), c);
 	cs = addToClientSale(cs, s);
 
+	free(c);
 	return bs;
 }
 
@@ -156,6 +155,7 @@ int* getClientQuant(BRANCHSALES bs, CLIENT c) {
 	for(i = 0; i < MONTHS; i++)
 		quant[i] = content->months->quant[i];
 
+	free(client);
 	return quant;
 }
 
@@ -174,6 +174,7 @@ double *getClientExpenses(BRANCHSALES bs, CLIENT c) {
 	for(i = 0; i < MONTHS; i++)
 		expenses[i] = content->months->billed[i];
 
+	free(client);
 	return expenses;
 }
 
@@ -190,6 +191,7 @@ LIST filterProductsByMonth(BRANCHSALES bs, CLIENT c, int month) {
 
 	sortSet(products,(compare_t) compareQuantByMonth, &month);
 
+	free(client);
 	return toList(products);
 }
 
@@ -206,6 +208,7 @@ LIST filterProductsByClient(BRANCHSALES bs, CLIENT c) {
 
 	sortSet(products, (compare_t) compareBilledByYear, NULL);
 
+	free(client);
 	return toList(products);
 }
 
@@ -216,6 +219,8 @@ void filterClientsByProduct(BRANCHSALES bs, PRODUCT prod, SET n, SET p){
 
 	condSeparateCat(bs->clients, p, n, (condition_t) existInProductList, product,
                                        (compare_t) clientIsShopAholic, product);
+
+	free(product);
 }
 
 /********* STATICS **********/
@@ -289,11 +294,12 @@ static CLIENTSALE initClientSale() {
 static CLIENTSALE addToClientSale(CLIENTSALE cs, SALE sale) {
 	char *product;
 
-	product = fromProduct(getProduct(sale));
+	product = getProduct(sale);
 
 	cs->months = addToMonthList(cs->months, sale);
 	cs->products = insertHashT(cs->products, product, sale);
 
+	free(product);
 	return cs;
 }
 

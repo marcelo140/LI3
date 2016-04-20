@@ -58,12 +58,12 @@ bool isSale(SALE sale, PRODUCTCAT prodCat, CLIENTCAT clientCat) {
 	  	 lookUpClient(clientCat, sale->client));
 }
 
-PRODUCT getProduct(SALE s) {
-	return s->prod;
+char* getProduct(SALE s) {
+	return fromProduct(s->prod);
 }
 
-CLIENT getClient(SALE s) {
-	return s->client;
+char* getClient(SALE s) {
+	return fromClient(s->client);
 }
 
 double getPrice(SALE s) {

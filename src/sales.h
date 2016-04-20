@@ -35,12 +35,12 @@ bool isSale (SALE sale, PRODUCTCAT prodCat, CLIENTCAT clientCat);
 /**
  * Devolve o produto vendido na transação dada.
  */
-PRODUCT getProduct (SALE s);
+char* getProduct (SALE s);
 
 /**
  * Devolve o cliente que participou na transação dada.
  */
-CLIENT getClient (SALE s);
+char* getClient (SALE s);
 
 /**
  * Devolve o preço unitário a que foi vendido o produto na transação dada.
