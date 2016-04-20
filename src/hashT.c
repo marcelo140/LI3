@@ -131,6 +131,7 @@ static HASHT resizeHashT(HASHT ht){
 	new->init     = ht->init;
 	new->free     = ht->free;
 	new->add 	  = ht->add;
+	new->clone    = ht->clone;
 	
 	new->table    = calloc(new->capacity, sizeof(HASHTCNTT));
 

@@ -18,7 +18,7 @@
 #define PRODUCTS_PATH "Produtos.txt"
 
 struct printset{
-	char* header;
+	char header[STR_SIZE];
 	char** list;
 	int size;
 	int capacity;
@@ -121,13 +121,12 @@ PRINTSET initPrintSet(int n) {
 	new->capacity = n;
 	new->size = 0;
 	new->list = calloc(n, sizeof(char*));
-	new->header = NULL;
+	new->header[0] = '\0';
 
 	return new;
 }
 
 PRINTSET setPrintHeader(PRINTSET ps, char *header) {
-	ps->header = malloc(STR_SIZE * sizeof(char));
 	strncpy(ps->header, header, STR_SIZE);
 
 	return ps;
@@ -135,12 +134,13 @@ PRINTSET setPrintHeader(PRINTSET ps, char *header) {
 
 PRINTSET addToPrintSet(PRINTSET ps, char* str) {
 
-	if (ps->size >= ps->capacity) {
+	if (ps->size >= ps->capacity -1) {
 		ps->capacity *= 2;
 		ps->list = realloc(ps->list, ps->capacity * sizeof(char*));
+		memset(ps->list + ps->size , 0, ps->capacity - ps->size);
 	}
 
-	ps->list[ps->size] = calloc(STR_SIZE, sizeof(char));
+	ps->list[ps->size] = calloc(STR_SIZE+1, sizeof(char));
 	strncpy(ps->list[ps->size], str, STR_SIZE);
 	ps->size++;
 
@@ -263,7 +263,7 @@ static void presentList(PRINTSET ps) {
 
 		printf("::::::::::::::::::::: PÁGINA %d de %d :::::::::::::::::::::\n\n", cpage, totalPages);
 
-		if (ps->header) printf("  %s\n", ps->header);
+		if (ps->header[0] != '\0') printf("  %s\n", ps->header);
 
 		print = getPage(ps, cpage);
 		for(i=0; print && print[i] && i < LINES_NUM; i++)

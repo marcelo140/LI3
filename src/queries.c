@@ -14,7 +14,7 @@ PRINTSET query2(PRODUCTCAT pcat, char index) {
 	LIST l;
 	char* product;
 	int i, size;
-	char buff[MAX_SIZE], aux[MAX_SIZE];
+	char aux[MAX_SIZE];
 
 	size  = countProducts(pcat, index);
 	print = initPrintSet(size);
@@ -23,7 +23,8 @@ PRINTSET query2(PRODUCTCAT pcat, char index) {
 
 	product = getListElement(l, 0);
 	for(i=0; product ; i++) {
-		sprintf(aux, "\t\t\t%s", buff);
+
+		sprintf(aux, "\t\t\t%s", product);
 		print = addToPrintSet(print, aux);
 		product = getListElement(l,i+1);
 	}
