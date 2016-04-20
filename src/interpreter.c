@@ -63,7 +63,6 @@ int interpreter(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat) {
 				 if (x == -1) break;
 				 ps = query3(fat, p, x);
 				 freeProduct(p);
-				 getchar();
 				 if (ps) presentList(ps);
 			 	 break;
 		case 4 : ps = query4(fat);

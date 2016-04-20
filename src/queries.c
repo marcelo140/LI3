@@ -64,7 +64,7 @@ PRINTSET query3(FATGLOBAL fat, PRODUCT product, int month) {
 		}	
 		sprintf(answ, "Quantidade Total: \t%d", quantT);
 		print = addToPrintSet(print, answ);	
-		sprintf(answ, "Faturação Total: \t%f", billedT);
+		sprintf(answ, "Faturação Total: \t%.2f", billedT);
 		print = addToPrintSet(print, answ);
 	} else {
 		print = setPrintHeader(print, "\t\tFilial 1\tFilial 2\tFilial 3");
@@ -75,16 +75,16 @@ PRINTSET query3(FATGLOBAL fat, PRODUCT product, int month) {
 			getProductFatBilled(pfat, i, &billed[i][0], &billed[i][1]);
 		}
 
-		sprintf(answ, "Quantidade N:\t%d\t\t%d\t\t%d", quantity[0][0], quantity[1][0], quantity[2][0]);
+		sprintf(answ, "Quantidade N\t %d\t\t %d\t\t %d", quantity[0][0], quantity[1][0], quantity[2][0]);
 		print = addToPrintSet(print, answ);
-		sprintf(answ, "Quantidade P:\t%d\t\t%d\t\t%d", quantity[0][1], quantity[1][1], quantity[2][1]);
+		sprintf(answ, "Quantidade P\t %d\t\t %d\t\t %d", quantity[0][1], quantity[1][1], quantity[2][1]);
 		print = addToPrintSet(print, answ);
 	
 		print = addToPrintSet(print, "");
 
-		sprintf(answ, "Faturado N:\t%f\t%f\t%f", billed[0][0], billed[1][0], billed[2][0]);
+		sprintf(answ, "Faturado N\t %.2f\t\t %.2f\t\t %.2f", billed[0][0], billed[1][0], billed[2][0]);
 		print = addToPrintSet(print, answ);
-		sprintf(answ, "Faturado P:\t%f\t%f\t%f", billed[0][1], billed[1][1], billed[2][1]);
+		sprintf(answ, "Faturado P\t %.2f\t\t %.2f\t\t %.2f", billed[0][1], billed[1][1], billed[2][1]);
 		print = addToPrintSet(print, answ);
 	}
 
@@ -154,8 +154,11 @@ PRINTSET query5(BRANCHSALES bs, CLIENT client) {
 
 	quantity = getClientQuant(bs, client);
 
+	sprintf(str, "\tMÊS\t    QUANTIDADE");
+	print = setPrintHeader(print, str);
+
 	for(i=0; i < 12; i++){
-		sprintf(str, "\tMês %d:\t\t%d", i+1, quantity[i]);
+		sprintf(str, "\t%2d\t\t%3d", i+1, quantity[i]);
 		print = addToPrintSet(print, str);
 	}
 
@@ -174,7 +177,7 @@ PRINTSET query6(FATGLOBAL fat, int initialMonth, int finalMonth) {
 	
 	sprintf(buff, "Quantidade:\t%d", quantity);
 	print = addToPrintSet(print, buff);
-	sprintf(buff, "Faturado:\t%f", billed);
+	sprintf(buff, "Faturado:\t%.2f", billed);
 	print = addToPrintSet(print, buff);
 
 	return print;
@@ -233,7 +236,7 @@ PRINTSET query10(BRANCHSALES bs, int n) {
 	if (max < n)
 		n = max;
 
-	sprintf(buff, "\tPRODUTO\tCLIENTES\tQUANTIDADE");
+	sprintf(buff, "\t\tPRODUTO\t C    Q");
 	print = setPrintHeader(print, buff);
 
 	for(i=0; i < n ; i++) {
@@ -241,7 +244,7 @@ PRINTSET query10(BRANCHSALES bs, int n) {
 		clients  = getClientsFromProductData(pdata[i]);
 		quantity = getQuantFromProductData(pdata[i]);
 		
-		sprintf(buff, "%dº\t%s\t%d\t%d", i, product, clients, quantity );
+		sprintf(buff, "%5dº \t%s\t%2d  %4d", i+1, product, clients, quantity );
 		print = addToPrintSet(print, buff);
 
 		free(product);
