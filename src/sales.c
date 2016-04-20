@@ -30,7 +30,7 @@ SALE readSale(SALE s, PRODUCT p, CLIENT c, char *line) {
 	int quant, month, branch, mode;
 
 	token = strtok(line, " ");
-	p = writeProduct(p, token);
+	p = changeProductCode(p, token);
 	
 	token = strtok(NULL, " ");
 	price = atof(token);
@@ -42,7 +42,7 @@ SALE readSale(SALE s, PRODUCT p, CLIENT c, char *line) {
 	mode = strcmp(token, "N") ? 1 : 0;
 
 	token = strtok(NULL, " ");
-	c = writeClient(c, token);
+	c = changeClientCode(c, token);
 
 	token = strtok(NULL, " ");
 	month = atoi(token);
