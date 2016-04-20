@@ -22,6 +22,7 @@
 
 struct branch {
 	CATALOG clients;
+	CATALOG products;
 };
 
 struct product_data {
@@ -67,15 +68,23 @@ BRANCHSALES initBranchSales () {
 	BRANCHSALES new = malloc(sizeof(*new));
 
 	new->clients = NULL;
+	new->products = NULL;
 
 	return new;
 }
 
-BRANCHSALES fillBranchSales (BRANCHSALES bs, CLIENTCAT client){
+HASHT initProdHashT(){
+	return initMyHashT(64,NULL, NULL, NULL, NULL);
+}
+
+BRANCHSALES fillBranchSales (BRANCHSALES bs, CLIENTCAT client, PRODUCTCAT product){
 
 	bs->clients = getClientCat(client);
 	bs->clients = changeCatalogOps(bs->clients, (init_t) initClientSale,  NULL,
 	                                            (free_t) freeClientSale);
+
+	bs->products = getProductCat(product);
+	bs->products = changeCatalogOps(bs->products,(init_t) initProdHashT, NULL, (free_t) freeHashT);
 
 	return bs;
 }
@@ -105,6 +114,7 @@ BRANCHSALES addSaleToBranch (BRANCHSALES bs, SALE s) {
 	CLIENTSALE cs;
 	CLIENT client;
 	PRODUCT product;
+	HASHT ht;
 	char c[CLIENT_LENGTH], p[PRODUCT_LENGTH];
 
 	client  = getClient(s);
@@ -115,6 +125,9 @@ BRANCHSALES addSaleToBranch (BRANCHSALES bs, SALE s) {
 
 	cs = getCatContent(bs->clients, INDEX(c), c);
 	cs = addToClientSale(cs, s);
+
+	ht = getCatContent(bs->products, INDEX(p), p);
+	ht = insertHashT(ht, c, NULL);
 
 	return bs;
 }
