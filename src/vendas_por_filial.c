@@ -127,12 +127,12 @@ PRODUCTDATA* getAllContent(BRANCHSALES bs, int *cenas) {
 }
 
 
-SET getClientsWhoBought (BRANCHSALES bs) {
+LIST getClientsWhoBought (BRANCHSALES bs) {
 	SET set;
 
 	set = filterCat(bs->clients, (condition_t) isNotEmptyClientSale, NULL);
 
-	return set;
+	return toList(set);
 }
 
 

@@ -37,7 +37,7 @@ BRANCHSALES addSaleToBranch (BRANCHSALES bs, SALE s);
  * @param bs Filial a ser analizada
  * @return Lista dos clientes que realizaram compras na filial
  */
-SET getClientsWhoBought (BRANCHSALES bs);
+LIST getClientsWhoBought (BRANCHSALES bs);
 
 /**
  * Determina os clientes que nunca compraram na filial dada.
