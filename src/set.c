@@ -192,6 +192,13 @@ SET intersectDataSet(SET s1, SET s2) {
 	return new;
 }
 
+void freeList(LIST l) {
+	if (l) {
+		freeSet(l->list);
+		free(l);
+	}
+}
+
 void freeSet(SET s) {
 	if (s) {
 		free(s->list);

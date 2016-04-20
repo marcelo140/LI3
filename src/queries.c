@@ -29,6 +29,8 @@ PRINTSET query2(PRODUCTCAT pcat, char index) {
 		product = getListElement(l,i+1);
 	}
 
+	freeList(l);
+
 	return print;
 }
 
@@ -85,6 +87,8 @@ PRINTSET query3(FATGLOBAL fat, PRODUCT product, int month) {
 		sprintf(answ, "Faturado P:\t%f\t%f\t%f", billed[0][1], billed[1][1], billed[2][1]);
 		print = addToPrintSet(print, answ);
 	}
+
+	freeProductFat(pfat);
 
 	return print;
 }

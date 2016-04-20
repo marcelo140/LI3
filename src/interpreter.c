@@ -62,6 +62,8 @@ int interpreter(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat) {
 				 x = askMonth();
 				 if (x == -1) break;
 				 ps = query3(fat, p, x);
+				 freeProduct(p);
+				 getchar();
 				 if (ps) presentList(ps);
 			 	 break;
 		case 4 : ps = query4(fat);
@@ -71,11 +73,9 @@ int interpreter(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat) {
 				 printf("  Cliente: ");
 				 fgets(answ, BUFF_SIZE, stdin);
 				 answ[CLIENT_LENGTH-1] = '\0';
-	getchar();
 				 client = toClient(answ);
 				 ps = query5(bs[x], client);
 				 freeClient(client);
-	getchar();
 				 presentList(ps);
 		 		 break;
 		case 6 : printf("Mês inicial: ");
@@ -259,7 +259,7 @@ static void presentList(PRINTSET ps) {
 
 	while (cpage <= totalPages) {
 
-		system("clear");
+		/* system("clear"); */
 		putchar('\n');
 
 		printf("::::::::::::::::::::: PÁGINA %d de %d :::::::::::::::::::::\n\n", cpage, totalPages);
@@ -330,7 +330,7 @@ static void printMainMenu() {
 
 static void printLogo() {
 
-	system("clear");
+	/* system("clear"); */
 	putchar('\n');
 	printf("           _____            __      __            _               \n");
 	printf("          / ____|           \\ \\    / /           | |              \n");

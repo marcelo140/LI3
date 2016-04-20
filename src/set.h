@@ -37,6 +37,8 @@ void* getSetData(SET s, int pos);
 
 int getSetSize(SET s);
 
+void freeList(LIST l);
+
 void freeSet(SET s);
 
 #endif

@@ -68,7 +68,7 @@ PRODUCT toProduct(char *str) {
 	PRODUCT new;
 
 	new = malloc (sizeof(*new));
-	strncpy(new->str, str, PRODUCT_LENGTH-1);
+	strncpy(new->str, str, PRODUCT_LENGTH);
 
 	return new;
 }
@@ -83,7 +83,7 @@ PRODUCT cloneProduct(PRODUCT product) {
 }
 
 char* fromProduct(PRODUCT product, char* dest) {
-	strcpy(dest, product->str);
+	strncpy(dest, product->str, PRODUCT_LENGTH);
 	return dest;
 }
 
