@@ -28,13 +28,13 @@ PRODUCTFAT getProductDataByMonth(FATGLOBAL fat, PRODUCT p, int month);
 
 double getBilledByMonthRange(FATGLOBAL fat, int initialMonth, int finalMonth);
 
-int getQuantByMonthRange(FATGLOBAL fat, int initialMonth, int finalMonth);
+int getSalesByMonthRange(FATGLOBAL fat, int initialMonth, int finalMonth);
 
 LIST getProductsNotSold(FATGLOBAL fat);
 
 LIST* getProductsNotSoldByBranch(FATGLOBAL);
 
-int getProductFatQuant(PRODUCTFAT, int branch, int* normal, int* promo);
+int getProductFatSales(PRODUCTFAT, int branch, int* normal, int* promo);
 
 double getProductFatBilled(PRODUCTFAT, int branch, double* normal, double* promo);
 

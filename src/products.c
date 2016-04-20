@@ -56,7 +56,8 @@ PRODUCT changeProductCode(PRODUCT product, char* str) {
 	if (product->str)
 		free(product->str);
 
-	product->str = str;
+	product->str = malloc(sizeof(char) * strlen(str) + 1);
+	strcpy(product->str, str);
 
 	return product;
 }

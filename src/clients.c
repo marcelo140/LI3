@@ -6,7 +6,7 @@
 
 #define CATALOG_SIZE 26
 
-#define INDEX(c)             (c->str[0] - 'A')
+#define INDEX(c) (c->str[0] - 'A')
 
 struct client{
 	char *str;
@@ -62,7 +62,8 @@ CLIENT changeClientCode(CLIENT c, char* str) {
 	if (c->str)
 		free(c->str);
 
-	c->str = str;
+	c->str = malloc(sizeof(char) * strlen(str) + 1);
+	strcpy(c->str, str);
 
 	return c;
 }

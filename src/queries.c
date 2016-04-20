@@ -59,8 +59,8 @@ PRINTSET query3(FATGLOBAL fat, PRODUCT product, int month) {
 		quantT  = 0;
 		billedT = 0;
 		for (i=0; i < BRANCHES; i++) {
-			quantT  += getProductFatQuant(pfat, i, NULL, NULL);
-	   		billedT += getProductFatQuant(pfat, i, NULL, NULL); 		
+			quantT  += getProductFatSales(pfat, i, NULL, NULL);
+	   		billedT += getProductFatSales(pfat, i, NULL, NULL); 		
 		}	
 		sprintf(answ, "Quantidade Total: \t%d", quantT);
 		print = addToPrintSet(print, answ);	
@@ -71,7 +71,7 @@ PRINTSET query3(FATGLOBAL fat, PRODUCT product, int month) {
 		print = addToPrintSet(print, "");
 	
 		for(i=0; i < BRANCHES; i++) { 
-			getProductFatQuant(pfat, i, &quantity[i][0], &quantity[i][1]);
+			getProductFatSales(pfat, i, &quantity[i][0], &quantity[i][1]);
 			getProductFatBilled(pfat, i, &billed[i][0], &billed[i][1]);
 		}
 
@@ -172,7 +172,7 @@ PRINTSET query6(FATGLOBAL fat, int initialMonth, int finalMonth) {
 	int quantity;
 	char buff[MAX_SIZE];
 
-	quantity = getQuantByMonthRange(fat, initialMonth, finalMonth);
+	quantity = getSalesByMonthRange(fat, initialMonth, finalMonth);
 	billed   = getBilledByMonthRange(fat, initialMonth, finalMonth);
 	
 	sprintf(buff, "Quantidade:\t%d", quantity);

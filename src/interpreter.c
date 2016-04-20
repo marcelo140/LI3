@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
+
 #include "dataloader.h"
 #include "interpreter.h"
 #include "clients.h"
@@ -340,7 +342,7 @@ static PRODUCT askProduct(PRODUCTCAT pcat) {
 	while(!stop) {
 		printf("  Produto: ");
 		fgets(buff, BUFF_SIZE, stdin);
-		product = toProduct(product);
+		product = toProduct(buff);
 
 		if (lookUpProduct(pcat, product)) stop=1;
 		else if (buff[0] == 'q') {
