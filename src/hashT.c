@@ -78,7 +78,7 @@ SET dumpHashT(HASHT ht, SET set) {
 	int i;
 
 	for (i=0; i < CAPACITY; i++) {
-		if (STATUS(i) == BUSY){
+		if (STATUS(i) == BUSY && CONTENT(i)){
 			contCopy = ht->clone(CONTENT(i));
 			set = insertElement(set, KEY(i), contCopy);
 		}

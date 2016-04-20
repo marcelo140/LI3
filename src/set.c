@@ -25,9 +25,9 @@ struct list {
 static ELEMENT newElement      (char* hash, void* content);
 static void    swapData        (SET set, int i, int j);
 static int     partitionByName (SET set, int begin, int end);
-static int     partition       (SET set, int begin, int end, compare_t comparator);
+static int     partition (SET set, int begin, int end, compare_t comparator, void* arg);
 static void    quicksortByName (SET set, int begin, int end);
-static void    quicksort       (SET set, int begin, int end, compare_t comparator);
+static void    quicksort (SET set, int begin, int end, compare_t comparator, void* arg);
 
 LIST toList(SET s) {
 	LIST new = malloc(sizeof(*new));
@@ -100,8 +100,8 @@ void sortSetByName(SET list) {
 	quicksortByName(list, 0, list->size-1);
 }
 
-void sortSet(SET list, compare_t comparator) {
-	quicksort(list, 0, list->size-1, comparator);
+void sortSet(SET list, compare_t comparator, void* arg) {
+	quicksort(list, 0, list->size-1, comparator, arg);
 }
 
 SET unionSets(SET s1, SET s2) {
@@ -237,12 +237,12 @@ static int partitionByName(SET set, int begin, int end) {
 	return lim+1;
 }
 
-static int partition(SET set, int begin, int end, compare_t comparator) {
+static int partition(SET set, int begin, int end, compare_t comparator, void* arg) {
 	char* pivot = CONTENT(set, end);
 	int i, lim = begin-1;
 
 	for(i = begin; i < end; i++) {
-		if (comparator(CONTENT(set,i), pivot) <= 0){
+		if (comparator(CONTENT(set,i), pivot, arg) <= 0){
 			lim++;
 			swapData(set, lim, i);
 		}
@@ -252,14 +252,14 @@ static int partition(SET set, int begin, int end, compare_t comparator) {
 	return lim+1;
 }
 
-static void quicksort(SET set, int begin, int end, compare_t comparator) {
+static void quicksort(SET set, int begin, int end, compare_t comparator, void* arg) {
 	int lim;
 
 	if (begin < end) {
-		lim = partition(set, begin, end, comparator);
+		lim = partition(set, begin, end, comparator, arg);
 		
-		quicksort(set, begin, lim-1, comparator);
-		quicksort(set, lim+1, end, comparator);
+		quicksort(set, begin, lim-1, comparator, arg);
+		quicksort(set, lim+1, end, comparator, arg);
 	}	
 }
 

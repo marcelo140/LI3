@@ -21,7 +21,7 @@ SET insertElement(SET list, char* hash, void* content);
 
 void sortSetByName(SET list);
 
-void sortSet(SET list, compare_t comparator);
+void sortSet(SET list, compare_t comparator, void* arg);
 
 SET datacpy(SET dest, SET src, int pos);
 

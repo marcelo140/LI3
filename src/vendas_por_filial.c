@@ -48,6 +48,7 @@ typedef struct client_sale {
 } *CLIENTSALE;
 
 PRODUCTSALE cloneProductSale(PRODUCTSALE ps);
+
 static CLIENTSALE initClientSale  ();
 static CLIENTSALE addToClientSale (CLIENTSALE cs, SALE sale);
 static void       freeClientSale  (CLIENTSALE cs);
@@ -74,7 +75,7 @@ BRANCHSALES fillBranchSales (BRANCHSALES bs, CLIENTCAT client){
 
 	bs->clients = getClientCat(client);
 	bs->clients = changeCatalogOps(bs->clients, (init_t) initClientSale,  NULL,
-	                                                (free_t) freeClientSale);
+	                                            (free_t) freeClientSale);
 
 	return bs;
 }
@@ -248,6 +249,23 @@ int* getClientQuant(BRANCHSALES bs, CLIENT c) {
 	return quant;
 }
 
+int compareQuantByMonth(PRODUCTSALE ps1, PRODUCTSALE ps2, int *month){
+	return (ps1->quantity[*month] - ps2->quantity[*month]);
+}
+/*
+LIST getClientProdByQuantity(BRANCHSALES bs, CLIENT c, int month) {
+	CLIENTSALE cs;
+	char client[CLIENT_LENGTH];
+	SET set = initSet(128);;
+
+	fromClient(c, client);
+	cs = getCatContent(bs->clients, INDEX(client), client);
+	set = dumpHashT(cs->products, set);
+
+
+	return toList(set);	
+}
+*/
 double *getClientExpenses(BRANCHSALES bs, CLIENT c) {
 	CLIENTSALE content;
 	char client[CLIENT_LENGTH];

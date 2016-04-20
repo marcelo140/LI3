@@ -59,7 +59,7 @@ FATGLOBAL initFat(){
 
 FATGLOBAL fillFat (FATGLOBAL fat, PRODUCTCAT p) {
 	fat->cat = getProductCat(p);
-	fat->cat = changeCatalogOps(fat->cat, (init_t) initRevenue, NULL,
+	fat->cat = changeCatalogOps(fat->cat, (init_t) initRevenue, (clone_t) cloneRevenue,
                                           (free_t) freeRevenue);
 
 	return fat;
