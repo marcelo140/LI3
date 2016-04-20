@@ -478,7 +478,7 @@ static void separateNode(NODE node, SET set1, SET set2, clone_t clone, compare_t
 	if (node) {
 		separateNode(node->left, set1, set2, clone, comp, arg);
 		
-		res = comp(node->content, arg);
+		res = comp(node->content, arg, NULL);
 	
 		if (clone && node->content)
 			contCopy = clone(node->content);
@@ -507,7 +507,7 @@ static void condSeparateNode(NODE n, SET set1, SET set2, clone_t clone, conditio
 		condSeparateNode(n->left, set1, set2, clone, pred, p_arg, comp, c_arg);
 
 		if (pred(n->content, p_arg)){
-			res = comp(n->content, c_arg);
+			res = comp(n->content, c_arg, NULL);
 
 			if (clone && n->content)
 				contCopy = clone(n->content);
