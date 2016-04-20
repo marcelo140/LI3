@@ -13,7 +13,7 @@
 #define STR_SIZE 128
 #define BUFF_SIZE 255
 
-#define SALES_PATH "Vendas_5M.txt"
+#define SALES_PATH "Vendas_1M.txt"
 #define CLIENTS_PATH "Clientes.txt"
 #define PRODUCTS_PATH "Produtos.txt"
 
@@ -182,6 +182,7 @@ void loader(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat ) {
 		clientsPath[0] = getchar();
 		if (clientsPath[0] == '\n') strcpy(clientsPath, CLIENTS_PATH);
 		else fgets(clientsPath+1, BUFF_SIZE-1, stdin);
+		strtok(clientsPath, "\n\r");
 		clients = fopen(clientsPath, "r");
 		if (clients) break;
 		printf("Ficheiro %s inválido ou inexistente!\n", clientsPath);
@@ -192,6 +193,7 @@ void loader(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat ) {
 		productsPath[0] = getchar();
 		if (productsPath[0] == '\n') strcpy(productsPath, PRODUCTS_PATH);
 		else fgets(productsPath+1, BUFF_SIZE-1, stdin);
+		strtok(productsPath, "\n\r");
 		products = fopen(productsPath, "r");
 		if (products) break;
 		printf("Ficheiro %s inválido ou inexistente!\n", productsPath);
@@ -202,6 +204,7 @@ void loader(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat ) {
 		salesPath[0] = getchar();
 		if (salesPath[0] == '\n') strcpy(salesPath, SALES_PATH);
 		else fgets(salesPath+1, BUFF_SIZE-1, stdin);
+		strtok(salesPath, "\n\r");
 		sales = fopen(salesPath, "r");
 		if (sales) break;
 		printf("Ficheiro %s inválido ou inexistente!\n", salesPath);
