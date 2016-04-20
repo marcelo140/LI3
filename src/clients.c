@@ -72,8 +72,7 @@ CLIENT writeClient(CLIENT c, char* str) {
 CLIENT toClient(char* str) {
 	CLIENT new = malloc(sizeof (*new));
 	
-	new = malloc(sizeof(*new));
-	strncpy(new->str, str, CLIENT_LENGTH-1);
+	strncpy(new->str, str, CLIENT_LENGTH);
 
 	return new;
 }

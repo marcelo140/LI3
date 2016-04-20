@@ -33,9 +33,11 @@ static int     askMonth();
 
 int interpreter(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat) {
 	PRODUCT p;
-	PRINTSET ps;
+	CLIENT client;
+	PRINTSET ps = NULL;
 	char answ[BUFF_SIZE];
 	int qnum, x, y;
+
 
 	printMainMenu();
 	printf("  Escolha uma opção : ");
@@ -54,7 +56,6 @@ int interpreter(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat) {
 				 fgets(answ, BUFF_SIZE, stdin);
 				 ps = query2(pcat, answ[0]);
 				 if (ps) presentList(ps);
-				 freePrintSet(ps);
 				 break;
 		case 3 : p = askProduct();
 				 if (!p) break;
@@ -65,13 +66,16 @@ int interpreter(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat) {
 			 	 break;
 		case 4 : ps = query4(fat);
 				 if (ps) presentList(ps);
-				 freePrintSet(ps);
 				 break;
 		case 5 : x = askBranch();
 				 printf("  Cliente: ");
 				 fgets(answ, BUFF_SIZE, stdin);
 				 answ[CLIENT_LENGTH-1] = '\0';
-				 ps = query5(bs[x], toClient(answ));
+	getchar();
+				 client = toClient(answ);
+				 ps = query5(bs[x], client);
+				 freeClient(client);
+	getchar();
 				 presentList(ps);
 		 		 break;
 		case 6 : printf("Mês inicial: ");
@@ -82,9 +86,8 @@ int interpreter(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat) {
 				 y = atoi(answ);
 				 ps = query6(fat, x, y);
 				 if (ps) presentList(ps);
-				 freePrintSet(ps);
 		  		 break;
-		case 7 :
+		case 7 : 
 				 break;
 		case 8 : x = askBranch();
 				 printf("Produto: ");
@@ -94,7 +97,6 @@ int interpreter(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat) {
 				 ps = query8(bs[x], p);
 				 if (ps) presentList(ps);
 				 freeProduct(p);
-			     if (ps) freePrintSet(ps);
 		 		 break;
 		case 9 :
 		 		 break;
@@ -104,7 +106,6 @@ int interpreter(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat) {
 				  y = atoi(answ);
 				  ps = query10(bs[x], y);
 				  presentList(ps);
-				  freePrintSet(ps);
 		 		  break;
 		case 11 :
 		 		  break;
@@ -112,6 +113,7 @@ int interpreter(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat) {
 				  break;
 	}
 
+	freePrintSet(ps);
 	return CONT;
 }
 
@@ -137,7 +139,7 @@ PRINTSET addToPrintSet(PRINTSET ps, char* str) {
 	if (ps->size >= ps->capacity -1) {
 		ps->capacity *= 2;
 		ps->list = realloc(ps->list, ps->capacity * sizeof(char*));
-		memset(ps->list + ps->size , 0, ps->capacity - ps->size);
+		memset(ps->list + ps->size , 0, (ps->capacity - ps->size) * sizeof(char*));
 	}
 
 	ps->list[ps->size] = calloc(STR_SIZE+1, sizeof(char));
@@ -160,10 +162,9 @@ char** getPage(PRINTSET ps, int page) {
 void freePrintSet(PRINTSET ps) {
 	int i;
 
-	for(i=0; i < ps->capacity; i++)
+	for(i=0; ps->list[i] && i < ps->capacity; i++)
 		free(ps->list[i]);
 	free(ps->list);
-	free(ps->header);
 	free(ps);
 }
 
