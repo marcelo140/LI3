@@ -121,6 +121,10 @@ static int Hash(char *key) {
 	return hash;
 }
 
+int getHashTsize(HASHT ht){
+	return ht->size;
+}
+
 static HASHT resizeHashT(HASHT ht){
 	HASHT new = malloc(sizeof(*new));
 	int i;

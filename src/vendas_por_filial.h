@@ -62,7 +62,9 @@ void filterClientsByProduct (BRANCHSALES bs, PRODUCT prod, SET n, SET p);
  * @param c Cliente a ser analizado
  * @return Lista de produtos comprados
  */
-SET filterProductsByClient (BRANCHSALES bs, CLIENT c);
+LIST filterProductsByClient (BRANCHSALES bs, CLIENT c);
+
+LIST filterProductsByMonth(BRANCHSALES bs, CLIENT c, int month);
 
 /**
  * Determina a quantidade de produtos comprados por um cliente ao longo do ano na

@@ -47,14 +47,16 @@ typedef struct client_sale {
 	HASHT products;
 } *CLIENTSALE;
 
+static int compareBilledByYear(PRODUCTSALE s1, PRODUCTSALE s2);
 static PRODUCTDATA newProductData(char *productName, int quantity, int clients);
 static int toProductData(SET set, PRODUCTDATA* pd);
 static PRODUCTSALE cloneProductSale(PRODUCTSALE ps);
-static CLIENTSALE initClientSale  ();
+static CLIENTSALE initClientSale ();
 static CLIENTSALE addToClientSale (CLIENTSALE cs, SALE sale);
-static void       freeClientSale  (CLIENTSALE cs);
+static void freeClientSale (CLIENTSALE cs);
 static int clientIsShopAholic(CLIENTSALE cs, char* product);
 static bool existInProductList(CLIENTSALE cs, char* product);
+static int compareQuantByMonth(PRODUCTSALE s1, PRODUCTSALE s2, int *month);
 
 static bool isEmptyClientSale(CLIENTSALE cs);
 static bool isNotEmptyClientSale(CLIENTSALE cs);
@@ -93,15 +95,11 @@ BRANCHSALES fillBranchSales (BRANCHSALES bs, CLIENTCAT client){
 BRANCHSALES addSaleToBranch (BRANCHSALES bs, SALE s) {
 	CLIENTSALE cs;
 	CLIENT client;
-	PRODUCT product;
-	char c[CLIENT_LENGTH], p[PRODUCT_LENGTH];
+	char *c;
 
 	client  = getClient(s);
-	product = getProduct(s);
-
-	fromClient(client, c);
-	fromProduct(product, p);
-
+	c = fromClient(client);
+	
 	cs = getCatContent(bs->clients, INDEX(c), c);
 	cs = addToClientSale(cs, s);
 
@@ -147,10 +145,10 @@ SET getClientsWhoHaveNotBought(BRANCHSALES bs) {
 
 int* getClientQuant(BRANCHSALES bs, CLIENT c) {
 	CLIENTSALE content;
-	char client[CLIENT_LENGTH];
+	char *client;
 	int i, *quant;
 
-	fromClient(c, client);
+	client = fromClient(c);
 	quant = malloc(sizeof(int) * MONTHS);
 
 	content = getCatContent(bs->clients, INDEX(client), client);
@@ -164,11 +162,11 @@ int* getClientQuant(BRANCHSALES bs, CLIENT c) {
 
 double *getClientExpenses(BRANCHSALES bs, CLIENT c) {
 	CLIENTSALE content;
-	char client[CLIENT_LENGTH];
+	char *client;
 	double *expenses;
 	int i;
 
-	fromClient(c, client);
+	client = fromClient(c);
 	expenses = malloc(sizeof(double) * MONTHS);
 
 	content = getCatContent(bs->clients, INDEX(client), client);
@@ -179,17 +177,63 @@ double *getClientExpenses(BRANCHSALES bs, CLIENT c) {
 	return expenses;
 }
 
+LIST filterProductsByMonth(BRANCHSALES bs, CLIENT c, int month) {
+	CLIENTSALE cs;
+	SET products;
+	char *client;
+
+	client = fromClient(c);
+	cs = getCatContent(bs->clients, INDEX(client), client);
+
+	products = initSet(getHashTsize(cs->products));
+	products = dumpHashT(cs->products, products);
+
+	sortSet(products,(compare_t) compareQuantByMonth, &month);
+
+	return toList(products);
+}
+
+LIST filterProductsByClient(BRANCHSALES bs, CLIENT c) {
+	CLIENTSALE cs;
+	SET products;
+	char *client;
+
+	client = fromClient(c);
+	cs = getCatContent(bs->clients, INDEX(client), client);
+	
+	products = initSet(getHashTsize(cs->products));
+	products = dumpHashT(cs->products, products);
+
+	sortSet(products, (compare_t) compareBilledByYear, NULL);
+
+	return toList(products);
+}
 
 void filterClientsByProduct(BRANCHSALES bs, PRODUCT prod, SET n, SET p){
-	char product[PRODUCT_LENGTH];
+	char *product;
 
-	fromProduct(prod, product);
+	product = fromProduct(prod);
 
 	condSeparateCat(bs->clients, p, n, (condition_t) existInProductList, product,
                                        (compare_t) clientIsShopAholic, product);
 }
 
+/********* STATICS **********/
 
+static int compareQuantByMonth(PRODUCTSALE s1, PRODUCTSALE s2, int *month){
+	return (s1->quantity[*month] - s2->quantity[*month]);
+}
+
+static int compareBilledByYear(PRODUCTSALE s1, PRODUCTSALE s2) {
+	int i, s1Total = 0, s2Total = 0;
+
+	for(i = 0; i < MONTHS; i++){
+		s1Total += s1->billed[i];
+		s2Total += s2->billed[i];
+	}
+
+	return s2Total-s1Total;
+}
 
 static PRODUCTDATA newProductData(char *productName, int quantity, int clients) {
 	PRODUCTDATA new = malloc(sizeof(*new));
@@ -243,9 +287,9 @@ static CLIENTSALE initClientSale() {
 }
 
 static CLIENTSALE addToClientSale(CLIENTSALE cs, SALE sale) {
-	char product[PRODUCT_LENGTH];
+	char *product;
 
-	fromProduct(getProduct(sale), product);
+	product = fromProduct(getProduct(sale));
 
 	cs->months = addToMonthList(cs->months, sale);
 	cs->products = insertHashT(cs->products, product, sale);
