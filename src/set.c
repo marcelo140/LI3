@@ -75,11 +75,12 @@ SET insertElement(SET s, char* hash, void* content) {
 }
 
 char* getSetHash(SET s, int pos) {
-	char* str = malloc(sizeof(char) * HASH_SIZE);
+	char* str;
 
 	if (pos < 0 || pos >= s->size)
 		return NULL;
-
+	
+	str = malloc(sizeof(char) * HASH_SIZE);
 	strcpy(str, s->list[pos]->hash);
 
 	return str;
