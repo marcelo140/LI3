@@ -43,12 +43,12 @@ CATALOG getProductCat (PRODUCTCAT prodCatalog);
 /**
  * Aloca espaço para um produto.
  */
-PRODUCT newProduct ();
+PRODUCT newProduct();
 
 /**
  * Altera o código do produto dado para a string indicada.
  */
-PRODUCT writeProduct (PRODUCT p, char* str);
+PRODUCT changeProductCode(PRODUCT p, char* str);
 
 /**
  * Cria um novo produto com um código corresponde ao da string dada.
@@ -66,17 +66,13 @@ PRODUCT cloneProduct (PRODUCT p);
  * @param dest Buffer onde será guardada a cópia do código do produto
  * @return Apontador para dest
  */
-char* fromProduct (PRODUCT p, char* dest);
+char* fromProduct (PRODUCT p);
 
 /**
  * Verifica se produto contém algum código associado.
  */
 bool isEmptyProduct (PRODUCT p);
 
-/**
- * Verifica se a string dada corresponde a um código de produto válido.
- */
-bool isProduct (char* str);
 
 /**
  * Liberta todo o espaço ocupado por um produto.

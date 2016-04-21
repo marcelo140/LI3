@@ -75,11 +75,12 @@ SET insertElement(SET s, char* hash, void* content) {
 }
 
 char* getSetHash(SET s, int pos) {
-	char* str = malloc(sizeof(char) * HASH_SIZE);
+	char* str;
 
 	if (pos < 0 || pos >= s->size)
 		return NULL;
-
+	
+	str = malloc(sizeof(char) * HASH_SIZE);
 	strcpy(str, s->list[pos]->hash);
 
 	return str;
@@ -102,6 +103,12 @@ void sortSetByName(SET list) {
 
 void sortSet(SET list, compare_t comparator, void* arg) {
 	quicksort(list, 0, list->size-1, comparator, arg);
+}
+
+LIST intersectLists(LIST l1, LIST l2){
+	SET new = intersectSet(l1->list, l2->list);
+
+	return toList(new);
 }
 
 SET unionSets(SET s1, SET s2) {
@@ -169,7 +176,7 @@ SET diffDataSets(SET s1, SET s2) {
 	return new;
 }
 
-SET intersectDataSet(SET s1, SET s2) {
+SET intersectSet(SET s1, SET s2) {
 	SET new;
 	int i, j, size;
 

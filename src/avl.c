@@ -4,8 +4,6 @@
 #include "avl.h"
 #include "set.h"
 
-#define HASH_SIZE 10
-
 typedef enum balance { LH, EH, RH } Balance;
 
 typedef struct node {
@@ -228,13 +226,14 @@ void* dumpDataAVL (AVL tree, void* data, void* (*dumper)(void*, void*)){
 
 static NODE newNode(char *hash, void *content, NODE left, NODE right) {
 	NODE new = malloc(sizeof(struct node));
+	int size = strlen(hash);
 
 	new->bal = EH;
-	new->hash = malloc(sizeof(char)*HASH_SIZE);
+	new->hash = malloc(sizeof(char) * size + 1);
 	new->content = content;
 	new->left = left;
 	new->right = right;
-	strncpy(new->hash, hash, HASH_SIZE);
+	strcpy(new->hash, hash);
 
 	return new;
 }

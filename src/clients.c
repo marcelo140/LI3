@@ -6,15 +6,10 @@
 
 #define CATALOG_SIZE 26
 
-#define INDEX(c)             (c->str[0] - 'A')
-
-/* MUST BE IMPROVED */
-#define IS_CAPITAL_LETTER(c) (c >= 'A' && c <= 'Z')
-#define IS_IN_RANGE(c, i, j) (c >= i   && c <= j)
-#define IS_NUMBER(c)         (c >= '0' && c <= '9')
+#define INDEX(c) (c->str[0] - 'A')
 
 struct client{
-	char str[CLIENT_LENGTH];
+	char *str;
 };
 
 struct client_catalog {
@@ -58,21 +53,28 @@ CATALOG getClientCat(CLIENTCAT clientCat) {
 
 CLIENT newClient() {
 	CLIENT new = malloc(sizeof(struct client));
-
-	new->str[0] = '\0';
+	new->str = NULL;
 
 	return new;
 }
 
-CLIENT writeClient(CLIENT c, char* str) {
-	strncpy(c->str, str, CLIENT_LENGTH);
+CLIENT changeClientCode(CLIENT c, char* str) {
+	if (c->str)
+		free(c->str);
+
+	c->str = malloc(sizeof(char) * strlen(str) + 1);
+	strcpy(c->str, str);
+
 	return c;
 }
 
 CLIENT toClient(char* str) {
-	CLIENT new = malloc(sizeof (*new));
+	CLIENT new;
+
+	new  = malloc(sizeof (*new));
+	new->str = malloc(sizeof(char) * strlen(str) + 1);
 	
-	strncpy(new->str, str, CLIENT_LENGTH);
+	strcpy(new->str, str);
 
 	return new;
 }
@@ -81,31 +83,28 @@ CLIENT cloneClient(CLIENT c) {
 	CLIENT new;
 
 	new = malloc(sizeof(*new));
+	new->str = malloc(sizeof(char) * strlen(c->str) + 1);
+
 	strcpy(new->str, c->str);
 
 	return new;	
 }
 
-char* fromClient(CLIENT c, char* dest) {
-	strncpy(dest, c->str, CLIENT_LENGTH);
-	return dest;
+char* fromClient(CLIENT c) {
+	char *str = malloc(sizeof(char) * strlen(c->str) + 1);
+	strcpy(str, c->str);
+
+	return str;
 }
 
 bool isEmptyClient(CLIENT c) {
-	return (c->str[0] == '\0');
-}
- 
-bool isClient(char *str) {
-	return IS_CAPITAL_LETTER(str[0]) &&
-           /* Se str[1] é '5', todos os carateres seguintes são '0' */
-	       ((str[1] == '5' && str[2] == '0' && str[3] == '0' && str[4] == '0') ||
-           /* Caso contrário, todos os carateres seguintes devem estar entre '0' e '9' */
-		    (IS_IN_RANGE(str[1], '1', '4') && IS_IN_RANGE(str[2], '0', '9')
-                                           && IS_IN_RANGE(str[3], '0', '9')
-                                           && IS_IN_RANGE(str[4], '0', '9')));
+	return (c->str == NULL);
 }
 
 void freeClient(CLIENT client) {
+	if (client->str)
+		free(client->str);
+
 	free(client);
 }
  

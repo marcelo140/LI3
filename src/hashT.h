@@ -15,6 +15,8 @@ typedef void* (*add_t)  (void*, void*);
 HASHT initHashT(init_t init, add_t add, clone_t clone, free_t free);
 HASHT initMyHashT(int size,init_t init, add_t add, clone_t clone, free_t free);
 
+int getHashTsize(HASHT ht);
+
 /**
  * Insere um dado conteúdo com uma certa chave na Tabela de Hash.
  * Caso a chave já existe, adidiciona o conteúdo novo ao conteúdo existente.
