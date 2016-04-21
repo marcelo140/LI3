@@ -108,10 +108,9 @@ void freeClient(CLIENT client) {
 	free(client);
 }
  
-LIST fillClientSet(CLIENTCAT catProd, char index) {
+SET fillClientSet(CLIENTCAT catProd, char index) {
 	SET set;
 	set = fillSet(catProd->cat, index - 'A');
 
-	return toList(set);
+	return set;
 }
-

@@ -83,6 +83,6 @@ void freeClient (CLIENT c);
  * existentes no catálogo de clientes. Se o conjunto não tiver espaço suficiente para
  * acatar todos os clientes, este será redimensionado para o tamnha necessário.
  */
-LIST fillClientSet (CLIENTCAT clientCat, char index);
+SET fillClientSet (CLIENTCAT clientCat, char index);
 
 #endif

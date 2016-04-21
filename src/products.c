@@ -102,9 +102,9 @@ void freeProduct(PRODUCT product) {
 	free(product);
 }
 
-LIST fillProductSet(PRODUCTCAT productCat, char index) {
+SET fillProductSet(PRODUCTCAT productCat, char index) {
 	SET set;
 	set = fillSet(productCat->cat, index - 'A');
 
-	return toList(set);
+	return set;
 }

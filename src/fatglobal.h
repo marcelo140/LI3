@@ -30,9 +30,9 @@ double getBilledByMonthRange(FATGLOBAL fat, int initialMonth, int finalMonth);
 
 int getSalesByMonthRange(FATGLOBAL fat, int initialMonth, int finalMonth);
 
-LIST getProductsNotSold(FATGLOBAL fat);
+SET getProductsNotSold(FATGLOBAL fat);
 
-LIST* getProductsNotSoldByBranch(FATGLOBAL);
+SET* getProductsNotSoldByBranch(FATGLOBAL);
 
 int getProductFatSales(PRODUCTFAT, int branch, int* normal, int* promo);
 

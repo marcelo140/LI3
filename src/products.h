@@ -88,7 +88,7 @@ void freeProduct (PRODUCT p);
  * existentes no catálogo de produtos. Se o conjunto não tiver espaço suficiente para
  * acatar todos os produtos, este será redimensionado para o tamnha necessário.
  */
-LIST fillProductSet (PRODUCTCAT cat, char index);
+SET fillProductSet (PRODUCTCAT cat, char index);
 
 /**
  * Calcula o tamanho de um conjunto de produtos.
