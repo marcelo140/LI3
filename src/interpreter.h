@@ -22,7 +22,7 @@ int interpreter(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat);
  * @param n Tamnaho mínimo do PrintSet
  * @return Novo PRINTSET
  */
-PRINTSET initPrintSet(int n);
+/* PRINTSET initPrintSet(int n); */
 
 /**
  * Altera o cabeçalho do PrintSet 
@@ -30,7 +30,7 @@ PRINTSET initPrintSet(int n);
  * @param header Nova header
  * @return PrinSet alterado
  */
-PRINTSET setPrintHeader(PRINTSET ps, char *header);
+/* PRINTSET setPrintHeader(PRINTSET ps, char *header); */
 
 /** 
  * Adiciona uma string a um PrintSet dado
@@ -38,14 +38,13 @@ PRINTSET setPrintHeader(PRINTSET ps, char *header);
  * @param str String a inserir
  * @return PrintSet atualizado
  */
-PRINTSET addToPrintSet(PRINTSET ps, char* str);
+/* PRINTSET addToPrintSet(PRINTSET ps, char* str); */
 
-char** getPage(PRINTSET ps, int page);
 
 /**
  * Liberta a memória alocada por um PrintSet
  * @param ps PrintSet a libertar
  */
-void freePrintSet(PRINTSET ps);
+/* void freePrintSet(PRINTSET ps); */
 
 #endif
