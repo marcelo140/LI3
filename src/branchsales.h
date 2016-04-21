@@ -6,6 +6,7 @@
 #include "sales.h"
 
 typedef struct branchsales *BRANCHSALES;
+typedef struct product_data *PRODUCTDATA;
 
 BRANCHSALES initBranchSales();
 
@@ -17,9 +18,13 @@ int* getClientQuantByMonth(BRANCHSALES bs, CLIENT c);
 
 LIST getClientsWhoBought(BRANCHSALES bs);
 
+LIST getClientsWhoHaveNotBought(BRANCHSALES bs);
+
 void getClientsByProduct(BRANCHSALES bs, PRODUCT prod, LIST *normal, LIST *clients);
 
 LIST getProductsByClient(BRANCHSALES bs, CLIENT c);
+
+SET listProductsByQuant(BRANCHSALES bs);
 
 void sortProductListByQuant(LIST productList, int month);
 

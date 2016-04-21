@@ -42,6 +42,11 @@ typedef struct client_unit {
 	int saletype;
 }*CLIENTUNIT;
 
+struct product_data {
+	int quantity;
+	int clients;	
+};
+
 static int compareProductUnitByMonth(PRODUCTUNIT pu1, PRODUCTUNIT pu2, int* month);
 static int compareProductUnitByBilled(PRODUCTUNIT pu1, PRODUCTUNIT pu2);
 bool clientBought(CLIENTSALE cs);
@@ -60,6 +65,8 @@ static CLIENTUNIT cloneClientUnit(CLIENTUNIT client);
 static void freeClientUnit(CLIENTUNIT client);
 static CLIENTSALE initClientSale();
 static void freeClientSale(CLIENTSALE cs);
+PRODUCTDATA dumpProductSale(PRODUCTSALE ps);
+int compareProductDataByQuant(PRODUCTDATA pd1, PRODUCTDATA pd2);
 
 BRANCHSALES initBranchSales() {
 	BRANCHSALES new = malloc(sizeof(*new));
@@ -103,6 +110,14 @@ int* getClientQuantByMonth(BRANCHSALES bs, CLIENT c) {
 LIST getClientsWhoBought(BRANCHSALES bs) {
 	SET s;
 
+	s = filterCat(bs->clients, (condition_t) clientBought, NULL);
+
+	return toList(s);
+}
+
+LIST getClientsWhoHaveNotBought(BRANCHSALES bs) {
+	SET s;
+	
 	s = filterCat(bs->clients, (condition_t) clientHaveNotBought, NULL);
 
 	return toList(s);
@@ -169,6 +184,15 @@ void sortProductListByBilled(LIST productList) {
 	sortSet(toSet(productList), (compare_t) compareProductUnitByBilled, NULL);
 }
 
+SET listProductsByQuant(BRANCHSALES bs) {
+	SET s;
+
+	s = dumpCatalog(bs->products, (void*(*)(void*)) dumpProductSale);
+	sortSet(s, (compare_t) compareProductDataByQuant, NULL);
+
+	return s;
+}
+
 void freeBranchSales(BRANCHSALES bs) {
 	if (bs) {
 		freeCatalog(bs->products);
@@ -219,6 +243,24 @@ static PRODUCTSALE addSaleToProductSale(PRODUCTSALE ps, SALE s) {
 
 	free(client);
 	return ps;
+}
+
+int compareProductDataByQuant(PRODUCTDATA pd1, PRODUCTDATA pd2){
+	return (pd1->quantity - pd2->quantity);
+}
+
+PRODUCTDATA dumpProductSale(PRODUCTSALE ps) {
+	PRODUCTDATA new = malloc(sizeof(*new));
+
+	if (ps){	
+		new->clients = getHashTsize(ps->clients);
+		new->quantity = ps->quantity;
+	}else{
+		new->clients = 0;
+		new->quantity = 0;
+	}
+
+	return new;
 }
 
 static void freeProductSale(PRODUCTSALE ps) {
