@@ -43,6 +43,7 @@ typedef struct client_unit {
 }*CLIENTUNIT;
 
 static int compareProductUnitByMonth(PRODUCTUNIT pu1, PRODUCTUNIT pu2, int* month);
+static int compareProductUnitByBilled(PRODUCTUNIT pu1, PRODUCTUNIT pu2);
 bool clientBought(CLIENTSALE cs);
 bool clientHaveNotBought(CLIENTSALE cs);
 static CLIENTSALE addSaleToClientSale(CLIENTSALE cs, SALE s);
@@ -143,7 +144,7 @@ void getClientsByProduct(BRANCHSALES bs, PRODUCT prod, LIST *normal, LIST *promo
 	*promo = toList(promoClients);
 }
 
-LIST getProductsByClient(BRANCHSALES bs, CLIENT c, int month) {
+LIST getProductsByClient(BRANCHSALES bs, CLIENT c) {
 	CLIENTSALE cs;
 	SET products;
 	char* client;
@@ -156,10 +157,16 @@ LIST getProductsByClient(BRANCHSALES bs, CLIENT c, int month) {
 	products = initSet(size);
 	products = dumpHashT(cs->products, products);
 
-	sortSet(products, (compare_t) compareProductUnitByMonth, &month);	
-
 	free(client);
 	return toList(products);
+}
+
+void sortProductListByQuant(LIST productList, int month) {
+	sortSet(toSet(productList), (compare_t) compareProductUnitByMonth, &month);
+}
+
+void sortProductListByBilled(LIST productList) {
+	sortSet(toSet(productList), (compare_t) compareProductUnitByBilled, NULL);
 }
 
 void freeBranchSales(BRANCHSALES bs) {
@@ -287,6 +294,18 @@ static PRODUCTUNIT cloneProductUnit(PRODUCTUNIT product) {
 
 static int compareProductUnitByMonth(PRODUCTUNIT pu1, PRODUCTUNIT pu2, int* month) {
 	return (pu1->quant[*month] - pu2->quant[*month]);
+}
+
+static int compareProductUnitByBilled(PRODUCTUNIT pu1, PRODUCTUNIT pu2) {
+	double billed1 = 0, billed2 = 0;
+	int i;
+
+	for(i = 0; i < MONTHS; i++) {
+		billed1 += pu1->billed[i];
+		billed2 += pu2->billed[i];
+	}
+
+	return (billed2 - billed1);
 }
 
 static void freeProductUnit(PRODUCTUNIT product){
