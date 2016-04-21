@@ -17,6 +17,8 @@ int* getClientQuantByMonth(BRANCHSALES bs, CLIENT c);
 
 LIST getClientsWhoBought(BRANCHSALES bs);
 
+void getClientsByProduct(BRANCHSALES bs, PRODUCT prod, LIST *normal, LIST *clients);
+
 void freeBranchSales(BRANCHSALES bs);
 
 #endif

@@ -106,7 +106,40 @@ LIST getClientsWhoBought(BRANCHSALES bs) {
 	return toList(s);
 }
 
+void getClientsByProduct(BRANCHSALES bs, PRODUCT prod, LIST *normal, LIST *promo) {
+	PRODUCTSALE ps;
+	SET clients, normalClients, promoClients;
+	CLIENTUNIT cu;
+	char* product;
+	int i, size;
+	
+	product = fromProduct(prod);
+	ps = getCatContent(bs->products, INDEX(product), product);
 
+	size = getHashTsize(ps->clients);
+	clients = initSet(size);
+	normalClients = initSet(size);
+	promoClients = initSet(size);
+
+	clients = dumpHashT(ps->clients, clients);
+
+	for(i = 0; i < size; i++){
+		cu = getSetData(clients, 0);
+	
+		switch(cu->saletype) {
+			case SALE_N: datacpy(normalClients, clients, i);
+                         break;
+            case SALE_P: datacpy(promoClients, clients, i);
+                         break;
+            case SALE_NP: datacpy(normalClients, clients, i);
+                          datacpy(promoClients, clients, i);
+     	                     break;
+		}
+	}
+
+	*normal = toList(normalClients);
+	*promo = toList(promoClients);
+}
 
 void freeBranchSales(BRANCHSALES bs) {
 	if (bs) {
