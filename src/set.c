@@ -37,10 +37,19 @@ LIST toList(SET s) {
 }
 
 char* getListElement(LIST l, int pos) {
-	if (pos < 0 || pos >= l->list->size)
-		return NULL;
+	char *ret = NULL, *hash;
 
-	return l->list->list[pos]->hash;
+	if (pos >= 0 && pos < l->list->size) {
+		hash = l->list->list[pos]->hash;
+		ret = malloc((strlen(hash)+1) * sizeof(char));
+		strcpy(ret, hash);
+	}
+
+	return ret;
+}
+
+int getListSize(LIST l) {
+	return l->list->size;
 }
 
 SET initSet(int capacity) {
