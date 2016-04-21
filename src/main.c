@@ -25,7 +25,7 @@ int main() {
 			if(running == LOAD) loader(branchSales, fat, productCat, clientCat);
 		}
 		
-		running = interpreter(branchSales, fat, productCat);
+		running = interpreter(branchSales, fat, productCat, clientCat);
 
 		if (running != CONT) { 
 			freeFat(fat);
