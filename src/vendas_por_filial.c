@@ -1,3 +1,4 @@
+/*
 #include <stdlib.h>
 #include <string.h>
 
@@ -224,9 +225,9 @@ void filterClientsByProduct(BRANCHSALES bs, PRODUCT prod, SET n, SET p){
 
 	free(product);
 }
-
+*/
 /********* STATICS **********/
-
+/*
 static int compareQuantByMonth(PRODUCTSALE s1, PRODUCTSALE s2, int *month){
 	return (s1->quantity[*month] - s2->quantity[*month]);
 }
@@ -257,9 +258,9 @@ static PRODUCTDATA newProductData(char *productName, int quantity, int clients) 
 static void* dumpContent(SET hs, CLIENTSALE cs) {
 	return dumpHashT(cs->products, hs);
 }
-
+*/
 /*   =========  FUNÇÕES PARA MONTHLIST ========= */
-
+/*
 static MONTHLIST initMonthList() {
 	return calloc(1, sizeof(struct month_list));
 }
@@ -278,9 +279,9 @@ static MONTHLIST addToMonthList(MONTHLIST ml, SALE s) {
 static void freeMonthList(MONTHLIST m) {
 	free(m);
 }
-
+*/
 /*  ==========  FUNÇÕES PARA CLIENTSALE =========== */
-
+/*
 static CLIENTSALE initClientSale() {
 	CLIENTSALE new = malloc(sizeof(*new));
 
@@ -377,8 +378,9 @@ static int clientIsShopAholic(CLIENTSALE cs, char* product) {
 
 	return (NP - ps->saleType);
 }
+*/
 /*  ==========  FUNÇÕES PARA PRODUCTSALE =========== */
-
+/*
 static PRODUCTSALE initProductSale() {
 	return calloc(1, (sizeof(struct product_sale)));
 }
@@ -454,4 +456,4 @@ PRODUCTSALE cloneProductSale(PRODUCTSALE ps) {
 	new->saleType = ps->saleType;
 
 	return new;
-}
+} */
