@@ -36,6 +36,10 @@ LIST toList(SET s) {
 	return new;
 }
 
+SET toSet(LIST l) {
+	return l->list;
+}
+
 char* getListElement(LIST l, int pos) {
 	char *ret = NULL, *hash;
 

@@ -15,6 +15,8 @@ int getListSize(LIST l);
 
 LIST toList(SET s);
 
+SET toSet(LIST s);
+
 LIST intersectLists(LIST s1, LIST s2);
 
 SET initSet(int capacity);
