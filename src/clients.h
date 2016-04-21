@@ -49,7 +49,7 @@ CLIENT newClient ();
 /**
  * Altera o código do cliente dado para a string indicada.
  */
-CLIENT writeClient (CLIENT c, char* str);
+CLIENT changeClientCode(CLIENT c, char* str);
 
 /**
  * Cria um novo cliente com um código corresponde ao da string dada.
@@ -66,7 +66,7 @@ CLIENT cloneClient (CLIENT c);
  * @param c Clietne pretendido.
  * @param dest Buffer onde será guardada a cópia do código do cliente
  */
-char* fromClient (CLIENT c, char* dest);
+char* fromClient (CLIENT c);
 
 /**
  * Verifica se cliente contém algum código associado.
@@ -74,15 +74,9 @@ char* fromClient (CLIENT c, char* dest);
 bool isEmptyClient (CLIENT c);
 
 /**
- * Verifica se a string dada corresponde a um código de cliente válido.
- */
-bool isClient (char* str);
-
-/**
  * Liberta todo o espaço ocupado por um cliente.
  */
 void freeClient (CLIENT c);
-
 
 /**
  * Preenche o conjunto indicado com todos os clientes começados pela letra dada 
@@ -90,4 +84,5 @@ void freeClient (CLIENT c);
  * acatar todos os clientes, este será redimensionado para o tamnha necessário.
  */
 LIST fillClientSet (CLIENTCAT clientCat, char index);
+
 #endif

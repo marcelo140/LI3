@@ -17,7 +17,7 @@ int getClientsFromProductData(PRODUCTDATA pd);
 PRODUCTDATA* getAllContent(BRANCHSALES bs, int*cenas);
 
 /**
- * Inicia uma filial com os clientes dados. Esta esturutra relaciona os clientes de
+ * Inicia uma filial. Esta esturutra relaciona os clientes de
  * uma filial com as compras efetuadas na mesma.
  */
 BRANCHSALES initBranchSales ();
@@ -37,7 +37,7 @@ BRANCHSALES addSaleToBranch (BRANCHSALES bs, SALE s);
  * @param bs Filial a ser analizada
  * @return Lista dos clientes que realizaram compras na filial
  */
-SET getClientsWhoBought (BRANCHSALES bs);
+LIST getClientsWhoBought (BRANCHSALES bs);
 
 /**
  * Determina os clientes que nunca compraram na filial dada.
@@ -62,7 +62,9 @@ void filterClientsByProduct (BRANCHSALES bs, PRODUCT prod, SET n, SET p);
  * @param c Cliente a ser analizado
  * @return Lista de produtos comprados
  */
-SET filterProductsByClient (BRANCHSALES bs, CLIENT c);
+LIST filterProductsByClient (BRANCHSALES bs, CLIENT c);
+
+LIST filterProductsByMonth(BRANCHSALES bs, CLIENT c, int month);
 
 /**
  * Determina a quantidade de produtos comprados por um cliente ao longo do ano na

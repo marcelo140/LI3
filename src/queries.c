@@ -29,10 +29,10 @@ static void freePage(PAGE p);
 
 static PRODUCT askProduct(PRODUCTCAT pcat);
 static int askMode();
-static int askBranch(); 
-static int askBranchPrev(int p1, int p2, int p3); 
-static int askMonth(); 
-static int askMonthRange(int* begin, int* end); 
+static int askBranch();
+static int askBranchPrev(int p1, int p2, int p3);
+static int askMonth();
+static int askMonthRange(int* begin, int* end);
 
 void query2(PRODUCTCAT pcat) {
 	PAGE page;
@@ -43,6 +43,7 @@ void query2(PRODUCTCAT pcat) {
 	do {
 		printf("Letra: ");
 		fgets(aux, MAX_SIZE, stdin);
+		if (aux[0] == 'q') return;
 	} while(aux[0] < 'A' && aux[0] > 'Z');
 
 	l = fillProductSet(pcat, aux[0]);
@@ -62,7 +63,7 @@ void query2(PRODUCTCAT pcat) {
 }
 
 void query3(FATGLOBAL fat, PRODUCTCAT pcat) {
-	PAGE page; 
+	PAGE page;
 	PRODUCT product;
 	PRODUCTFAT pfat;
 	char answ[MAX_SIZE], oldCmd[MAX_SIZE];
@@ -78,45 +79,49 @@ void query3(FATGLOBAL fat, PRODUCTCAT pcat) {
 
 	pfat = getProductDataByMonth(fat, product, month);
 
-
 	if (mode == 1) {
 		quantT  = 0;
 		billedT = 0;
 		page = createPage("", 2, 1,1);
-		
+
 		for (i=0; i < BRANCHES; i++) {
-			quantT  += getProductFatQuant(pfat, i, NULL, NULL);
-	   		billedT += getProductFatQuant(pfat, i, NULL, NULL);
+			quantT  += getProductFatSales(pfat, i, NULL, NULL);
+	   		billedT += getProductFatSales(pfat, i, NULL, NULL);
 		}
-		
 		sprintf(answ, "Quantidade Total: \t%d", quantT);
 		page = addLineToPage(page, answ);
 		sprintf(answ, "Faturação Total: \t%.2f", billedT);
 		page = addLineToPage(page, answ);
 
 	} else {
-		page = createPage("\t\tFilial 1\tFilial 2\tFilial 3", 4, 1,1);
+		page = createPage("\t\tFilial 1\tFilial 2\tFilial 3", 5, 1,1);
 
 		for(i=0; i < BRANCHES; i++) {
-			getProductFatQuant(pfat, i, &qtt[i][0], &qtt[i][1]);
+			getProductFatSales(pfat, i, &qtt[i][0], &qtt[i][1]);
 			getProductFatBilled(pfat, i, &billed[i][0], &billed[i][1]);
 		}
 
-		sprintf(answ, "Quantidade N\t %d\t\t %d\t\t %d", qtt[0][0], qtt[1][0], qtt[2][0]);
-		page = addLineToPage(page, answ); 
-		sprintf(answ, "Quantidade P\t %d\t\t %d\t\t %d", qtt[0][1], qtt[1][1], qtt[2][1]);
-		page = addLineToPage(page, answ); 
+		sprintf(answ, "Vendas N\t %d\t\t %d\t\t %d", qtt[0][0], qtt[1][0], qtt[2][0]);
+		page = addLineToPage(page, answ);
 
-		page = addLineToPage(page, answ); 
+		sprintf(answ, "Vendas P\t %d\t\t %d\t\t %d", qtt[0][1], qtt[1][1], qtt[2][1]);
+		page = addLineToPage(page, answ);
 
-		sprintf(answ, "Faturado N\t %.2f\t\t %.2f\t\t %.2f", billed[0][0], billed[1][0], billed[2][0]);
-		page = addLineToPage(page, answ); 
-		sprintf(answ, "Faturado P\t %.2f\t\t %.2f\t\t %.2f", billed[0][1], billed[1][1], billed[2][1]);
-		page = addLineToPage(page, answ); 
+
+		page = addLineToPage(page, "");
+
+
+		sprintf(answ, "Faturado N\t %6.2f\t %6.2f\t %6.2f", 
+								billed[0][0], billed[1][0], billed[2][0]);
+		page = addLineToPage(page, answ);
+
+		sprintf(answ, "Faturado P\t %6.2f\t %6.2f\t %6.2f",
+			   					billed[0][1], billed[1][1], billed[2][1]);
+		page = addLineToPage(page, answ);
 	}
 
 	freeProductFat(pfat);
-	
+
 	strcpy(oldCmd, "\n");
 	while (newPage != -1)
 		newPage = presentList(page, oldCmd);
@@ -137,7 +142,7 @@ void query4(FATGLOBAL fat) {
 		size  = getListSize(pgroup);
 	} else {
 		pgroupB = getProductsNotSoldByBranch(fat);
-	
+
 		sizes[0] = getListSize(pgroupB[0]);
 		sizes[1] = getListSize(pgroupB[1]);
 		sizes[2] = getListSize(pgroupB[2]);
@@ -146,9 +151,9 @@ void query4(FATGLOBAL fat) {
 		if (mode == -1) return;
 
 		size =  sizes[mode];
-		pgroup = pgroupB[mode];	
+		pgroup = pgroupB[mode];
 	}
-	
+
 	strcpy(oldCmd, "\n");
 	newPage=1;
 	while(newPage != -1) {
@@ -177,14 +182,14 @@ void query4(FATGLOBAL fat) {
 
 	} else {
 		pgroupB = getProductsNotSoldByBranch(fat);
-		
+
 		for(i=0; i < BRANCHES; i++) {
 			aux = getListSize(pgroupB[i]);
 			size = (aux > size) ? aux : size;
 		}
-		
+
 		page = createPage("\tFilial 1\tFilial 2\tFilial 3", LINE_NUMS, 1, size/LINE_NUMS);
-	
+
 		auxSet = initSet(size);
 
 		for(i=0; i < size; i++) {
@@ -237,7 +242,8 @@ void query6(FATGLOBAL fat) {
 	double billed;
 	int quantity;
 	char buff[MAX_SIZE];
-	quantity = getQuantByMonthRange(fat, initialMonth, finalMonth);
+
+	quantity = getSalesByMonthRange(fat, initialMonth, finalMonth);
 	billed   = getBilledByMonthRange(fat, initialMonth, finalMonth);
 	sprintf(buff, "Quantidade:\t%d", quantity);
 	print = addToPrintSet(print, buff);
@@ -491,9 +497,9 @@ static int askBranchPrev(int p1, int p2, int p3) {
 	int r=0;
 
 	printf("\n  ::::::::::::::::::::::::::::::\n");
-	printf("\t   1• Filial 1 (%d)\n", p1);
-	printf("\t   2• Filial 2 (%d)\n", p2);
-	printf("\t   3• Filial 3 (%d)\n", p3);
+	printf("\t1• Filial 1 (%d)\n", p1);
+	printf("\t2• Filial 2 (%d)\n", p2);
+	printf("\t3• Filial 3 (%d)\n", p3);
 	printf("  ::::::::::::::::::::::::::::::\n");
 	do {
 		printf("  Escolha uma filial: ");
@@ -517,12 +523,12 @@ static PRODUCT askProduct(PRODUCTCAT pcat) {
 		strtok(buff, "\n\r");
 		product = toProduct(buff);
 
-		if (lookUpProduct(pcat, product)) stop=1;
-		else if (buff[0] == 'q') {
+		if (buff[0] == 'q') {
 			stop=1;
 			freeProduct(product);
 			product = NULL;
-		} else if (buff[0] != '\n') printf("Produto Inválido!\n");
+		} else if (lookUpProduct(pcat, product)) stop=1;
+		  else printf("Produto Inválido!\n");
 	}
 
 	return product;
@@ -561,7 +567,7 @@ static int askMonth() {
 		printf("Um mês deve estar entre 1 e 12.");
 	}
 
-	return mes;
+	return mes-1;
 }
 
 /* devolve -1 caso o utilizador sair */

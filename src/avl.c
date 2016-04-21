@@ -4,8 +4,6 @@
 #include "avl.h"
 #include "set.h"
 
-#define HASH_SIZE 10
-
 typedef enum balance { LH, EH, RH } Balance;
 
 typedef struct node {
@@ -228,13 +226,14 @@ void* dumpDataAVL (AVL tree, void* data, void* (*dumper)(void*, void*)){
 
 static NODE newNode(char *hash, void *content, NODE left, NODE right) {
 	NODE new = malloc(sizeof(struct node));
+	int size = strlen(hash);
 
 	new->bal = EH;
-	new->hash = malloc(sizeof(char)*HASH_SIZE);
+	new->hash = malloc(sizeof(char) * size + 1);
 	new->content = content;
 	new->left = left;
 	new->right = right;
-	strncpy(new->hash, hash, HASH_SIZE);
+	strcpy(new->hash, hash);
 
 	return new;
 }
@@ -478,7 +477,7 @@ static void separateNode(NODE node, SET set1, SET set2, clone_t clone, compare_t
 	if (node) {
 		separateNode(node->left, set1, set2, clone, comp, arg);
 		
-		res = comp(node->content, arg);
+		res = comp(node->content, arg, NULL);
 	
 		if (clone && node->content)
 			contCopy = clone(node->content);
@@ -507,7 +506,7 @@ static void condSeparateNode(NODE n, SET set1, SET set2, clone_t clone, conditio
 		condSeparateNode(n->left, set1, set2, clone, pred, p_arg, comp, c_arg);
 
 		if (pred(n->content, p_arg)){
-			res = comp(n->content, c_arg);
+			res = comp(n->content, c_arg, NULL);
 
 			if (clone && n->content)
 				contCopy = clone(n->content);

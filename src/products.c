@@ -5,20 +5,14 @@
 #define CATALOG_SIZE 26
 
 #define INDEX(p)             (p->str[0] - 'A')
-#define IS_CAPITAL_LETTER(c) (c >= 'A' && c <= 'Z')
-#define IS_NUMBER(c)         (c >= '0' && c <= '9')
 
 struct product{
-	char str[PRODUCT_LENGTH];
+	char *str;
 };
 
 struct product_catalog {
 	CATALOG cat;
 };
-
-struct product_set {
-	SET set;	
-}; 
 
 PRODUCTCAT initProductCat(){
 	PRODUCTCAT productCat = malloc(sizeof(*productCat));
@@ -53,22 +47,28 @@ CATALOG getProductCat (PRODUCTCAT productCat) {
 
 PRODUCT newProduct() {
 	PRODUCT new = malloc(sizeof(struct product));
+	new->str = NULL;
 	
-	new->str[0] = '\0';
-
 	return new;
 }
 
-PRODUCT writeProduct(PRODUCT product, char* str) {
-	strncpy(product->str, str, PRODUCT_LENGTH);
+PRODUCT changeProductCode(PRODUCT product, char* str) {
+	if (product->str)
+		free(product->str);
+
+	product->str = malloc(sizeof(char) * strlen(str) + 1);
+	strcpy(product->str, str);
+
 	return product;
 }
 
 PRODUCT toProduct(char *str) {
 	PRODUCT new;
 
-	new = malloc (sizeof(*new));
-	strncpy(new->str, str, PRODUCT_LENGTH);
+	new = malloc(sizeof(*new));
+	new->str = malloc(sizeof(char) * strlen(str) + 1);
+
+	strcpy(new->str, str);
 
 	return new;
 }
@@ -76,33 +76,32 @@ PRODUCT toProduct(char *str) {
 PRODUCT cloneProduct(PRODUCT product) {
 	PRODUCT new;
 
-	new = malloc (sizeof (*new));	
-	strncpy(new->str, product->str, PRODUCT_LENGTH);
+	new = malloc(sizeof(*new));
+	new->str = malloc(sizeof(char) * strlen(product->str) + 1);
+
+	strcpy(new->str, product->str);
 
 	return new;
 }
 
-char* fromProduct(PRODUCT product, char* dest) {
-	strncpy(dest, product->str, PRODUCT_LENGTH);
-	return dest;
+char* fromProduct(PRODUCT product) {
+	char *str = malloc(sizeof(char) * strlen(product->str) + 1);
+	strcpy(str, product->str);
+
+	return str;
 }
 
 bool isEmptyProduct(PRODUCT p) {
-	return (p->str[0] == '\0');
-}
-
-bool isProduct (char *str){
-	return IS_CAPITAL_LETTER(str[0]) && 
-           IS_CAPITAL_LETTER(str[1]) &&
-	       str[2] == '1'             && 
-           IS_NUMBER(str[3])         && 
-           IS_NUMBER(str[4])         && 
-           IS_NUMBER(str[5]);
+	return (p->str == NULL);
 }
 
 void freeProduct(PRODUCT product) {
+	if (product->str)
+		free(product->str);
+
 	free(product);
 }
+
 LIST fillProductSet(PRODUCTCAT productCat, char index) {
 	SET set;
 	set = fillSet(productCat->cat, index - 'A');

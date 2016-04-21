@@ -20,9 +20,6 @@
 
 static void    printMainMenu();
 static void    printLogo();
-static int     askBranch();
-static PRODUCT askProduct();
-static int     askMonth();
 
 int interpreter(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat) {
 	char answ[BUFF_SIZE];
