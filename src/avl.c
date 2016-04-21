@@ -39,17 +39,7 @@ static void freeNode     (NODE node, free_t free);
 static SET addNodeToSet (SET s, NODE node, clone_t clone);
 static SET filterNode   (NODE n, SET s, clone_t clone, condition_t predicate, void* arg);
 
-static void* dumpDataNode (NODE n, void* data, void* (*dumper) (void*, void*));
-
-static void  separateNode (NODE n, SET set1, SET set2,
-                           clone_t clone, 
-                           compare_t comp, void* arg);
-
-static void condSeparateNode (NODE n, 
-                              SET set1, SET set2, 
-                              clone_t clone, 
-                              condition_t pred, void* p_arg, 
-                              compare_t comp, void* c_arg);
+static SET dumpNode (NODE n, SET set, void*(*dumper)(void*));
 
 
 AVL initAVL(init_t init, condition_t equals, clone_t clone, free_t free){
@@ -207,21 +197,10 @@ SET filterAVL (AVL tree, SET s, condition_t condition, void* arg) {
 	return s;
 }
 
-void separateAVL(AVL tree, SET set1, SET set2, compare_t comparator, void* arg){
-	separateNode(tree->head, set1, set2, tree->clone, comparator, arg);
-}
+SET dumpAVL (AVL tree, SET set, void* (*dumper)(void*)){
+	set = dumpNode(tree->head, set, dumper);
 
-void condSeparateAVL (AVL tree, SET s1, SET s2,      /* Sets */ 
-                      condition_t pred, void* p_arg, /* Predicado */
-                      compare_t comp, void* c_arg)   /* Comparador */
-{
-	condSeparateNode(tree->head, s1, s2, tree->clone, pred, p_arg, comp, c_arg);
-}
-
-void* dumpDataAVL (AVL tree, void* data, void* (*dumper)(void*, void*)){
-	data = dumpDataNode(tree->head, data, dumper);
-
-	return data;
+	return set;
 }
 
 static NODE newNode(char *hash, void *content, NODE left, NODE right) {
@@ -470,69 +449,15 @@ static SET filterNode(NODE n, SET s, clone_t clone, condition_t condition, void*
 	return s;
 }
 
-static void separateNode(NODE node, SET set1, SET set2, clone_t clone, compare_t comp, void* arg) { 
-	void* contCopy = NULL;
-	int res;
-	
-	if (node) {
-		separateNode(node->left, set1, set2, clone, comp, arg);
-		
-		res = comp(node->content, arg, NULL);
-	
-		if (clone && node->content)
-			contCopy = clone(node->content);
-
-		if (res < 0)
-			insertElement(set1, node->hash, contCopy);
-		else if (res > 0)
-			insertElement(set2, node->hash, contCopy);
-		else {
-			insertElement(set2, node->hash, contCopy);
-			insertElement(set2, node->hash, contCopy);
-		}
-
-		separateNode(node->right, set1, set2, clone, comp, arg); 
-	}
-
-}
-
-static void condSeparateNode(NODE n, SET set1, SET set2, clone_t clone, condition_t pred,
-                             void* p_arg, compare_t comp, void* c_arg)
- {
-	void* contCopy = NULL;
-	int res;
+static SET dumpNode(NODE n, SET set, void* (*dumper)(void*)) {
 
 	if (n) {
-		condSeparateNode(n->left, set1, set2, clone, pred, p_arg, comp, c_arg);
-
-		if (pred(n->content, p_arg)){
-			res = comp(n->content, c_arg, NULL);
-
-			if (clone && n->content)
-				contCopy = clone(n->content);
-
-			if (res < 0)
-				insertElement(set1, n->hash, contCopy);
-			else if (res > 0)
-				insertElement(set2, n->hash, contCopy);
-			else {
-				insertElement(set1, n->hash, contCopy);
-				insertElement(set2, n->hash, contCopy);
-			}
-		}
-
-		condSeparateNode(n->right, set1, set2, clone, pred, p_arg, comp, c_arg);
-	}
-}
-
-static void* dumpDataNode(NODE n, void* data, void* (*dumper) (void*, void*)) {
-	if (n) {
-		data = dumper(data, n->content);
-		data = dumpDataNode(n->left, data, dumper);
-		data = dumpDataNode(n->right, data, dumper);	
+		set = dumpNode(n->left, set, dumper);
+		set = insertElement(set, n->hash, dumper(n->content));
+		set = dumpNode(n->right, set, dumper);	
 	}
 
-	return data;
+	return set;
 }
 
 static SET addNodeToSet(SET s, NODE node, clone_t clone) {

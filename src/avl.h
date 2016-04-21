@@ -117,26 +117,6 @@ SET addAVLtoSet (SET s, AVL tree);
 SET filterAVL (AVL tree, SET s, condition_t condition, void* arg);
 
 /**
- ** Constrói dois conjuntos de dados a partir do resultado da função comparação dada que
- ** será aplicada a todos os nodos da árvore, por ordem crescente.
- **
- ** O primeiro argumento do comparador deve ser sempre o conteúdo, sendo possível 
- ** passar-lhe um argumento extra.
- **
- ** Caso o resultado da comparação seja inferior a zero, o nodo é acrescentado ao set1.
- ** Caso o resultado da comparação seja superior a zero, o nodo é acrescentado ao set2.
- ** Caso o resultado da comparação seja igual a zero, o nodo é acrescentado aos dois sets.
- **
- ** @param tree Árvore onde será aplicado o separate
- ** @param set1 Conjunto de dados onde serão adicionados elementos
- ** @param set2 Conjunto de dados onde serão adicionados elementos
- ** @param compare Função usada para indentificar o conjunto de dados onde será acrescentao
- ** o nodo
- ** @param arg Argumento opcional para o comparador
- **/
-void separateAVL (AVL tree, SET set1, SET set2, compare_t compare, void* arg);
-
-/**
  ** Extrai o conteúdo de cada nodo, usando a função dumper dada. O conteúdo extraido será
  ** guardado na estrutura data fornecida.
  ** 
@@ -147,31 +127,6 @@ void separateAVL (AVL tree, SET set1, SET set2, compare_t compare, void* arg);
  ** argumento corresponde à estrutura de dados presente no conteúdo de cada nodo
  ** @return Estrutura de dados com toda a informação
  **/
-void* dumpDataAVL(AVL tree, void* data, void* (*dumper)(void*, void*));
+SET dumpAVL(AVL tree, SET set, void* (*dumper)(void*));
 
-/**
- ** Constrói dois conjuntos de dados a partir do resultado da função comparação. A função
- ** comparação apenas é aplicada a nodos para o qual a condição dada é verdade. Os nodos
- ** em que a condição é falsa são ignorados.
- **
- ** O primeiro argumento da condição e do comparador deve corresponder sempre ao conteúdo
- ** do nodo. Cada uma destas funçãos pode receber um argumento opcional.
- *
- ** Caso o resultado da comparação seja inferior a zero, o nodo é acrescentado ao set1.
- ** Caso o resultado da comparação seja superior a zero, o nodo é acrescentado ao set2.
- ** Caso o resultado da comparação seja igual a zero, o nodo é acrescentado aos dois sets.
- **
- ** @param tree Árvore onde será aplicado a função
- ** @param set1 Conjunto de dados onde serão adicionados elementos
- ** @param set2 Conjunto de dados onde serão adicionados elementos
- ** @param condition Condição aplicada ao conteúdo de cada nodo
- ** @param cond_arg Argumento opcional para a condição
- ** @param comparator Função usada para indentificar o conjunto de dados onde 
- ** será acrescentao o nodo
- ** @param comp_arg Argumento opcional para a condição
- **/
-void condSeparateAVL (AVL tree, SET set1, SET set2,
-                      condition_t condition,  void* cond_arg,
-                      compare_t   comparator, void* comp_arg);
-               
 #endif
