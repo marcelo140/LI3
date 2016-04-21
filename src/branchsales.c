@@ -42,6 +42,7 @@ typedef struct client_unit {
 	int saletype;
 }*CLIENTUNIT;
 
+static int compareProductUnitByMonth(PRODUCTUNIT pu1, PRODUCTUNIT pu2, int* month);
 bool clientBought(CLIENTSALE cs);
 bool clientHaveNotBought(CLIENTSALE cs);
 static CLIENTSALE addSaleToClientSale(CLIENTSALE cs, SALE s);
@@ -137,8 +138,28 @@ void getClientsByProduct(BRANCHSALES bs, PRODUCT prod, LIST *normal, LIST *promo
 		}
 	}
 
+	free(product);
 	*normal = toList(normalClients);
 	*promo = toList(promoClients);
+}
+
+LIST getProductsByClient(BRANCHSALES bs, CLIENT c, int month) {
+	CLIENTSALE cs;
+	SET products;
+	char* client;
+	int size;
+	
+	client = fromClient(c);	
+	cs = getCatContent(bs->products, INDEX(client), client);
+
+	size = getHashTsize(cs->products);
+	products = initSet(size);
+	products = dumpHashT(cs->products, products);
+
+	sortSet(products, (compare_t) compareProductUnitByMonth, &month);	
+
+	free(client);
+	return toList(products);
 }
 
 void freeBranchSales(BRANCHSALES bs) {
@@ -262,6 +283,10 @@ static PRODUCTUNIT cloneProductUnit(PRODUCTUNIT product) {
 	memcpy(new->quant, product->quant, sizeof(int) * MONTHS);
 
 	return new;
+}
+
+static int compareProductUnitByMonth(PRODUCTUNIT pu1, PRODUCTUNIT pu2, int* month) {
+	return (pu1->quant[*month] - pu2->quant[*month]);
 }
 
 static void freeProductUnit(PRODUCTUNIT product){

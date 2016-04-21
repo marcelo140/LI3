@@ -19,6 +19,8 @@ LIST getClientsWhoBought(BRANCHSALES bs);
 
 void getClientsByProduct(BRANCHSALES bs, PRODUCT prod, LIST *normal, LIST *clients);
 
+LIST getProductsByClient(BRANCHSALES bs, CLIENT c, int month);
+
 void freeBranchSales(BRANCHSALES bs);
 
 #endif
