@@ -37,26 +37,11 @@ struct hasht {
 static int Hash(char *key);
 static HASHT resizeHashT(HASHT ht);
 
-HASHT initMyHashT(int size, init_t init, add_t add, clone_t clone, free_t free) {
+HASHT initHashT(int size, init_t init, add_t add, clone_t clone, free_t free) {
 	HASHT new = malloc(sizeof(*new));
 
 	new->table    = calloc(size, sizeof(HASHTCNTT));
 	new->capacity = size;
-	new->size 	  = 0;
-	new->maxSize  = new->capacity * 0.8;
-	new->init 	  = init;
-	new->add  	  = add;
-	new->clone    = clone;
-	new->free 	  = free;
-
-	return new;
-}
-
-HASHT initHashT(init_t init, add_t add, clone_t clone, free_t free) {
-	HASHT new = malloc(sizeof(*new));
-
-	new->table    = calloc(BASE_CAPACITY, sizeof(HASHTCNTT));
-	new->capacity = BASE_CAPACITY;
 	new->size 	  = 0;
 	new->maxSize  = new->capacity * 0.8;
 	new->init 	  = init;

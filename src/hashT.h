@@ -12,8 +12,7 @@ typedef void* (*add_t)  (void*, void*);
  * Inicializa uma nova tabela de Hash 
  * @return Nova tabela de Hash
  */
-HASHT initHashT(init_t init, add_t add, clone_t clone, free_t free);
-HASHT initMyHashT(int size,init_t init, add_t add, clone_t clone, free_t free);
+HASHT initHashT(int size, init_t init, add_t add, clone_t clone, free_t free);
 
 int getHashTsize(HASHT ht);
 
