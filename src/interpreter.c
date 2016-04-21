@@ -18,10 +18,11 @@
 #define CLIENTS_PATH "Clientes.txt"
 #define PRODUCTS_PATH "Produtos.txt"
 
-static void    printMainMenu();
-static void    printLogo();
+static void printMainMenu();
+static void printLogo();
+static void presentQueryName(int i);
 
-int interpreter(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat) {
+int interpreter(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat) {
 	char answ[BUFF_SIZE];
 	int qnum;
 
@@ -37,6 +38,8 @@ int interpreter(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat) {
 
 	qnum = atoi(answ);
 
+	presentQueryName(qnum); /* TODO */
+
 	switch(qnum) {
 		case 1 : return LOAD;
 		case 2 : query2(pcat);
@@ -45,13 +48,13 @@ int interpreter(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat) {
 			 	 break;
 		case 4 : query4(fat);
 				 break;
-		case 5 : query5(bs);
+		case 5 : query5(bs, ccat);
 		 		 break;
 		case 6 : query6(fat);
 		  		 break;
 		case 7 :
 				 break;
-		case 8 : query8(bs);
+		case 8 : query8(bs, pcat);
 		 		 break;
 		case 9 :
 		 		 break;
@@ -146,26 +149,71 @@ void loader(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat ) {
 	fclose(sales);
 }
 
+static void presentQueryName(int i) {
+	
+	switch(i) {
+		case 1: 
+			printf("\t➤ Leitura de Dados                                \n");
+			break;
+		case 2:
+			printf("\t➤ Listar Produtos por Letra                       \n");
+			break;
+		case 3:
+			printf("\t➤ Receita do Produto por Mês                      \n");
+			break;
+		case 4:
+			printf("\t➤ Produtos Não Comprados                          \n");
+			break;
+		case 5:
+			printf("\t➤ Gastos de um Cliente                            \n");
+			break;
+		case 6:
+			printf("\t➤ Vendas num Intervalo de Meses                   \n");
+			break;
+		case 7:
+			printf("\t➤ Clientes Que Compraram em Todas as Filiais      \n");
+			break;
+		case 8:
+			printf("\t➤ Clientes Que Compraram Produto em Filial        \n");
+			break;
+		case 9:
+			printf("\t➤ Produto Mais Comprado por Cliente em Mês        \n");
+			break;
+		case 10:
+			printf("\t➤ Produtos Mais Vendidos em Todo o Ano            \n");
+			break;
+		case 11:
+			printf("\t➤ Três Produtos em que o Cliente mais gastou      \n");
+			break;
+		case 12:
+			printf("\t➤ Clientes sem Compras & Produtos não Vendidos    \n");
+			break;
+	}
+
+
+	printf("\n  :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\n");
+}
+
 
 static void printMainMenu() {
 
 	printLogo();
 
 	printf("      1 • Leitura de Dados                                \n");
-	printf("      2 • Listar Produtos                                 \n");
+	printf("      2 • Listar Produtos por Letra                       \n");
 	printf("      3 • Receita do Produto por Mês                      \n");
 	printf("      4 • Produtos Não Comprados                          \n");
 	printf("      5 • Gastos de um Cliente                            \n");
-	printf("      6 • Vendas no Intervalo de Meses                    \n");
+	printf("      6 • Vendas num Intervalo de Meses                   \n");
 	printf("      7 • Clientes Que Compraram em Todas as Filiais      \n");
 	printf("      8 • Clientes Que Compraram Produto em Filial        \n");
 	printf("      9 • Produto Mais Comprado por Cliente em Mês        \n");
 	printf("     10 • Produtos Mais Vendidos em Todo o Ano            \n");
 	printf("     11 • Três Produtos em que o Cliente mais gastou      \n");
 	printf("     12 • Clientes sem Compras & Produtos não Vendidos    \n");
-	printf("                                                         \n");
+	printf("                                                          \n");
 	printf("      q • Sair                                            \n");
-	printf("                                                         \n");
+	printf("                                                          \n");
 	printf("  :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\n");
 }
 

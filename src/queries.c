@@ -22,11 +22,14 @@ struct page{
 
 static PAGE createPage(char* header, int linesNum,int page, int totalPage);
 static PAGE addLineToPage(PAGE p, char* line);
-static PAGE getPage(PAGE p, LIST lines, int page);
+static PAGE getPage(PAGE p, LIST lines);
+static PAGE resetReadPage(PAGE page); 
 static int presentList(PAGE page, char* onav);
 static void printHelp();
 static void freePage(PAGE p);
 
+static int askClientMode(int n, int p); 
+static CLIENT askClient(CLIENTCAT ccat); 
 static PRODUCT askProduct(PRODUCTCAT pcat);
 static int askMode();
 static int askBranch();
@@ -54,7 +57,7 @@ void query2(PRODUCTCAT pcat) {
 	newPage = 1;
 	while(newPage != -1) {
 		page = createPage("",LINE_NUMS, newPage, size);
-		page = getPage(page, l, newPage);
+		page = getPage(page, l);
 		if (page) newPage = presentList(page, aux);
 		freePage(page);
 	}
@@ -158,142 +161,102 @@ void query4(FATGLOBAL fat) {
 	newPage=1;
 	while(newPage != -1) {
 		page = createPage("", LINE_NUMS, newPage, size / LINE_NUMS);
-		page = getPage(page, pgroup, newPage);
+		page = getPage(page, pgroup);
 		if (page) newPage = presentList(page, oldCmd);
 		else newPage = -1;
 		freePage(page);
 	}
+}
 
+void query5(BRANCHSALES* bs, CLIENTCAT ccat) {
+	CLIENT client;
+	PAGE page;
+	char str[MAX_SIZE];
+	int branch, *quantity, i, newPage;
 
+	branch = askBranch();
+	if (branch == -1) return;
+	client = askClient(ccat);
+	if (!client) return;
 
+	quantity = getClientQuantByMonth(bs[branch], client);
 
-/*	PAGE page;
-	LIST *pgroupB, pgroup;
-	SET auxSet;
-	char buff[MAX_SIZE], *line;
-	int i, j, op, size=1, aux, newPage;
+	page = createPage("\tMÊS\t    QUANTIDADE", 12, 1, 1);
 
-	op = askMode();
-
-	if (op == 1) {
-		pgroup = getProductsNotSold(fat);
-		size    = getListSize(pgroup);
-		page    = createPage("", LINE_NUMS, 1, size/LINE_NUMS);
-
-	} else {
-		pgroupB = getProductsNotSoldByBranch(fat);
-
-		for(i=0; i < BRANCHES; i++) {
-			aux = getListSize(pgroupB[i]);
-			size = (aux > size) ? aux : size;
-		}
-
-		page = createPage("\tFilial 1\tFilial 2\tFilial 3", LINE_NUMS, 1, size/LINE_NUMS);
-
-		auxSet = initSet(size);
-
-		for(i=0; i < size; i++) {
-			buff[0] = '\0';
-			for(j=0; j < BRANCHES; j++) {
-				line = getListElement(pgroupB[j], i);
-				if (line) sprintf(buff, "%s\t%s", buff, line);
-				else sprintf(buff, "%s\t\t", buff);
-			}
-			printf("%s\n", buff);
-			auxSet = insertElement(auxSet, buff, NULL);
-		}
-		pgroup = toList(auxSet);
-		freeSet(auxSet);
+	for(i=0; i < 12; i++) {
+		sprintf(str, "\t%2d\t\t%3d", i+1, quantity[i]);
+		page = addLineToPage(page, str);
 	}
 
+	strcpy(str, "\n");
+	newPage = 1;
+	while(newPage != -1) {
+		newPage = presentList(page, str);
+	}
+
+	freePage(page);
+	freeClient(client);
+	free(quantity); 
+}
+
+void query6(FATGLOBAL fat) {
+	PAGE page;
+	double billed;
+	int sales, init, final, newPage;
+	char buff[MAX_SIZE];
+
+	askMonthRange(&init, &final);
+
+	page = createPage("", 2, 1, 1);
+
+	sales  = getSalesByMonthRange(fat, init, final);
+	billed = getBilledByMonthRange(fat, init, final);
+	sprintf(buff, "Vendas:\t%d", sales);
+	page = addLineToPage(page, buff);
+	sprintf(buff, "Faturado:\t%.2f", billed);
+	page = addLineToPage(page, buff);
+	
 	strcpy(buff, "\n");
 	newPage = 1;
 	while(newPage != -1) {
-		page = getPage(page, pgroup, newPage);
+		newPage = presentList(page, buff);
+	}
+
+	freePage(page);
+}
+
+void query8(BRANCHSALES* bs, PRODUCTCAT pcat) {
+	PAGE page;
+	LIST n, p, toPrint;
+	PRODUCT product;
+	char buff[MAX_SIZE];
+	int branch, mode, newPage, size;
+	
+	product = askProduct(pcat);
+	if (!product) return;
+	branch = askBranch();
+	if (branch == -1) return;
+
+	getClientsByProduct(bs[branch], product, &n, &p);
+	
+	mode = askClientMode(getListSize(n), getListSize(p));
+	if (mode == -1) return;
+
+	toPrint = (mode == 1) ? n : p;
+	size = getListSize(toPrint);
+	size = (size > LINE_NUMS) ? size / LINE_NUMS : 1;
+
+	newPage = 1;
+	while (newPage != -1) {
+		page = createPage("", LINE_NUMS, newPage, size); 
+		page = getPage(page, toPrint);	
 		if (page) newPage = presentList(page, buff);
 		else newPage = -1;
 		freePage(page);
 	}
 
-	freeList(pgroup); */
-}
-
-void query5(BRANCHSALES* bs) {
-/*	PRINTSET print = initPrintSet(12);
-	char str[MAX_SIZE];
-	int i, *quantity;
-
-	quantity = getClientQuant(bs, client);
-
-	sprintf(str, "\tMÊS\t    QUANTIDADE");
-	print = setPrintHeader(print, str);
-
-	for(i=0; i < 12; i++){
-		sprintf(str, "\t%2d\t\t%3d", i+1, quantity[i]);
-		print = addToPrintSet(print, str);
-	}
-
-	free(quantity); */
-}
-
-void query6(FATGLOBAL fat) {
-/*
-	PRINTSET print = initPrintSet(2);
-	double billed;
-	int quantity;
-	char buff[MAX_SIZE];
-
-	quantity = getSalesByMonthRange(fat, initialMonth, finalMonth);
-	billed   = getBilledByMonthRange(fat, initialMonth, finalMonth);
-	sprintf(buff, "Quantidade:\t%d", quantity);
-	print = addToPrintSet(print, buff);
-	sprintf(buff, "Faturado:\t%.2f", billed);
-	print = addToPrintSet(print, buff);
-*/
-
-}
-
-void query8(BRANCHSALES* bs) {
-/*
-	PRINTSET print = NULL;
-	SET n = initSet(1024), p = initSet(1024), toPrint;
-	char answ[MAX_SIZE], *buff;
-	int mode = 0, i;
-
-	filterClientsByProduct(bs, product, n, p);
-
-	printf("\n::::::::::::::::::::::::::::::\n\n");
-	printf(" 1• Clientes em modo N (%d)\n", getSetSize(n));
-	printf(" 2• Clientes em modo P (%d)\n", getSetSize(p));
-	printf("\n::::::::::::::::::::::::::::::\n");
-
-	while (mode <= 0 || mode >= 3) {
-		printf("Escolha um modo: ");
-		fgets(answ, MAX_SIZE, stdin);
-		mode = atoi(answ);
-
-		if (answ[0] == 'q') break;
-
-		if (UPPER(answ[0]) == 'N')
-			mode = 1;
-		else if (UPPER(answ[0]) == 'P')
-			mode = 2;
-	}
-
-	if (mode == 1 || mode == 2) {
-		toPrint = (mode == 1) ? n : p;
-		print = initPrintSet(MAX_SIZE);
-
-		for(i=0; (buff = getSetHash(toPrint, i)) ; i++) {
-			sprintf(answ, "\t\t%s",buff);
-			print = addToPrintSet(print, answ);
-			free(buff);
-		}
-	}
-
-	freeSet(n);
-	freeSet(p);
- */
+	freeList(n);
+	freeList(p);
 }
 
 void query10(BRANCHSALES* bs) {
@@ -353,19 +316,17 @@ static PAGE createPage(char* header, int linesNum, int page, int totalPage) {
 	return new;
 }
 
-static PAGE getPage(PAGE p, LIST lines, int page) {
+static PAGE getPage(PAGE p, LIST lines) {
 	int i, index;
-	char *line;
+	char *line = NULL;
 
-	index = (page-1) * p->linesNum;
+	index = (p->page-1) * p->linesNum;
 
 	for(i=0; i < p->linesNum; i++) {
 		line = getListElement(lines, i + index);
 		if (line) addLineToPage(p, line);
-		else return NULL;
-	   free(line);
+	   	free(line);
 	}
-
 
 	return p;
 }
@@ -399,6 +360,11 @@ char* getNextLine(PAGE p) {
 	return line;
 }
 
+static PAGE resetReadPage(PAGE page) {
+	page->readH = -1;
+	return page;
+}
+
 static void freePage(PAGE p) {
 	int i;
 
@@ -429,6 +395,7 @@ static int presentList(PAGE p, char *ocmd) {
 		printf("  %s\n", buff);
 		free(buff);
 	}
+	p = resetReadPage(p);
 
 	printf(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n");
 	printf("\n b: Anterior\tn: Seguinte\th: Ajuda\n g: Ir para página\tq: Sair\n\t>> ");
@@ -534,6 +501,29 @@ static PRODUCT askProduct(PRODUCTCAT pcat) {
 	return product;
 }
 
+/* devovle NULL se o utilizador sair */
+static CLIENT askClient(CLIENTCAT ccat) {
+	CLIENT client=NULL;
+	char buff[MAX_SIZE];
+	int stop=0;
+
+	while(!stop) {
+		printf("  Cliente: ");
+		fgets(buff, MAX_SIZE, stdin);
+		strtok(buff, "\n\r");
+		client = toClient(buff);
+
+		if (buff[0] == 'q') {
+			stop = 1;
+			freeClient(client);
+			client = NULL;
+		} else if (lookUpClient(ccat, client)) stop=1;
+		  else printf("Cliente Inválido!\n");
+	}
+
+	return client;
+}
+
 static int askMode() {
 	char answ[MAX_SIZE];
 	int mode=0;
@@ -548,6 +538,31 @@ static int askMode() {
 		fgets(answ, MAX_SIZE, stdin);
 		mode = atoi(answ);
 		if (answ[0] == 'q') return -1;
+	}
+
+	return mode;
+}
+
+static int askClientMode(int n, int p) {
+	int mode=0;
+	char answ[MAX_SIZE];
+
+	printf("\n::::::::::::::::::::::::::::::\n\n");
+	printf(" 1• Clientes em modo N (%d)\n", n);
+	printf(" 2• Clientes em modo P (%d)\n", p);
+	printf("\n::::::::::::::::::::::::::::::\n");
+
+	while (mode <= 0 || mode >= 3) {
+		printf("Escolha um modo: ");
+		fgets(answ, MAX_SIZE, stdin);
+		mode = atoi(answ);
+
+		if (answ[0] == 'q') return -1;
+
+		if (UPPER(answ[0]) == 'N')
+			mode = 1;
+		else if (UPPER(answ[0]) == 'P')
+			mode = 2;
 	}
 
 	return mode;
@@ -585,7 +600,7 @@ static int askMonthRange(int* begin, int* end) {
 	}
 
 	while(1) {
-		printf("  Mês incial (%d-12): ", b);
+		printf("  Mês fimal (%d-12): ", b);
 		fgets(buff, MAX_SIZE, stdin);
 		if (buff[0] == 'q') return -1;
 		e = atoi(buff);
