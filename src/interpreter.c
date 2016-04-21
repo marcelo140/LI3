@@ -129,7 +129,7 @@ void loader(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat ) {
 	printf("A carregar vendas de %s... ", salesPath);
 	fflush(stdout);
 	for(i=0; i < 3; i++)
-		bs[i] = fillBranchSales(bs[i], ccat);
+		bs[i] = fillBranchSales(bs[i], ccat, pcat);
 	fat = fillFat(fat, pcat);
 	success = loadSales(sales, fat, bs, pcat, ccat, &failed);
 	printf("\nVendas analisadas: %d\n", success+failed);

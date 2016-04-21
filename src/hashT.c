@@ -37,11 +37,11 @@ struct hasht {
 static int Hash(char *key);
 static HASHT resizeHashT(HASHT ht);
 
-HASHT initHashT(init_t init, add_t add, clone_t clone, free_t free) {
+HASHT initHashT(int size, init_t init, add_t add, clone_t clone, free_t free) {
 	HASHT new = malloc(sizeof(*new));
 
-	new->table    = calloc(BASE_CAPACITY, sizeof(HASHTCNTT));
-	new->capacity = BASE_CAPACITY;
+	new->table    = calloc(size, sizeof(HASHTCNTT));
+	new->capacity = size;
 	new->size 	  = 0;
 	new->maxSize  = new->capacity * 0.8;
 	new->init 	  = init;
@@ -65,10 +65,13 @@ HASHT insertHashT(HASHT ht, char* key, void* content) {
 	if (STATUS(p) != BUSY) {
 		STATUS(p) = BUSY;
 		strncpy(KEY(p), key, KEY_SIZE);
-		CONTENT(p) = ht->init();
+		if (ht->init)
+			CONTENT(p) = ht->init();
 		ht->size++;
 	}
-	CONTENT(p) = ht->add(CONTENT(p), content);
+
+	if(ht->add)
+		CONTENT(p) = ht->add(CONTENT(p), content);
 
 	return ht;
 }
@@ -78,7 +81,7 @@ SET dumpHashT(HASHT ht, SET set) {
 	int i;
 
 	for (i=0; i < CAPACITY; i++) {
-		if (STATUS(i) == BUSY){
+		if (STATUS(i) == BUSY && CONTENT(i)){
 			contCopy = ht->clone(CONTENT(i));
 			set = insertElement(set, KEY(i), contCopy);
 		}
@@ -92,10 +95,12 @@ void freeHashT(HASHT ht) {
 
 	if (!ht) return;
 
-	for(i=0; i < ht->capacity; i++)
-		if (STATUS(i) == BUSY) 
-			ht->free(CONTENT(i));
-	
+	if (ht->free){
+		for(i=0; i < ht->capacity; i++)
+			if (STATUS(i) == BUSY) 
+				ht->free(CONTENT(i));
+	}
+
 	free(ht->table);
 	free(ht);
 }

@@ -22,6 +22,7 @@
 
 struct branch {
 	CATALOG clients;
+	CATALOG products;
 };
 
 struct product_data {
@@ -77,6 +78,7 @@ BRANCHSALES initBranchSales () {
 	BRANCHSALES new = malloc(sizeof(*new));
 
 	new->clients = NULL;
+	new->products = NULL;
 
 	return new;
 }

@@ -22,7 +22,7 @@ PRODUCTDATA* getAllContent(BRANCHSALES bs, int*cenas);
  */
 BRANCHSALES initBranchSales ();
 
-BRANCHSALES fillBranchSales (BRANCHSALES bs, CLIENTCAT client);
+BRANCHSALES fillBranchSales (BRANCHSALES bs, CLIENTCAT client, PRODUCTCAT product);
 
 /**
  * Adiciona os dados da compra ao registo do cliente.
