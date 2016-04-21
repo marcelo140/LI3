@@ -130,25 +130,6 @@ SET fillAllSet (CATALOG cat);
 SET filterCat(CATALOG cat, condition_t condition, void* arg);
 
 /**
- * Constrói dois conjuntos de dados a partir do resultado da função comparação dada que
- * será aplicada a todos os elementos do catálogo, por ordem crescente.
- *
- * O primeiro argumento do comparador deve ser sempre o conteúdo, sendo possível
- * passar-lhe um argumento extra.
- *
- * Caso o resultado da comparação seja inferior a zero, o elemento é acrescentado ao set1.
- * Caso o resultado da comparação seja superior a zero, o elemento é acrescentado ao set2.
- * Caso o resultado da comparação seja igual a zero, o elemento é acrescentado aos dois.
- *
- * @param cat Catálogo onde será aplicado o separate
- * @param compare Função usada para identificar o set onde será acrescentado o elemento
- * @param arg Argumento opcional para o comparador
- * @param set1 Conjunto de dados onde serão adicionados elementos
- * @param set2 Conjunto de dados onde serão adicionados elementos
- */
-void separateCat(CATALOG cat, compare_t compare, void* arg, SET set1, SET set2);
-
-/**
  * Extrai o conteúdo de cada elemento, usando a função dumper dada. O conteúdo extraido será
  * guardado na estrutura data fornecida.
  * 
@@ -159,32 +140,6 @@ void separateCat(CATALOG cat, compare_t compare, void* arg, SET set1, SET set2);
  * O segundo argumento corresponde à estrutura presente no conteúdo de cada elemento
  * @return Estrutura de dados com toda a informação
  */
-void* dumpDataCat(CATALOG cat, void* data, void* (*dumper)(void*, void*));
-
-/**
- * Constrói dois conjuntos de dados a partir do resultado da função comparação. A função
- * comparação apenas é aplicada a elementos para o qual a condição dada é verdade. 
- * Os elementos em que a condição é falsa são ignorados.
- *
- * O primeiro argumento da condição e do comparador deve corresponder sempre ao conteúdo
- * do nodo. Cada uma destas funçãos pode receber um argumento opcional.
- 
- * Caso o resultado da comparação seja inferior a zero, o nodo é acrescentado ao set1.
- * Caso o resultado da comparação seja superior a zero, o nodo é acrescentado ao set2.
- * Caso o resultado da comparação seja igual a zero, o nodo é acrescentado aos dois sets.
- *
- * @param cat Catálogo onde será aplicado a função
- * @param set1 Conjunto de dados onde serão adicionados elementos
- * @param set2 Conjunto de dados onde serão adicionados elementos
- * @param condition Condição aplicada ao conteúdo de cada nodo
- * @param cond_arg Argumento opcional para a condição
- * @param comparator Função usada para indentificar o conjunto de dados onde será 
- * acrescentado o elemento
- * @param comp_arg Argumento opcional para a condição
- */
-void condSeparateCat(CATALOG cat, SET set1, SET set2,
-                                  condition_t condition, void* cond_arg,
-                                  compare_t   comparator, void* comp_arg);
-
+SET dumpCatalog(CATALOG cat, void* (*dumper)(void*));
 
 #endif

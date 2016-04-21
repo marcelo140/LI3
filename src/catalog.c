@@ -124,28 +124,14 @@ SET filterCat (CATALOG cat, condition_t condition, void* arg) {
 	return cs;
 }
 
-void separateCat (CATALOG cat, compare_t comp, void* arg, SET set1, SET set2) {
+SET dumpCatalog(CATALOG cat, void* (*dumper)(void*)) {
+	SET s;
 	int i, size = cat->size;
 
-	for(i = 0; i < size; i++)
-		separateAVL(cat->root[i], set1, set2, comp, arg);
-}
-
-void* dumpDataCat(CATALOG cat, void* data, void* (*dumper)(void*, void*)) {
-	int i, size = cat->size;
+	s = initSet(countAllElems(cat));
 
 	for (i = 0; i < size; i++)
-		data = dumpDataAVL(cat->root[i], data, dumper);
+		s = dumpAVL(cat->root[i], s, dumper);
 
-	return data;
-}
-
-void condSeparateCat (CATALOG cat, SET set1, SET set2,
-                                   condition_t predicate, void* predicateArg,
-                                   compare_t  comparator, void* comparatorArg) {
-	int i, size = cat->size;
-
-	for(i = 0; i < size; i++)
-		condSeparateAVL(cat->root[i], set1, set2, predicate, predicateArg,
-                                                  comparator, comparatorArg);
+	return s;
 }
