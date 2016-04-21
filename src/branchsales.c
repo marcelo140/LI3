@@ -2,7 +2,6 @@
 #include <string.h>
 
 #include "branchsales.h"
-#include "sales.h"
 #include "catalog.h"
 #include "hashT.h"
 
@@ -43,6 +42,8 @@ typedef struct client_unit {
 	int saletype;
 }*CLIENTUNIT;
 
+bool clientBought(CLIENTSALE cs);
+bool clientHaveNotBought(CLIENTSALE cs);
 static CLIENTSALE addSaleToClientSale(CLIENTSALE cs, SALE s);
 static PRODUCTSALE addSaleToProductSale(PRODUCTSALE ps, SALE s);
 static void freeProductSale(PRODUCTSALE ps);
@@ -82,6 +83,30 @@ BRANCHSALES fillBranchSales(BRANCHSALES bs, CLIENTCAT cc, PRODUCTCAT pc) {
 
 	return bs;
 }
+
+int* getClientQuantByMonth(BRANCHSALES bs, CLIENT c) {
+	char* client;
+	CLIENTSALE cs;
+	int *months;
+
+	client = fromClient(c);
+	months = malloc(sizeof(int) * MONTHS);
+
+	cs = getCatContent(bs->clients, INDEX(client), client);
+	memcpy(months, cs->quant, sizeof(int) * MONTHS);	
+
+	return months;
+}
+
+LIST getClientsWhoBought(BRANCHSALES bs) {
+	SET s;
+
+	s = filterCat(bs->clients, (condition_t) clientHaveNotBought, NULL);
+
+	return toList(s);
+}
+
+
 
 void freeBranchSales(BRANCHSALES bs) {
 	if (bs) {
@@ -153,6 +178,14 @@ static CLIENTSALE initClientSale() {
 	memset(new->quant, 0, sizeof(int) * MONTHS);
 
 	return new;
+}
+
+bool clientBought(CLIENTSALE cs) {
+	return (cs == NULL);
+}
+
+bool clientHaveNotBought(CLIENTSALE cs) {
+	return (cs != NULL);
 }
 
 static CLIENTSALE addSaleToClientSale(CLIENTSALE cs, SALE s) {
