@@ -16,19 +16,23 @@ BRANCHSALES addSaleToBranch(BRANCHSALES bs, SALE s);
 
 int* getClientQuantByMonth(BRANCHSALES bs, CLIENT c);
 
-LIST getClientsWhoBought(BRANCHSALES bs);
+SET getClientsWhoBought(BRANCHSALES bs);
 
-LIST getClientsWhoHaveNotBought(BRANCHSALES bs);
+SET getClientsWhoHaveNotBought(BRANCHSALES bs);
 
-void getClientsByProduct(BRANCHSALES bs, PRODUCT prod, LIST *normal, LIST *clients);
+void getClientsByProduct(BRANCHSALES bs, PRODUCT prod, SET *normal, SET *clients);
 
-LIST getProductsByClient(BRANCHSALES bs, CLIENT c);
+SET getProductsByClient(BRANCHSALES bs, CLIENT c);
 
 SET listProductsByQuant(BRANCHSALES bs);
 
-void sortProductListByQuant(LIST productList, int month);
+int getClientsFromData(PRODUCTDATA pd);
 
-void sortProductListByBilled(LIST productList);
+int getQuantFromData(PRODUCTDATA pd);
+
+void sortProductListByQuant(SET productList, int month);
+
+void sortProductListByBilled(SET productList);
 
 void freeBranchSales(BRANCHSALES bs);
 

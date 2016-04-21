@@ -7,19 +7,16 @@
 #define CONTENT(s,i) s->list[i]->content
 #define SIZE(s) s->size
 
-struct element {
+typedef struct element {
 	char* hash;
 	void* content;
-};
+}*ELEMENT;
 
 struct set {
 	ELEMENT* list;
 	int size;
 	int capacity;
-};
-
-struct list {
-	struct set* list;
+	free_t free;
 };
 
 static ELEMENT newElement      (char* hash, void* content);
@@ -29,32 +26,6 @@ static int     partition (SET set, int begin, int end, compare_t comparator, voi
 static void    quicksortByName (SET set, int begin, int end);
 static void    quicksort (SET set, int begin, int end, compare_t comparator, void* arg);
 
-LIST toList(SET s) {
-	LIST new = malloc(sizeof(*new));
-	new->list = s;
-	
-	return new;
-}
-
-SET toSet(LIST l) {
-	return l->list;
-}
-
-char* getListElement(LIST l, int pos) {
-	char *ret = NULL, *hash;
-
-	if (pos >= 0 && pos < l->list->size) {
-		hash = l->list->list[pos]->hash;
-		ret = malloc((strlen(hash)+1) * sizeof(char));
-		strcpy(ret, hash);
-	}
-
-	return ret;
-}
-
-int getListSize(LIST l) {
-	return l->list->size;
-}
 
 SET initSet(int capacity) {
 	SET new = malloc(sizeof(*new));
@@ -116,12 +87,6 @@ void sortSetByName(SET list) {
 
 void sortSet(SET list, compare_t comparator, void* arg) {
 	quicksort(list, 0, list->size-1, comparator, arg);
-}
-
-LIST intersectLists(LIST l1, LIST l2){
-	SET new = intersectSet(l1->list, l2->list);
-
-	return toList(new);
 }
 
 SET unionSets(SET s1, SET s2) {
@@ -210,13 +175,6 @@ SET intersectSet(SET s1, SET s2) {
 	}
 
 	return new;
-}
-
-void freeList(LIST l) {
-	if (l) {
-		freeSet(l->list);
-		free(l);
-	}
 }
 
 void freeSet(SET s) {

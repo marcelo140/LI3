@@ -107,23 +107,23 @@ int* getClientQuantByMonth(BRANCHSALES bs, CLIENT c) {
 	return months;
 }
 
-LIST getClientsWhoBought(BRANCHSALES bs) {
+SET getClientsWhoBought(BRANCHSALES bs) {
 	SET s;
 
 	s = filterCat(bs->clients, (condition_t) clientBought, NULL);
 
-	return toList(s);
+	return s;
 }
 
-LIST getClientsWhoHaveNotBought(BRANCHSALES bs) {
+SET getClientsWhoHaveNotBought(BRANCHSALES bs) {
 	SET s;
 	
 	s = filterCat(bs->clients, (condition_t) clientHaveNotBought, NULL);
 
-	return toList(s);
+	return s;
 }
 
-void getClientsByProduct(BRANCHSALES bs, PRODUCT prod, LIST *normal, LIST *promo) {
+void getClientsByProduct(BRANCHSALES bs, PRODUCT prod, SET *normal, SET *promo) {
 	PRODUCTSALE ps;
 	SET clients, normalClients, promoClients;
 	CLIENTUNIT cu;
@@ -155,11 +155,11 @@ void getClientsByProduct(BRANCHSALES bs, PRODUCT prod, LIST *normal, LIST *promo
 	}
 
 	free(product);
-	*normal = toList(normalClients);
-	*promo = toList(promoClients);
+	*normal = normalClients;
+	*promo = promoClients;
 }
 
-LIST getProductsByClient(BRANCHSALES bs, CLIENT c) {
+SET getProductsByClient(BRANCHSALES bs, CLIENT c) {
 	CLIENTSALE cs;
 	SET products;
 	char* client;
@@ -173,15 +173,15 @@ LIST getProductsByClient(BRANCHSALES bs, CLIENT c) {
 	products = dumpHashT(cs->products, products);
 
 	free(client);
-	return toList(products);
+	return products;
 }
 
-void sortProductListByQuant(LIST productList, int month) {
-	sortSet(toSet(productList), (compare_t) compareProductUnitByMonth, &month);
+void sortProductListByQuant(SET productList, int month) {
+	sortSet(productList, (compare_t) compareProductUnitByMonth, &month);
 }
 
-void sortProductListByBilled(LIST productList) {
-	sortSet(toSet(productList), (compare_t) compareProductUnitByBilled, NULL);
+void sortProductListByBilled(SET productList) {
+	sortSet(productList, (compare_t) compareProductUnitByBilled, NULL);
 }
 
 SET listProductsByQuant(BRANCHSALES bs) {
@@ -261,6 +261,14 @@ PRODUCTDATA dumpProductSale(PRODUCTSALE ps) {
 	}
 
 	return new;
+}
+
+int getClientsFromData(PRODUCTDATA pd) {
+	return pd->clients;
+}
+
+int getQuantFromData(PRODUCTDATA pd) {
+	return pd->quantity;
 }
 
 static void freeProductSale(PRODUCTSALE ps) {
