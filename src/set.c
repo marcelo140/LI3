@@ -200,9 +200,11 @@ void freeSet(SET s) {
 	int i;
 
 	if (s) {
-		for(i = 0; i < SIZE(s); i++){
-			free(HASH(s,i));
-			s->free(CONTENT(s,i));
+		if (s->free){
+			for(i = 0; i < SIZE(s); i++){
+				free(HASH(s,i));
+				s->free(CONTENT(s,i));
+			}
 		}
 
 		free(s->list);
