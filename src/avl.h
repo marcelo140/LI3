@@ -4,7 +4,7 @@
 #include "generic.h"
 #include "set.h"
 
-typedef struct avl      *AVL;
+typedef struct avl *AVL;
 
 /**
  * Inicia uma AVL com as funções auxiliares dadas.
@@ -117,16 +117,16 @@ SET addAVLtoSet (SET s, AVL tree);
 SET filterAVL (AVL tree, SET s, condition_t condition, void* arg);
 
 /**
- ** Extrai o conteúdo de cada nodo, usando a função dumper dada. O conteúdo extraido será
- ** guardado na estrutura data fornecida.
- ** 
- ** @param tree Árvore com a informação a ser extraida
- ** @param data Local onde a informação será guardada
- ** @param dumper Função responsável por extrair o conteúdo dos nodos. O primeiro argumento
- ** corresponde à estrutura de dados onde vai ser guardada a informação (data). O segundo
- ** argumento corresponde à estrutura de dados presente no conteúdo de cada nodo
- ** @return Estrutura de dados com toda a informação
- **/
+ * Transforma o conteúdo de cada nodo, usando a função dumper dada. O resultado do dumper
+ * é então adicionado, juntamente com a hash do elemento, ao set dado.
+ * 
+ * @param tree Árvore com a informação a ser extraida
+ * @param set Local onde a informação será guardada
+ * @param dumper Função responsável por extrair o conteúdo dos nodos. O primeiro argumento
+ * corresponde à estrutura de dados onde vai ser guardada a informação (data). O segundo
+ * argumento corresponde à estrutura de dados presente no conteúdo de cada nodo
+ * @return Estrutura de dados com toda a informação
+ */
 SET dumpAVL(AVL tree, SET set, void* (*dumper)(void*));
 
 #endif
