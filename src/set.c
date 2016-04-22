@@ -246,14 +246,17 @@ static int partitionByName(SET set, int begin, int end) {
 	return lim+1;
 }
 
+#define SWAP(i,j) tmp=list[i];list[i]=list[j];list[j]=tmp;
 static int partition(SET set, int begin, int end, compare_t comparator, void* arg) {
-	char* pivot = CONTENT(set, end);
+	ELEMENT* list = set->list;
+	void* pivot = list[end]->content;
 	int i, lim = begin-1;
-
+	ELEMENT tmp;	
+	
 	for(i = begin; i < end; i++) {
-		if (comparator(CONTENT(set,i), pivot, arg) <= 0){
+		if (comparator(list[i]->content, pivot, arg) >= 0){
 			lim++;
-			swapData(set, lim, i);
+			SWAP(lim, i);
 		}
 	}
 
