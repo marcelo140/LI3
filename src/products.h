@@ -35,6 +35,12 @@ bool lookUpProduct (PRODUCTCAT catalog, PRODUCT product);
 int countProducts (PRODUCTCAT prodCat, char index);
 
 /**
+ * Verifica se o catálogo de produtos está ou não vazio
+ * @return true caso seja vazio, false caso contrário
+ */
+bool isEmptyProductCat (PRODUCTCAT prodCatalog);
+
+/**
  * Cria uma cópia do catálogo de produtos.
  */
 CATALOG getProductCat (PRODUCTCAT prodCatalog);

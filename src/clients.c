@@ -43,6 +43,10 @@ bool lookUpClient(CLIENTCAT clientCat, CLIENT client) {
 	return lookUpCatalog(clientCat->cat, INDEX(client), client->str);
 }
 
+bool isEmptyClientCat (CLIENTCAT clientCat) {
+	return isEmptyCatalog(clientCat->cat);	
+}
+
 int countClients(CLIENTCAT clientCat, char index) {
 	return countPosElems(clientCat->cat, index-'A');
 }

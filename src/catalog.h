@@ -47,6 +47,12 @@ CATALOG insertCatalog (CATALOG cat, int index, char* hash, void* content);
 void* replaceCatalog (CATALOG cat, int index, char* hash, void* content);
 
 /**
+ * Verifica se o catálogo está vazio ou não.
+ * @return true caso seja vazio, false caso contrário
+ */
+bool isEmptyCatalog (CATALOG cat);
+
+/**
  * Clona o catálogo dado, incluindo as suas operações. Se a função auxiliar clone existir,
  * o conteúdo dos elementos é também clonado.
  */
