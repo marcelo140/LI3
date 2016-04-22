@@ -90,7 +90,7 @@ void query3(FATGLOBAL fat, PRODUCTCAT pcat) {
 
 		for (i=0; i < BRANCHES; i++) {
 			quantT  += getProductFatSales(pfat, i, NULL, NULL);
-	   		billedT += getProductFatSales(pfat, i, NULL, NULL);
+	   		billedT += getProductFatBilled(pfat, i, NULL, NULL);
 		}
 		sprintf(answ, "Quantidade Total: \t%d", quantT);
 		page = addLineToPage(page, answ);
