@@ -103,8 +103,9 @@ void freeProduct(PRODUCT product) {
 }
 
 SET fillProductSet(PRODUCTCAT productCat, char index) {
-	SET set;
-	set = fillSet(productCat->cat, index - 'A');
+	SET set = initSet(countAllElems(productCat->cat), NULL);
+
+	set = fillSet(productCat->cat, set, index - 'A');
 
 	return set;
 }

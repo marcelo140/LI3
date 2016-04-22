@@ -10,15 +10,10 @@ typedef struct faturacao *FATGLOBAL;
 typedef struct product_fat *PRODUCTFAT;
 
 #define MONTHS 12
-#define BRANCHES 3
 #define SALEMODE 2
+#define BRANCHES 3
 
-
-#define BY_QUANTITY 0
-#define BY_BILLING  1
-
-
-FATGLOBAL initFat ();
+FATGLOBAL initFat (int branch);
 
 FATGLOBAL fillFat (FATGLOBAL fat, PRODUCTCAT p);
 

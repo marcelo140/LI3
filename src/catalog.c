@@ -94,44 +94,38 @@ void freeCatalog(CATALOG cat){
 	}
 }
 
-SET fillSet(CATALOG cat, int index) {
-	SET s = initSet(countPosElems(cat, index));
-	s = addAVLtoSet(s, cat->root[index]);
+SET fillSet(CATALOG cat, SET set, int index) {
+	set = addAVLtoSet(set, cat->root[index]);
 
-	return s;
+	return set;
 }
 
-SET fillAllSet(CATALOG cat) {
-	SET s = initSet(countAllElems(cat));
+SET fillAllSet(CATALOG cat, SET set) {
 	int i, size = cat->size;
 
 	if (size == 0)
 		return NULL;
 
 	for(i = 0; i < size; i++)
-		s = addAVLtoSet(s, cat->root[i]);
+		set = addAVLtoSet(set, cat->root[i]);
 
-	return s;
+	return set;
 }
 
-SET filterCat (CATALOG cat, condition_t condition, void* arg) {
+SET filterCat (CATALOG cat, SET set, condition_t condition, void* arg) {
 	int i, size = cat->size;
-	SET cs = initSet(size);
 
 	for(i = 0; i < size; i++)
-		cs = filterAVL(cat->root[i], cs, condition, arg);
+		set = filterAVL(cat->root[i], set, condition, arg);
 
-	return cs;
+	return set;
 }
 
-SET dumpCatalog(CATALOG cat, void* (*dumper)(void*)) {
-	SET s;
+SET dumpCatalog(CATALOG cat, SET set, void* (*dumper)(void*)) {
 	int i, size = cat->size;
 
-	s = initSet(countAllElems(cat));
-
 	for (i = 0; i < size; i++)
-		s = dumpAVL(cat->root[i], s, dumper);
+		set = dumpAVL(cat->root[i], set, dumper);
 
-	return s;
+	return set;
 }
