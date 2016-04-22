@@ -20,11 +20,14 @@ struct set {
 };
 
 static ELEMENT newElement (char* hash, void* content);
-static void swapData (SET set, int i, int j);
+
 static int partitionByName (SET set, int begin, int end);
-static int partition (SET set, int begin, int end, compare_t comparator, void* arg);
 static void quicksortByName (SET set, int begin, int end);
+
 static void quicksort (SET set, int begin, int end, compare_t comparator, void* arg);
+static int partition (SET set, int begin, int end, compare_t comparator, void* arg);
+
+static void swapData (SET set, int i, int j);
 
 
 SET initSet(int capacity, free_t free) {
@@ -36,12 +39,6 @@ SET initSet(int capacity, free_t free) {
 	new->free = free;
 
 	return new;
-}
-
-SET datacpy(SET dest, SET src, int pos) {
-	insertElement(dest, HASH(src,pos), CONTENT(src,pos));
-
-	return dest;
 }
 
 SET insertElement(SET s, char* hash, void* content) {
@@ -57,6 +54,12 @@ SET insertElement(SET s, char* hash, void* content) {
 	s->size++;
 
 	return s;
+}
+
+SET datacpy(SET dest, SET src, int pos) {
+	insertElement(dest, HASH(src,pos), CONTENT(src,pos));
+
+	return dest;
 }
 
 char* getSetHash(SET s, int pos) {
@@ -134,18 +137,18 @@ SET unionSets(SET s1, SET s2) {
 
 SET diffDataSets(SET s1, SET s2) {
 	SET new;
-	int res, pos1, pos2, maxSizeS1, maxSizeS2;
+	int res, pos1, pos2, size1, size2;
 
 	pos1 = pos2 = 0;
-	maxSizeS1 = s1->size;
-	maxSizeS2 = s2->size;
+	size1 = s1->size;
+	size2 = s2->size;
 
-	if (maxSizeS1 > maxSizeS2)
-		new = initSet(maxSizeS1, s1->free);
+	if (size1 > size2)
+		new = initSet(size1, s1->free);
 	else
-		new = initSet(maxSizeS2, s2->free);
+		new = initSet(size2, s2->free);
 
-	while(pos1 < maxSizeS1 && pos2 < maxSizeS2){
+	while(pos1 < size1 && pos2 < size2){
 		res = strcmp(HASH(s1,pos1), HASH(s2, pos2));
 
 		if (res < 0) {
@@ -160,12 +163,12 @@ SET diffDataSets(SET s1, SET s2) {
 		}
 	}
 
-	while(pos1 < maxSizeS1){
+	while(pos1 < size1){
 		new = insertElement(new, HASH(s1,pos1), CONTENT(s1,pos1));
 		pos1++;
 	}
 	
-	while(pos2 < maxSizeS2){
+	while(pos2 < size2){
 		new = insertElement(new, HASH(s2,pos2), CONTENT(s2,pos2));
 		pos2++;
 	}
