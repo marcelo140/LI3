@@ -449,10 +449,15 @@ static SET filterNode(NODE n, SET s, clone_t clone, condition_t condition, void*
 }
 
 static SET dumpNode(NODE n, SET set, void* (*dumper)(void*)) {
+	void* element;
 
 	if (n) {
 		set = dumpNode(n->left, set, dumper);
-		set = insertElement(set, n->hash, dumper(n->content));
+
+		element = dumper(n->content);
+		if (element)
+			set = insertElement(set, n->hash, element);
+
 		set = dumpNode(n->right, set, dumper);	
 	}
 

@@ -190,18 +190,9 @@ void sortProductListByBilled(SET productList) {
 #include <stdio.h>
 SET listProductsByQuant(BRANCHSALES bs) {
 	SET s = initSet(countAllElems(bs->products), (free_t) freeProductData);
-	clock_t inicio, fim;
-	inicio = clock();
+
 	s = dumpCatalog(bs->products, s, (void*(*)(void*)) dumpProductSale);
-	fim = clock();
-	printf("tempo dump: %f\n", (double)(fim-inicio)/CLOCKS_PER_SEC);
-
-	inicio = clock();
 	sortSet(s, (compare_t) compareProductDataByQuant, NULL);
-	fim = clock();
-	printf("tempo sort: %f\n", (double)(fim-inicio)/CLOCKS_PER_SEC);
-
-	printf("QUANTIDADE: %d\n", getQuantFromData(getSetData(s,0)));
 
 	return s;
 }
@@ -227,6 +218,9 @@ BRANCHSALES addSaleToBranch(BRANCHSALES bs, SALE s) {
 
 	cs = addSaleToClientSale(cs, s);
 	ps = addSaleToProductSale(ps, s);
+
+	free(product);
+	free(client);
 
 	return bs;
 }
@@ -263,14 +257,12 @@ int compareProductDataByQuant(PRODUCTDATA pd1, PRODUCTDATA pd2){
 }
 
 PRODUCTDATA dumpProductSale(PRODUCTSALE ps) {
-	PRODUCTDATA new = malloc(sizeof(*new));
+	PRODUCTDATA new = NULL;
 
 	if (ps){
+		new = malloc(sizeof(*new));
 		new->clients = getHashTsize(ps->clients);
 		new->quantity = ps->quantity;
-	}else{
-		new->clients = 0;
-		new->quantity = 0;
 	}
 
 	return new;
