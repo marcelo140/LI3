@@ -4,7 +4,7 @@
 
 #define CATALOG_SIZE 26
 
-#define INDEX(p)             (p->str[0] - 'A')
+#define INDEX(p) (p->str[0] - 'A')
 
 struct product{
 	char *str;

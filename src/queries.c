@@ -22,7 +22,7 @@ struct page{
 
 static PAGE createPage(char* header, int linesNum,int page, int totalPage);
 static PAGE addLineToPage(PAGE p, char* line);
-static PAGE getPage(PAGE p, LIST lines);
+static PAGE getPage(PAGE p, SET lines); 
 static PAGE resetReadPage(PAGE page); 
 static int presentList(PAGE page, char* onav);
 static void printHelp();
@@ -39,7 +39,7 @@ static int askMonthRange(int* begin, int* end);
 
 void query2(PRODUCTCAT pcat) {
 	PAGE page;
-	LIST l;
+	SET s;
 	char aux[MAX_SIZE];
 	int size, newPage;
 
@@ -49,20 +49,20 @@ void query2(PRODUCTCAT pcat) {
 		if (aux[0] == 'q') return;
 	} while(aux[0] < 'A' && aux[0] > 'Z');
 
-	l = fillProductSet(pcat, aux[0]);
+	s = fillProductSet(pcat, aux[0]);
 
-	size = getListSize(l) / LINE_NUMS;
+	size = getSetSize(s) / LINE_NUMS;
 
 	strcpy(aux, "\n");
 	newPage = 1;
 	while(newPage != -1) {
 		page = createPage("",LINE_NUMS, newPage, size);
-		page = getPage(page, l);
+		page = getPage(page, s);
 		if (page) newPage = presentList(page, aux);
 		freePage(page);
 	}
 
-	freeList(l);
+	freeSet(s);
 }
 
 void query3(FATGLOBAL fat, PRODUCTCAT pcat) {
@@ -132,7 +132,7 @@ void query3(FATGLOBAL fat, PRODUCTCAT pcat) {
 
 void query4(FATGLOBAL fat) {
 	PAGE page;
-	LIST *pgroupB, pgroup;
+	SET *pgroupB, pgroup;
 	char oldCmd[MAX_SIZE];
 	int mode, size, sizes[BRANCHES], newPage;
 
@@ -142,13 +142,13 @@ void query4(FATGLOBAL fat) {
 
 	if (mode == 1) {
 		pgroup = getProductsNotSold(fat);
-		size  = getListSize(pgroup);
+		size  = getSetSize(pgroup);
 	} else {
 		pgroupB = getProductsNotSoldByBranch(fat);
 
-		sizes[0] = getListSize(pgroupB[0]);
-		sizes[1] = getListSize(pgroupB[1]);
-		sizes[2] = getListSize(pgroupB[2]);
+		sizes[0] = getSetSize(pgroupB[0]);
+		sizes[1] = getSetSize(pgroupB[1]);
+		sizes[2] = getSetSize(pgroupB[2]);
 
 		mode = askBranchPrev(sizes[0], sizes[1], sizes[2]);
 		if (mode == -1) return;
@@ -227,7 +227,7 @@ void query6(FATGLOBAL fat) {
 
 void query8(BRANCHSALES* bs, PRODUCTCAT pcat) {
 	PAGE page;
-	LIST n, p, toPrint;
+	SET n, p, toPrint;
 	PRODUCT product;
 	char buff[MAX_SIZE];
 	int branch, mode, newPage, size;
@@ -239,11 +239,11 @@ void query8(BRANCHSALES* bs, PRODUCTCAT pcat) {
 
 	getClientsByProduct(bs[branch], product, &n, &p);
 	
-	mode = askClientMode(getListSize(n), getListSize(p));
+	mode = askClientMode(getSetSize(n), getSetSize(p));
 	if (mode == -1) return;
 
 	toPrint = (mode == 1) ? n : p;
-	size = getListSize(toPrint);
+	size = getSetSize(toPrint);
 	size = (size > LINE_NUMS) ? size / LINE_NUMS : 1;
 
 	newPage = 1;
@@ -255,22 +255,22 @@ void query8(BRANCHSALES* bs, PRODUCTCAT pcat) {
 		freePage(page);
 	}
 
-	freeList(n);
-	freeList(p);
+	freeSet(n);
+	freeSet(p);
 }
 
 void query10(BRANCHSALES* bs) {
-/*	PRINTSET print = initPrintSet(n);
+/*	PAGE page;
 	PRODUCTDATA *pdata;
 	char buff[MAX_SIZE], *product;
 	int i, clients, quantity;
-	int max;
-
+ 	int max; */
+/*
 	clock_t inicio, fim;
 	double tempo;
 
 	inicio = clock();
-
+*/ /*
 	pdata = getAllContent(bs, &max);
 
 	if (max < n)
@@ -316,14 +316,14 @@ static PAGE createPage(char* header, int linesNum, int page, int totalPage) {
 	return new;
 }
 
-static PAGE getPage(PAGE p, LIST lines) {
+static PAGE getPage(PAGE p, SET lines) {
 	int i, index;
 	char *line = NULL;
 
 	index = (p->page-1) * p->linesNum;
 
 	for(i=0; i < p->linesNum; i++) {
-		line = getListElement(lines, i + index);
+		line = getSetHash(lines, i + index);
 		if (line) addLineToPage(p, line);
 	   	free(line);
 	}
@@ -342,11 +342,11 @@ static PAGE addLineToPage(PAGE p, char* line) {
 	return p;
 }
 
-int getPageSize(PAGE p) {
+static int getPageSize(PAGE p) {
 	return p->linesNum;
 }
 
-char* getNextLine(PAGE p) {
+static char* getNextLine(PAGE p) {
 	char *line = NULL, *original;
 
 	if (p->readH < p->writeH) {
