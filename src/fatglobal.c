@@ -113,7 +113,9 @@ double getBilledByMonthRange(FATGLOBAL fat, int initialMonth, int finalMonth) {
 	int i, month, size;
 	double res = 0;
 
-	set = filterCat(fat->cat, (condition_t) isNotEmptyRev, NULL);
+	set = initSet(countAllElems(fat->cat), (free_t) freeRevenue);
+
+	set = filterCat(fat->cat, set, (condition_t) isNotEmptyRev, NULL);
 	size = getSetSize(set);
 
 	for(i = 0; i < size; i++){
@@ -130,8 +132,9 @@ int getSalesByMonthRange(FATGLOBAL fat, int initialMonth, int finalMonth) {
 	SET set;
 	REVENUE rev;
 	int i, month, size, res = 0;
-
-	set = filterCat(fat->cat, (condition_t) isNotEmptyRev, NULL);
+	
+	set = initSet(countAllElems(fat->cat), (free_t) freeRevenue);
+	set = filterCat(fat->cat, set, (condition_t) isNotEmptyRev, NULL);
 	size = getSetSize(set);
 
 	for(i = 0; i < size; i++){
@@ -145,9 +148,9 @@ int getSalesByMonthRange(FATGLOBAL fat, int initialMonth, int finalMonth) {
 }
 
 SET getProductsNotSold(FATGLOBAL fat) {
-	SET set;
+	SET set = initSet(countAllElems(fat->cat), (free_t) freeRevenue);
 
-	set = filterCat(fat->cat, (condition_t) isEmptyRev, NULL);
+	set = filterCat(fat->cat, set, (condition_t) isEmptyRev, NULL);
 
 	return set;
 }
@@ -159,11 +162,12 @@ SET* getProductsNotSoldByBranch(FATGLOBAL fat) {
 
 	res = malloc(sizeof(SET) * BRANCHES);
 
-	set = fillAllSet(fat->cat);
+	set = initSet(countAllElems(fat->cat), (free_t) freeRevenue);
+	set = fillAllSet(fat->cat, set);
 	size = getSetSize(set);
 
 	for(branch = 0; branch < BRANCHES; branch++)
-		res[branch] = initSet(size);
+		res[branch] = initSet(size, (free_t) freeRevenue);
 
 	for(i = 0; i < size; i++) {
 		rev = getSetData(set, i);
