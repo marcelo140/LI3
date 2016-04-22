@@ -51,7 +51,8 @@ void query2(PRODUCTCAT pcat) {
 
 	s = fillProductSet(pcat, aux[0]);
 
-	size = getSetSize(s) / LINE_NUMS;
+	size = getSetSize(s);
+	size = size / LINE_NUMS + ((size % LINE_NUMS != 0) ? 1 : 0);
 
 	strcpy(aux, "\n");
 	newPage = 1;
@@ -157,6 +158,8 @@ void query4(FATGLOBAL fat) {
 		pgroup = pgroupB[mode];
 	}
 
+	size = size / LINE_NUMS + ((size % LINE_NUMS != 0) ? 1 : 0);
+
 	strcpy(oldCmd, "\n");
 	newPage=1;
 	while(newPage != -1) {
@@ -244,7 +247,7 @@ void query8(BRANCHSALES* bs, PRODUCTCAT pcat) {
 
 	toPrint = (mode == 1) ? n : p;
 	size = getSetSize(toPrint);
-	size = (size > LINE_NUMS) ? size / LINE_NUMS : 1;
+	size = size / LINE_NUMS + ((size % LINE_NUMS != 0) ? 1 : 0);
 
 	newPage = 1;
 	while (newPage != -1) {
@@ -260,21 +263,69 @@ void query8(BRANCHSALES* bs, PRODUCTCAT pcat) {
 }
 
 void query10(BRANCHSALES* bs) {
-/*	PAGE page;
-	PRODUCTDATA *pdata;
+	PAGE page;
+	PRODUCTDATA pdata;
+	SET s[BRANCHES], l;
 	char buff[MAX_SIZE], *product;
-	int i, clients, quantity;
- 	int max; */
+	char header[]="\tFILIAL 1\t\tFILIAL 2\t\tFILIAL 3\n PRODUTO\t C   Q\t|  PRODUTO\t C   Q\t|  PRODUTO\t C   Q";
+	int i, j, n=0, size, nClients, nQuant;
+
+	while(n <= 0) {
+		printf("Número de produtos: ");
+		fgets(buff, MAX_SIZE, stdin);
+		n = atoi(buff);
+		if (buff[0] == '\n') return;
+	}
+
+	s[0] = listProductsByQuant(bs[0]);
+	s[1] = listProductsByQuant(bs[1]);
+	s[2] = listProductsByQuant(bs[2]);
+
+
+	size = getSetSize(s[0]);
+	size = (size > getSetSize(s[1])) ? size : getSetSize(s[1]);
+	size = (size > getSetSize(s[2])) ? size : getSetSize(s[2]);
+
+
+	n = (n > size) ? size : n;
+
+	l = initSet(n);
+
+	for(i = 0; i < n; i++) {
+		sprintf(buff, "%5dº  ", i+1);
+		for (j = 0; j < BRANCHES; j++) {
+			product  = getSetHash(s[j], i);
+			if (!product) { sprintf(buff, "%s\t\t", buff); 	continue;}
+			pdata    = getSetData(s[j], i);
+			nClients = getClientsFromData(pdata);
+			nQuant   = getQuantFromData(pdata);
+			
+			sprintf(buff, "%s\t%s %d    %d", buff, product, nClients, nQuant);
+			free(product);
+		}
+		l = insertElement(l, buff, NULL);
+	}
+
+	size = n / LINE_NUMS + ((n % LINE_NUMS != 0) ? 1 : 0);
+	
+	strcpy(buff, "\n");
+	i = 1;	
+	while(i != -1) {
+		page = createPage(header, LINE_NUMS, i, size);
+		page = getPage(page, l);		
+		i = presentList(page, buff);	/*TODO fazer isto aos outros */
+		freePage(page);
+	}
 /*
 	clock_t inicio, fim;
 	double tempo;
 
 	inicio = clock();
-*/ /*
-	pdata = getAllContent(bs, &max);
+*/ 
+/*
+	branch = askBranch();
 
-	if (max < n)
-		n = max;
+	s = listProductsByQuant(bs[branch]);
 
 	sprintf(buff, "\t\tPRODUTO\t C    Q");
 	print = setPrintHeader(print, buff);
@@ -288,8 +339,8 @@ void query10(BRANCHSALES* bs) {
 		print = addToPrintSet(print, buff);
 
 		free(product);
-	}
-
+	} */
+/*
 
 	fim = clock();
 	tempo = (double) (fim - inicio) / CLOCKS_PER_SEC;
