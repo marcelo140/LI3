@@ -11,9 +11,8 @@ typedef struct product_fat *PRODUCTFAT;
 
 #define MONTHS 12
 #define SALEMODE 2
-#define BRANCHES 3
 
-FATGLOBAL initFat ();
+FATGLOBAL initFat (int branches);
 
 FATGLOBAL fillFat (FATGLOBAL fat, PRODUCTCAT p);
 
