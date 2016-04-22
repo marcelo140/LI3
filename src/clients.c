@@ -109,8 +109,9 @@ void freeClient(CLIENT client) {
 }
  
 SET fillClientSet(CLIENTCAT catProd, char index) {
-	SET set;
-	set = fillSet(catProd->cat, index - 'A');
+	SET set = initSet(countAllElems(catProd->cat), NULL);
+
+	set = fillSet(catProd->cat, set, index - 'A');
 
 	return set;
 }

@@ -108,17 +108,17 @@ int* getClientQuantByMonth(BRANCHSALES bs, CLIENT c) {
 }
 
 SET getClientsWhoBought(BRANCHSALES bs) {
-	SET s;
+	SET s = initSet(countAllElems(bs->clients), (free_t) freeClientSale);
 
-	s = filterCat(bs->clients, (condition_t) clientBought, NULL);
+	s = filterCat(bs->clients, s, (condition_t) clientBought, NULL);
 
 	return s;
 }
 
 SET getClientsWhoHaveNotBought(BRANCHSALES bs) {
-	SET s;
+	SET s = initSet(countAllElems(bs->clients), (free_t) freeClientSale);
 	
-	s = filterCat(bs->clients, (condition_t) clientHaveNotBought, NULL);
+	s = filterCat(bs->clients, s, (condition_t) clientHaveNotBought, NULL);
 
 	return s;
 }
@@ -134,9 +134,9 @@ void getClientsByProduct(BRANCHSALES bs, PRODUCT prod, SET *normal, SET *promo) 
 	ps = getCatContent(bs->products, INDEX(product), product);
 
 	size = getHashTsize(ps->clients);
-	clients = initSet(size);
-	normalClients = initSet(size);
-	promoClients = initSet(size);
+	clients = initSet(size, (free_t) freeClientUnit);
+	normalClients = initSet(size, (free_t) freeClientUnit);
+	promoClients = initSet(size, (free_t) freeClientUnit);
 
 	clients = dumpHashT(ps->clients, clients);
 
@@ -155,6 +155,8 @@ void getClientsByProduct(BRANCHSALES bs, PRODUCT prod, SET *normal, SET *promo) 
 	}
 
 	free(product);
+	freeSet(clients);
+
 	*normal = normalClients;
 	*promo = promoClients;
 }
@@ -169,7 +171,7 @@ SET getProductsByClient(BRANCHSALES bs, CLIENT c) {
 	cs = getCatContent(bs->products, INDEX(client), client);
 
 	size = getHashTsize(cs->products);
-	products = initSet(size);
+	products = initSet(size, (free_t) freeProductUnit);
 	products = dumpHashT(cs->products, products);
 
 	free(client);
@@ -185,9 +187,9 @@ void sortProductListByBilled(SET productList) {
 }
 
 SET listProductsByQuant(BRANCHSALES bs) {
-	SET s;
+	SET s = initSet(countAllElems(bs->products), (free_t) freeProductSale);
 
-	s = dumpCatalog(bs->products, (void*(*)(void*)) dumpProductSale);
+	s = dumpCatalog(bs->products, s, (void*(*)(void*)) dumpProductSale);
 	sortSet(s, (compare_t) compareProductDataByQuant, NULL);
 
 	return s;

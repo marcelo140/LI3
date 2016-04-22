@@ -25,7 +25,6 @@ struct faturacao {
 	CATALOG cat;
 };
 
-
 static PRODUCTFAT newProductFat();
 static void addProductFatBilled(PRODUCTFAT pf, int branch, double normal, double promo);
 static void addProductFatSales(PRODUCTFAT pf, int branch, int normal, int promo);

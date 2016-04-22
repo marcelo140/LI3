@@ -19,20 +19,21 @@ struct set {
 	free_t free;
 };
 
-static ELEMENT newElement      (char* hash, void* content);
-static void    swapData        (SET set, int i, int j);
-static int     partitionByName (SET set, int begin, int end);
-static int     partition (SET set, int begin, int end, compare_t comparator, void* arg);
-static void    quicksortByName (SET set, int begin, int end);
-static void    quicksort (SET set, int begin, int end, compare_t comparator, void* arg);
+static ELEMENT newElement (char* hash, void* content);
+static void swapData (SET set, int i, int j);
+static int partitionByName (SET set, int begin, int end);
+static int partition (SET set, int begin, int end, compare_t comparator, void* arg);
+static void quicksortByName (SET set, int begin, int end);
+static void quicksort (SET set, int begin, int end, compare_t comparator, void* arg);
 
 
-SET initSet(int capacity) {
+SET initSet(int capacity, free_t free) {
 	SET new = malloc(sizeof(*new));
 
 	new->list = malloc(sizeof(ELEMENT) * capacity);
 	new->size = 0;
 	new->capacity = capacity;
+	new->free = free;
 
 	return new;
 }
@@ -64,7 +65,7 @@ char* getSetHash(SET s, int pos) {
 	if (pos < 0 || pos >= s->size)
 		return NULL;
 	
-	str = malloc(sizeof(char) * HASH_SIZE);
+	str = malloc(sizeof(char) * strlen(HASH(s, pos)) + 1);
 	strcpy(str, s->list[pos]->hash);
 
 	return str;
@@ -90,65 +91,83 @@ void sortSet(SET list, compare_t comparator, void* arg) {
 }
 
 SET unionSets(SET s1, SET s2) {
-	SET new = initSet(100);
-	int res, sizeS2 = 0, sizeS1 = 0, maxSizeS2 = s2->size, maxSizeS1 = s1->size;
+	SET new;
+	int res, pos2, pos1, size2, size1;
 	
-	while(sizeS2 < maxSizeS2 && sizeS1 < maxSizeS1){
-		res = strcmp(HASH(s1,sizeS1), HASH(s2,sizeS2));
+	pos2 = pos1 = 0;
+	size1 = s1->size;
+	size2 = s2->size;
+	
+	if (size1 > size2)
+		new = initSet(size1, s1->free);
+	else
+		new = initSet(size2, s2->free);
+
+	while(pos2 < size2 && pos1 < size1){
+		res = strcmp(HASH(s1,pos1), HASH(s2,pos2));
 
 		if (res < 0) {
-			new = insertElement(new, HASH(s1, sizeS1), CONTENT(s1, sizeS1));
-			sizeS1++;
+			new = insertElement(new, HASH(s1, pos1), CONTENT(s1, pos1));
+			pos1++;
 		}else if (res > 0){
-			new = insertElement(new, HASH(s2, sizeS2), CONTENT(s2, sizeS2));
-			sizeS2++;
+			new = insertElement(new, HASH(s2, pos2), CONTENT(s2, pos2));
+			pos2++;
 		}else{
-			new = insertElement(new, HASH(s2, sizeS2), CONTENT(s2, sizeS2));
-			sizeS2++;	
-			sizeS1++;
+			new = insertElement(new, HASH(s2, pos2), CONTENT(s2, pos2));
+			pos2++;	
+			pos1++;
 		}
 	}
 
-	while(sizeS1 < maxSizeS1){
-		new = insertElement(new, HASH(s1,sizeS1), CONTENT(s1,sizeS1));
-		sizeS1++;
+	while(pos1 < size1){
+		new = insertElement(new, HASH(s1,pos1), CONTENT(s1,pos1));
+		pos1++;
 	}
 	
-	while(sizeS2 < maxSizeS2){
-		new = insertElement(new, HASH(s2,sizeS2), CONTENT(s2,sizeS2));
-		sizeS2++;
+	while(pos2 < size2){
+		new = insertElement(new, HASH(s2,pos2), CONTENT(s2,pos2));
+		pos2++;
 	}
 
 	return new;
 }
 
 SET diffDataSets(SET s1, SET s2) {
-	SET new = initSet(100);
-	int res, sizeS1 = 0, sizeS2 = 0, maxSizeS1 = s1->size, maxSizeS2 = s2->size;
+	SET new;
+	int res, pos1, pos2, maxSizeS1, maxSizeS2;
 
-	while(sizeS1 < maxSizeS1 && sizeS2 < maxSizeS2){
-		res = strcmp(HASH(s1,sizeS1), HASH(s2, sizeS2));
+	pos1 = pos2 = 0;
+	maxSizeS1 = s1->size;
+	maxSizeS2 = s2->size;
+
+	if (maxSizeS1 > maxSizeS2)
+		new = initSet(maxSizeS1, s1->free);
+	else
+		new = initSet(maxSizeS2, s2->free);
+
+	while(pos1 < maxSizeS1 && pos2 < maxSizeS2){
+		res = strcmp(HASH(s1,pos1), HASH(s2, pos2));
 
 		if (res < 0) {
-			new = insertElement(new, HASH(s1,sizeS1), CONTENT(s1,sizeS1));
-			sizeS1++;
+			new = insertElement(new, HASH(s1,pos1), CONTENT(s1,pos1));
+			pos1++;
 		}else if (res > 0){
-			new = insertElement(new, HASH(s2,sizeS2), CONTENT(s2,sizeS2));
-			sizeS2++;
+			new = insertElement(new, HASH(s2,pos2), CONTENT(s2,pos2));
+			pos2++;
 		}else{
-			sizeS1++;
-			sizeS2++;
+			pos1++;
+			pos2++;
 		}
 	}
 
-	while(sizeS1 < maxSizeS1){
-		new = insertElement(new, HASH(s1,sizeS1), CONTENT(s1,sizeS1));
-		sizeS1++;
+	while(pos1 < maxSizeS1){
+		new = insertElement(new, HASH(s1,pos1), CONTENT(s1,pos1));
+		pos1++;
 	}
 	
-	while(sizeS2 < maxSizeS2){
-		new = insertElement(new, HASH(s2,sizeS2), CONTENT(s2,sizeS2));
-		sizeS2++;
+	while(pos2 < maxSizeS2){
+		new = insertElement(new, HASH(s2,pos2), CONTENT(s2,pos2));
+		pos2++;
 	}
 
 	return new;
@@ -156,21 +175,21 @@ SET diffDataSets(SET s1, SET s2) {
 
 SET intersectSet(SET s1, SET s2) {
 	SET new;
-	int i, j, size;
+	int pos1, pos2, size;
 
-	i = j = 0;
+	pos1 = pos2 = 0;
 	size = (SIZE(s1) < SIZE(s2)) ? SIZE(s1) : SIZE(s2);
-	new = initSet(size);
+	new = initSet(size, s1->free);
 
-	while(i < SIZE(s1) && j < SIZE(s1)) {
-		if (HASH(s1,i) < HASH(s2,j)) 
-			i++;	
-		else if (HASH(s1,i) > HASH(s2,j)) 
-			 j++;
+	while(pos1 < SIZE(s1) && pos2 < SIZE(s2)) {
+		if (HASH(s1,pos1) < HASH(s2,pos2)) 
+			pos1++;	
+		else if (HASH(s1,pos1) > HASH(s2,pos2)) 
+			 pos2++;
 		else {
-			new = insertElement(new, HASH(s1,i), CONTENT(s1,i));
-			i++;
-			j++;
+			new = insertElement(new, HASH(s1,pos1), CONTENT(s1,pos1));
+			pos1++;
+			pos2++;
 		}
 	}
 
@@ -178,7 +197,14 @@ SET intersectSet(SET s1, SET s2) {
 }
 
 void freeSet(SET s) {
+	int i;
+
 	if (s) {
+		for(i = 0; i < SIZE(s); i++){
+			free(HASH(s,i));
+			s->free(CONTENT(s,i));
+		}
+
 		free(s->list);
 		free(s);
 	}
@@ -187,8 +213,8 @@ void freeSet(SET s) {
 static ELEMENT newElement(char* hash, void* content) {
 	ELEMENT new = malloc(sizeof(*new));
 
-	new->hash = malloc(sizeof(char) * HASH_SIZE);
-	strncpy(new->hash, hash, HASH_SIZE);
+	new->hash = malloc(sizeof(char) * strlen(hash) + 1);
+	strcpy(new->hash, hash);
 	new->content = content;
 
 	return new;
