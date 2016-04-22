@@ -5,8 +5,6 @@
 #include "generic.h"
 #include "set.h"
 
-#define CLIENT_LENGTH 6
-
 typedef struct client         *CLIENT;
 typedef struct client_catalog *CLIENTCAT;
 
@@ -63,8 +61,6 @@ CLIENT cloneClient (CLIENT c);
 
 /**
  * Devolve uma cópia do código do cliente.
- * @param c Clietne pretendido.
- * @param dest Buffer onde será guardada a cópia do código do cliente
  */
 char* fromClient (CLIENT c);
 
@@ -80,8 +76,7 @@ void freeClient (CLIENT c);
 
 /**
  * Preenche o conjunto indicado com todos os clientes começados pela letra dada 
- * existentes no catálogo de clientes. Se o conjunto não tiver espaço suficiente para
- * acatar todos os clientes, este será redimensionado para o tamnha necessário.
+ * existentes no catálogo de clientes.
  */
 SET fillClientSet (CLIENTCAT clientCat, char index);
 
