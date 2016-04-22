@@ -163,7 +163,7 @@ void query4(FATGLOBAL fat) {
 	strcpy(oldCmd, "\n");
 	newPage=1;
 	while(newPage != -1) {
-		page = createPage("", LINE_NUMS, newPage, size / LINE_NUMS);
+		page = createPage("", LINE_NUMS, newPage, size);
 		page = getPage(page, pgroup);
 		if (page) newPage = presentList(page, oldCmd);
 		else newPage = -1;
@@ -208,7 +208,8 @@ void query6(FATGLOBAL fat) {
 	int sales, init, final, newPage;
 	char buff[MAX_SIZE];
 
-	askMonthRange(&init, &final);
+	newPage = askMonthRange(&init, &final);
+	if (newPage == -1) return;
 
 	page = createPage("", 2, 1, 1);
 
@@ -498,17 +499,14 @@ static void printHelp() {
 static int askBranch() {
 	char buff[MAX_SIZE];
 	int r=0;
-
-	printf("\n  ::::::::::::::::::::::::::::::\n");
-	printf("\t   1• Filial 1\n");
-	printf("\t   2• Filial 2\n");
-	printf("\t   3• Filial 3\n");
-	printf("  ::::::::::::::::::::::::::::::\n");
-	do {
-		printf("  Escolha uma filial: ");
+	
+	while(1) {
+		printf("  Filial(1-3): ");
 		fgets(buff, MAX_SIZE, stdin);
 		r = atoi(buff);
-	} while(buff[0] != 'q' && (r < 1 || r > 3));
+		if (buff[0] == 'q' || (r >= 1 && r <= 3)) break;
+		printf("A filial deve estar entre 1 e 3.\n");
+	}
 
 	return r-1;
 }
@@ -654,7 +652,7 @@ static int askMonthRange(int* begin, int* end) {
 	}
 
 	while(1) {
-		printf("  Mês fimal (%d-12): ", b);
+		printf("  Mês final (%d-12): ", b);
 		fgets(buff, MAX_SIZE, stdin);
 		if (buff[0] == 'q') return -1;
 		e = atoi(buff);

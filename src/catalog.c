@@ -41,6 +41,16 @@ CATALOG insertCatalog(CATALOG cat, int i, char *hash, void *content) {
 	return cat;
 }
 
+bool isEmptyCatalog (CATALOG cat) {
+	int i;
+	bool r = true;
+
+	for (i = 0; r && i < cat->size ; i++) 
+		r = isEmptyAVL(cat->root[i]);
+
+	return r;
+}
+
 CATALOG cloneCatalog(CATALOG cat){
 	CATALOG c;
 	int i, size = cat->size;

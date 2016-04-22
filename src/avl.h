@@ -59,16 +59,17 @@ void freeElement(ELEMENT element);
 bool lookUpAVL (AVL tree, char *hash);
 
 /**
+ * Verifica se a AVL está vazia ou não.
+ * @return true caso seja vazia, false caso contráio
+ */
+bool isEmptyAVL (AVL tree);
+
+/**
  * Verifica se duas árvores são iguais. Duas árvores são iguais se tiverem as mesmas
  * operações e os mesmos nodos. Se existir uma operação equals no set de operações
  * da árvore, é também verificado se o conteúdo de cada nodo de cada árvore é igual.
  */
 bool equalsAVL (AVL tree, AVL b);
-
-/**
- * Verifica se a árvore é, ou não, vazia.
- */
-bool isEmptyAVL (AVL tree);
 
 /*
  * Determina o número de nodos existentes na árvore.

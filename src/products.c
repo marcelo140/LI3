@@ -41,6 +41,10 @@ int countProducts(PRODUCTCAT productCat, char index) {
 	return countPosElems(productCat->cat, index-'A');
 }
 
+bool isEmptyProductCat (PRODUCTCAT prodCatalog) {
+	return isEmptyCatalog(prodCatalog);
+}
+
 CATALOG getProductCat (PRODUCTCAT productCat) {
 	return cloneCatalog(productCat->cat);
 }

@@ -30,6 +30,13 @@ void freeClientCat (CLIENTCAT catalog);
 bool lookUpClient (CLIENTCAT catalog, CLIENT client);
 
 /**
+ * Verifica se o catálogo de clientes está ou não vazio
+ * @return true caso seja vazio, false caso contrário
+ */
+bool isEmptyClientCat (CLIENTCAT clientCat);
+
+
+/**
  * Calcula o número de clientes começados por uma dada letra existentes no catálogo.
  */
 int countClientes (CLIENTCAT clientCat, char index);
