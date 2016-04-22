@@ -228,6 +228,40 @@ void query6(FATGLOBAL fat) {
 	freePage(page);
 }
 
+void query7(BRANCHSALES* bs) {
+	PAGE page;
+	SET setB[BRANCHES], tSet, auxSet;
+	char ocmd[MAX_SIZE];
+	int i, size;
+
+
+
+	setB[0] = getClientsWhoBought(bs[0]);
+	setB[1] = getClientsWhoBought(bs[1]);
+	setB[2] = getClientsWhoBought(bs[2]);
+
+	auxSet = intersectSet(setB[0], setB[1]);
+	tSet   = intersectSet(auxSet, setB[2]);
+
+	
+	size = getSetSize(tSet);
+	size = size / LINE_NUMS + ((size % LINE_NUMS != 0) ? 1 : 0);
+
+	strcpy(ocmd, "\n");
+	i = 1;
+	while(i != -1) {
+		page = createPage("", LINE_NUMS, i, size);
+		page = getPage(page, tSet);
+		i    = presentList(page, ocmd);
+		freePage(page);
+	}
+
+	for(i = 0; i < BRANCHES; i++)
+		freeSet(setB[i]);
+	freeSet(auxSet);
+	freeSet(tSet);
+}
+
 void query8(BRANCHSALES* bs, PRODUCTCAT pcat) {
 	PAGE page;
 	SET n, p, toPrint;
@@ -316,37 +350,6 @@ void query10(BRANCHSALES* bs) {
 		i = presentList(page, buff);	/*TODO fazer isto aos outros */
 		freePage(page);
 	}
-/*
-	clock_t inicio, fim;
-	double tempo;
-
-	inicio = clock();
-*/ 
-/*
-	branch = askBranch();
-
-	s = listProductsByQuant(bs[branch]);
-
-	sprintf(buff, "\t\tPRODUTO\t C    Q");
-	print = setPrintHeader(print, buff);
-
-	for(i=0; i < n ; i++) {
-		product  = getNameFromProductData(pdata[i]);
-		clients  = getClientsFromProductData(pdata[i]);
-		quantity = getQuantFromProductData(pdata[i]);
-
-		sprintf(buff, "%5dº \t%s\t%2d  %4d", i+1, product, clients, quantity );
-		print = addToPrintSet(print, buff);
-
-		free(product);
-	} */
-/*
-
-	fim = clock();
-	tempo = (double) (fim - inicio) / CLOCKS_PER_SEC;
-
-	printf("Tempo: %f\n", tempo);
-*/
 }
 
 	/*====================== FUNÇÕES DO PRINTSET ===================*/
@@ -443,6 +446,7 @@ static int presentList(PAGE p, char *ocmd) {
 
 	for(i=0; i < p->linesNum ; i++) {
 		buff = getNextLine(p);
+		if(!buff) break; 
 		printf("  %s\n", buff);
 		free(buff);
 	}
