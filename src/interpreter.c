@@ -40,6 +40,13 @@ int interpreter(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat)
 
 	presentQueryName(qnum); /* TODO */
 
+	if (qnum > 1 && qnum <= 12 && isEmptyProductCat(pcat) && isEmptyClientCat(ccat)) {
+		printf("Sem dados para processar. Por favor carregue os ficheiros.\n");
+		printf("Pressione qualquer tecla para voltar. ");
+		getchar();
+		return CONT;
+	}
+
 	switch(qnum) {
 		case 1 : return LOAD;
 		case 2 : query2(pcat);
