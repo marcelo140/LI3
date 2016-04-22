@@ -3,8 +3,7 @@
 
 #include "catalog.h"
 #include "generic.h"
-
-#define PRODUCT_LENGTH 7
+#include "set.h"
 
 typedef struct product         *PRODUCT;
 typedef struct product_catalog *PRODUCTCAT;
@@ -62,9 +61,6 @@ PRODUCT cloneProduct (PRODUCT p);
 
 /**
  * Devolve uma cópia do código do produto.
- * @param p Produto pretendido.
- * @param dest Buffer onde será guardada a cópia do código do produto
- * @return Apontador para dest
  */
 char* fromProduct (PRODUCT p);
 
@@ -73,33 +69,15 @@ char* fromProduct (PRODUCT p);
  */
 bool isEmptyProduct (PRODUCT p);
 
-
 /**
  * Liberta todo o espaço ocupado por um produto.
  */
 void freeProduct (PRODUCT p);
 
 /**
- * Aloca espaço para um conjunto de produtos com tamanho inicial n.
- */
-
-/**
  * Preenche o conjunto indicado com todos os produtos começados pela letra dada 
- * existentes no catálogo de produtos. Se o conjunto não tiver espaço suficiente para
- * acatar todos os produtos, este será redimensionado para o tamnha necessário.
+ * existentes no catálogo de produtos. 
  */
 SET fillProductSet (PRODUCTCAT cat, char index);
-
-/**
- * Calcula o tamanho de um conjunto de produtos.
- */
-
-/**
- * Retorna o produto na posição dada do conjunto.
- */
-
-/**
- * Liberta todo o espaço ocupado por um conjunto de produtos.
- */
 
 #endif
