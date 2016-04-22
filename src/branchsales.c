@@ -187,7 +187,7 @@ void sortProductListByBilled(SET productList) {
 }
 
 SET listProductsByQuant(BRANCHSALES bs) {
-	SET s = initSet(countAllElems(bs->products), (free_t) freeProductSale);
+	SET s = initSet(countAllElems(bs->products), (free_t) freeProductData);
 
 	s = dumpCatalog(bs->products, s, (void*(*)(void*)) dumpProductSale);
 	sortSet(s, (compare_t) compareProductDataByQuant, NULL);
@@ -263,6 +263,10 @@ PRODUCTDATA dumpProductSale(PRODUCTSALE ps) {
 	}
 
 	return new;
+}
+
+void freeProductData(PRODUCTDATA pd) {
+	free(pd);
 }
 
 int getClientsFromData(PRODUCTDATA pd) {
