@@ -2,10 +2,10 @@
 #define __SET__
 
 #include "generic.h"
-#define HASH_SIZE 10
+
 typedef struct set *SET;
 
-SET initSet(int capacity);
+SET initSet(int capacity, free_t free);
 
 SET insertElement(SET list, char* hash, void* content);
 

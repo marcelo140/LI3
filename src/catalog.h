@@ -105,7 +105,7 @@ void freeCatalog (CATALOG cat);
  * @param index Índice do catálogo cujos elementos serão inseridos
  * @return Conjunto de dados com os novos elementos adicionados
  */
-SET fillSet (CATALOG cat, int index);
+SET fillSet (CATALOG cat, SET set, int index);
 
 /**
  * Adiciona a um conjunto de dados todos os elementos existentes num catálogo.
@@ -113,7 +113,7 @@ SET fillSet (CATALOG cat, int index);
  * @param cs Conjunto de dados onde serão inseridos os elementos pretendidos
  * @return Conjunto de dados com os novos elementos adicionados
  */
-SET fillAllSet (CATALOG cat);
+SET fillAllSet (CATALOG cat, SET set);
 
 /**
  * Cria um conjunto de dados com todos os elementos do catálogo para os quais a condição
@@ -127,7 +127,7 @@ SET fillAllSet (CATALOG cat);
  * @param arg Argumento adiciona para a condição
  * @return Conjunto de dados com os elementos filtrados
  */
-SET filterCat(CATALOG cat, condition_t condition, void* arg);
+SET filterCat(CATALOG cat, SET set, condition_t condition, void* arg);
 
 /**
  * Extrai o conteúdo de cada elemento, usando a função dumper dada. O conteúdo extraido será
@@ -140,6 +140,6 @@ SET filterCat(CATALOG cat, condition_t condition, void* arg);
  * O segundo argumento corresponde à estrutura presente no conteúdo de cada elemento
  * @return Estrutura de dados com toda a informação
  */
-SET dumpCatalog(CATALOG cat, void* (*dumper)(void*));
+SET dumpCatalog(CATALOG cat, SET set, void* (*dumper)(void*));
 
 #endif
