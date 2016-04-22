@@ -289,7 +289,7 @@ void query10(BRANCHSALES* bs) {
 
 	n = (n > size) ? size : n;
 
-	l = initSet(n);
+	l = initSet(n, NULL);
 
 	for(i = 0; i < n; i++) {
 		sprintf(buff, "%5dº  ", i+1);
