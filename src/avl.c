@@ -380,9 +380,9 @@ static NODE cloneNode(NODE n, void* (*clone)(void *)) {
 		NODE new;
 	
 		new = malloc(sizeof(*new));
-		new->hash = malloc(sizeof(char) * HASH_SIZE);
+		new->hash = malloc(sizeof(char) * strlen(n->hash) + 1);
 	
-		strncpy(new->hash, n->hash, HASH_SIZE);
+		strcpy(new->hash, n->hash);
 		new->bal = n->bal;
 		new->content = (clone) ? clone(n->content) : NULL;
 		new->left = cloneNode(n->left, clone);
