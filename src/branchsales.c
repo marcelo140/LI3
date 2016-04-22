@@ -81,13 +81,11 @@ BRANCHSALES fillBranchSales(BRANCHSALES bs, CLIENTCAT cc, PRODUCTCAT pc) {
 	bs->clients = getClientCat(cc);
 	bs->products = getProductCat(pc);
 
-	bs->clients = changeCatalogOps(bs->clients, (init_t) initClientSale,
-                                                NULL,
+	bs->clients = changeCatalogOps(bs->clients, NULL,
                                                 (free_t) freeClientSale);
 
 
-	bs->products = changeCatalogOps(bs->products, (init_t) initProductSale,
-                                                  NULL,
+	bs->products = changeCatalogOps(bs->products, NULL,
                                                   (free_t) freeProductSale);
 
 	return bs;
@@ -99,11 +97,14 @@ int* getClientQuantByMonth(BRANCHSALES bs, CLIENT c) {
 	int *months;
 
 	client = fromClient(c);
-	months = malloc(sizeof(int) * MONTHS);
+	cs = getCatContent(bs->clients, INDEX(client), client, NULL);
 
-	cs = getCatContent(bs->clients, INDEX(client), client);
-	memcpy(months, cs->quant, sizeof(int) * MONTHS);	
+	months = calloc(MONTHS, sizeof(int));
 
+	if (cs)
+		memcpy(months, cs->quant, sizeof(int) * MONTHS);	
+
+	free(client);
 	return months;
 }
 
@@ -131,7 +132,14 @@ void getClientsByProduct(BRANCHSALES bs, PRODUCT prod, SET *normal, SET *promo) 
 	int i, size;
 	
 	product = fromProduct(prod);
-	ps = getCatContent(bs->products, INDEX(product), product);
+	ps = getCatContent(bs->products, INDEX(product), product, NULL);
+
+	if (!ps) {
+		*normal = initSet(0, NULL);
+		*promo = initSet(0, NULL);
+		free(product);
+		return;
+	}
 
 	size = getHashTsize(ps->clients);
 	clients = initSet(size, (free_t) freeClientUnit);
@@ -168,7 +176,13 @@ SET getProductsByClient(BRANCHSALES bs, CLIENT c) {
 	int size;
 	
 	client = fromClient(c);	
-	cs = getCatContent(bs->products, INDEX(client), client);
+	cs = getCatContent(bs->products, INDEX(client), client, NULL);
+
+	if (!cs) {
+		products = initSet(0, NULL);
+		free(client);
+		return products;
+	}
 
 	size = getHashTsize(cs->products);
 	products = initSet(size, (free_t) freeProductUnit);
@@ -186,8 +200,6 @@ void sortProductListByBilled(SET productList) {
 	sortSet(productList, (compare_t) compareProductUnitByBilled, NULL);
 }
 
-#include <time.h>
-#include <stdio.h>
 SET listProductsByQuant(BRANCHSALES bs) {
 	SET s = initSet(countAllElems(bs->products), (free_t) freeProductData);
 
@@ -208,16 +220,29 @@ void freeBranchSales(BRANCHSALES bs) {
 BRANCHSALES addSaleToBranch(BRANCHSALES bs, SALE s) {
 	PRODUCTSALE ps;
 	CLIENTSALE cs;
+	MEMBER member;
 	char *product, *client;
 
 	product = getProduct(s);
 	client = getClient(s);
+	member = newMember();
 
-	ps = getCatContent(bs->products, INDEX(product), product);
-	cs = getCatContent(bs->clients, INDEX(client), client);
+	ps = getCatContent(bs->products, INDEX(product), product, member);
+	
+	if (!ps)
+		ps = initProductSale();
+
+	ps = addSaleToProductSale(ps, s);
+	updateMember(member, ps);
+
+
+	cs = getCatContent(bs->clients, INDEX(client), client, member);
+
+	if (!cs)
+		cs = initClientSale();
 
 	cs = addSaleToClientSale(cs, s);
-	ps = addSaleToProductSale(ps, s);
+	updateMember(member, cs);
 
 	free(product);
 	free(client);

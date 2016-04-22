@@ -17,7 +17,7 @@ struct product_catalog {
 PRODUCTCAT initProductCat(){
 	PRODUCTCAT productCat = malloc(sizeof(*productCat));
 
-	productCat->cat = initCatalog(CATALOG_SIZE, NULL, NULL, NULL);
+	productCat->cat = initCatalog(CATALOG_SIZE, NULL, NULL);
 
 	return productCat;
 }

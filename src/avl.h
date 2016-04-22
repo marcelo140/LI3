@@ -5,25 +5,23 @@
 #include "set.h"
 
 typedef struct avl *AVL;
-
+typedef struct element *ELEMENT;
 /**
  * Inicia uma AVL com as funções auxiliares dadas.
- * @param init Inicia o conteúdo quando necessário
  * @param equals Verifica se dois conteúdos são iguais
  * @param clone Função capaz de clonar o conteúdo de um element da árvore
  * @param free Responsável por libertar toda a memória ocupada pelo conteúdo de um elemento
  */
-AVL initAVL (init_t init, condition_t equals, clone_t clone, free_t free);
+AVL initAVL (condition_t equals, clone_t clone, free_t free);
 
 /**
  * Altera as operações com que a árvore foi inicializada.
  * @param tree Árvore cujas operações serão mudadas
- * @param init Inicia o conteúdo quando necessário
  * @param equals Verifica se dois conteúdos são iguais
  * @param clone Função capaz de clonar o conteúdo de uma árvore
  * @param free Responsável por libertar toda a memória ocupada pelo conteúdo
  */
-AVL changeOps (AVL tree, init_t init, condition_t equals, clone_t clone, free_t free);
+AVL changeOps (AVL tree, condition_t equals, clone_t clone, free_t free);
 
 /**
  * Insere na árvore um nodo com a hash e o conteúdo dados. Se o nodo já existe, nada faz.
@@ -35,16 +33,6 @@ AVL changeOps (AVL tree, init_t init, condition_t equals, clone_t clone, free_t 
 AVL insertAVL (AVL tree, char *hash, void *content);
 
 /**
- * Substitui o conteúdo do nodo com a hash dada pelo novo conteúdo. Se o nodo não existir,
- * nada faz.
- * @param tree Árvore com o nodo a ser alterado
- * @param hash Identificador do nodo
- * @param content Novo conteúdo a ser inserido no nodo
- * @return Conteúdo antigo que se encontrava no nodo
- */
-void* replaceAVL (AVL tree, char *hash, void *content);
-
-/**
  * Clona a árvore dada, incluindo as suas operações. Se a função auxiliar clone existir,
  * o conteúdo dos elementos é também clonado.
  */
@@ -54,17 +42,13 @@ AVL cloneAVL (AVL tree);
  * Devolve o conteúdo do nodo com a hash dada. Se o nodo não tiver conteúdo mas existir
  * uma função init, o conteúdo é inicializado antes de ser devolvido.
  */
-void* getAVLcontent (AVL tree, char *hash);
+void* getAVLcontent (AVL tree, char *hash, ELEMENT elem);
 
-/**
- * Adiciona um nodo com a hash dada à árvore, inicializando o conteúdo com a função init
- * (requerida) existente nas operações. Se o nodo já existir apenas devolve o conteúdo,
- * inicializando-o se necessário.
- * @param tree Árvore onde se pretende inserir o elemento
- * @param hash Identificador do nodo
- * @return Conteúdo do nodo com a hash dada
- */ 
-void* addAVL (AVL tree, char *hash);
+ELEMENT newElement();
+
+void updateElement(ELEMENT elem, void* content);
+
+void freeElement(ELEMENT element);
 
 /**
  * Verifica se existe um nodo com o identificador hash.

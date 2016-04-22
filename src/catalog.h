@@ -5,6 +5,7 @@
 #include "set.h"
 
 typedef struct catalog *CATALOG;
+typedef struct member* MEMBER;
 
 /**
  * Inicia um catálogo com o tamanho e funções auxiliares dadas.
@@ -13,7 +14,7 @@ typedef struct catalog *CATALOG;
  * @param clone Função capaz de clonar o conteúdo de um elemento do catálogo
  * @param free Responsável por libertar a memória ocupado pelo conteúdo de um elemento
  */
-CATALOG initCatalog (int n, init_t init, clone_t clone, free_t free);
+CATALOG initCatalog (int n, clone_t clone, free_t free);
 
 /**
  * Altera as operações com que o catálogo foi inicializado.
@@ -22,7 +23,7 @@ CATALOG initCatalog (int n, init_t init, clone_t clone, free_t free);
  * @param clone Função capaz de clonar o conteúdo de um elemento do catálogo
  * @param free Responsável por libertar a memória ocupado pelo conteúdo de um elemento
  */
-CATALOG changeCatalogOps (CATALOG cat, init_t init, clone_t clone, free_t free);
+CATALOG changeCatalogOps (CATALOG cat, clone_t clone, free_t free);
 
 /** 
  * Insere no índice especificado do catálogo um elemento com a hash e o conteúdo dados.
@@ -35,16 +36,11 @@ CATALOG changeCatalogOps (CATALOG cat, init_t init, clone_t clone, free_t free);
  */
 CATALOG insertCatalog (CATALOG cat, int index, char* hash, void* content);
 
-/**
- * Substitui o conteúdo do elemento com a hash dada pelo novo conteúdo. Se o elemento não
- * existir, nada faz.
- * @param cat Catálogo cujo elemento será alterado
- * @param index Índice onde se encontra o elemento a ser alterado
- * @param hash String que identifica o elemento
- * @param content Novo conteúdo a ser inserido no elemento
- * @result Conteúdo antigo que se encontrava no elemento
- */
-void* replaceCatalog (CATALOG cat, int index, char* hash, void* content);
+MEMBER newMember();
+
+void updateMember(MEMBER member, void* content);
+
+void freeMember(MEMBER member);
 
 /**
  * Clona o catálogo dado, incluindo as suas operações. Se a função auxiliar clone existir,
@@ -60,7 +56,7 @@ CATALOG cloneCatalog (CATALOG cat);
  * @param hash Indentificador do elemento
  * @return Conteúdo do elemento
  */
-void* getCatContent (CATALOG cat, int index, char* hash);
+void* getCatContent (CATALOG cat, int index, char* hash, MEMBER member);
 
 /**
  * Adiciona um elemento com a hash dada à árvore, inicializando o conteúdo com a função

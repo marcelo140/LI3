@@ -58,31 +58,46 @@ FATGLOBAL initFat(){
 
 FATGLOBAL fillFat (FATGLOBAL fat, PRODUCTCAT p) {
 	fat->cat = getProductCat(p);
-	fat->cat = changeCatalogOps(fat->cat, (init_t) initRevenue, (clone_t) cloneRevenue,
-                                          (free_t) freeRevenue);
+	fat->cat = changeCatalogOps(fat->cat, (clone_t) cloneRevenue, (free_t) freeRevenue);
 
 	return fat;
 }
 
 FATGLOBAL addFat(FATGLOBAL fat, SALE s) {
-	REVENUE r;
+	REVENUE rev;
+	MEMBER member = newMember();
 	char *prod = getProduct(s);
 
-	r = getCatContent(fat->cat, INDEX(prod), prod);
-	addSaleToRev(r, s);
+	rev = getCatContent(fat->cat, INDEX(prod), prod, member);
 
+	if (!rev)
+		rev = initRevenue();
+
+	addSaleToRev(rev, s);
+	updateMember(member, rev);	
+
+	freeMember(member);
 	free(prod);
+
 	return fat;
 }
 
 FATGLOBAL addSaleToFat(FATGLOBAL fat, SALE s) {
 	REVENUE rev;
+	MEMBER member = newMember();
 	char *product = getProduct(s);
 
-	rev = getCatContent(fat->cat, INDEX(product), product);
-	addSaleToRev(rev, s);
+	rev = getCatContent(fat->cat, INDEX(product), product, member);
 
+	if (!rev)
+		rev = initRevenue();
+
+	addSaleToRev(rev, s);
+	updateMember(member, rev);
+
+	freeMember(member);
 	free(product);
+	
 	return fat;
 }
 
@@ -93,7 +108,12 @@ PRODUCTFAT getProductDataByMonth(FATGLOBAL fat, PRODUCT p, int month) {
 	double billedN = 0, billedP = 0;
 	int branch, salesN = 0, salesP = 0;
 
-	rev = getCatContent(fat->cat, INDEX(product), product);
+	rev = getCatContent(fat->cat, INDEX(product), product, NULL);
+
+	if (!rev){
+		free(product);
+		return pf;
+	}
 
 	for(branch = 0; branch < BRANCHES; branch++) {
 		getBilledRev(rev, branch, month, &billedN, &billedP);
