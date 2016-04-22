@@ -186,11 +186,22 @@ void sortProductListByBilled(SET productList) {
 	sortSet(productList, (compare_t) compareProductUnitByBilled, NULL);
 }
 
+#include <time.h>
+#include <stdio.h>
 SET listProductsByQuant(BRANCHSALES bs) {
 	SET s = initSet(countAllElems(bs->products), (free_t) freeProductData);
-
+	clock_t inicio, fim;
+	inicio = clock();
 	s = dumpCatalog(bs->products, s, (void*(*)(void*)) dumpProductSale);
+	fim = clock();
+	printf("tempo dump: %f\n", (double)(fim-inicio)/CLOCKS_PER_SEC);
+
+	inicio = clock();
 	sortSet(s, (compare_t) compareProductDataByQuant, NULL);
+	fim = clock();
+	printf("tempo sort: %f\n", (double)(fim-inicio)/CLOCKS_PER_SEC);
+
+	printf("QUANTIDADE: %d\n", getQuantFromData(getSetData(s,0)));
 
 	return s;
 }
@@ -254,7 +265,7 @@ int compareProductDataByQuant(PRODUCTDATA pd1, PRODUCTDATA pd2){
 PRODUCTDATA dumpProductSale(PRODUCTSALE ps) {
 	PRODUCTDATA new = malloc(sizeof(*new));
 
-	if (ps){	
+	if (ps){
 		new->clients = getHashTsize(ps->clients);
 		new->quantity = ps->quantity;
 	}else{
@@ -298,11 +309,11 @@ static CLIENTSALE initClientSale() {
 }
 
 bool clientBought(CLIENTSALE cs) {
-	return (cs == NULL);
+	return (cs != NULL);
 }
 
 bool clientHaveNotBought(CLIENTSALE cs) {
-	return (cs != NULL);
+	return (cs == NULL);
 }
 
 static CLIENTSALE addSaleToClientSale(CLIENTSALE cs, SALE s) {
