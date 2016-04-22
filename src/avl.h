@@ -6,6 +6,7 @@
 
 typedef struct avl *AVL;
 typedef struct element *ELEMENT;
+
 /**
  * Inicia uma AVL com as funções auxiliares dadas.
  * @param equals Verifica se dois conteúdos são iguais

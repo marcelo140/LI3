@@ -16,7 +16,7 @@ FATGLOBAL initFat (int branches);
 
 FATGLOBAL fillFat (FATGLOBAL fat, PRODUCTCAT p);
 
-FATGLOBAL addSaleToFat  (FATGLOBAL fat, SALE s);
+FATGLOBAL addSaleToFat (FATGLOBAL fat, SALE s);
 
 PRODUCTFAT getProductDataByMonth(FATGLOBAL fat, PRODUCT p, int month);
 

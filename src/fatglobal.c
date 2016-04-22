@@ -4,17 +4,14 @@
 #include "catalog.h"
 #include "fatglobal.h"
 
-#define CATALOG_SIZE 26
-#define BUFFER_SIZE 10
-
 #define INDEX(p) (p[0] - 'A')
 #define BRANCHES(p) p->branches
 
 /* Dados de cada produto */
 struct revenue{
-	int branches;
 	double *billed;
 	int *sales;
+	int branches;
 };
 
 /** Dados de um produto num dado mês */
@@ -158,6 +155,7 @@ int getSalesByMonthRange(FATGLOBAL fat, int initialMonth, int finalMonth) {
 	int i, month, size, res = 0;
 	
 	set = initSet(countAllElems(fat->cat), (free_t) freeRevenue);
+
 	set = filterCat(fat->cat, set, (condition_t) isNotEmptyRev, NULL);
 	size = getSetSize(set);
 
@@ -240,9 +238,13 @@ static REVENUE addSaleToRev(REVENUE r, SALE s) {
 static REVENUE cloneRevenue(REVENUE r) {
 	REVENUE new = malloc(sizeof(*new));
 
-	memcpy(new->sales, r->sales,   MONTHS*BRANCHES(r)*SALEMODE*sizeof(int));
-	memcpy(new->billed, r->billed, MONTHS*BRANCHES(r)*SALEMODE*sizeof(double));
+	new->sales = malloc(MONTHS*BRANCHES(r)*SALEMODE*sizeof(int));
+	new->billed = malloc(MONTHS*BRANCHES(r)*SALEMODE*sizeof(double));
 
+	memcpy(new->sales, r->sales, MONTHS*BRANCHES(r)*SALEMODE*sizeof(int));
+	memcpy(new->billed, r->billed, MONTHS*BRANCHES(r)*SALEMODE*sizeof(double));
+	new->branches = r->branches;
+	
 	return new;
 }
 
@@ -266,7 +268,7 @@ static double getMonthBilled(REVENUE r, int month, double *normal, double *promo
 		p += r->billed[(month * BRANCHES(r) + branch) * SALEMODE + MODE_P];
 	}
 
-	if (promo)  *promo  = p;
+	if (promo) *promo  = p;
 	if (normal) *normal = n;
 
 	return n+p;
@@ -296,8 +298,8 @@ static int getSalesRev(REVENUE r, int branch, int month, int* normal, int* promo
 	if (!r)
 		return 0;
 
-	n = r->billed[(month * BRANCHES(r) + branch) * SALEMODE + MODE_N];
-	p = r->billed[(month * BRANCHES(r) + branch) * SALEMODE + MODE_P];
+	n = r->sales[(month * BRANCHES(r) + branch) * SALEMODE + MODE_N];
+	p = r->sales[(month * BRANCHES(r) + branch) * SALEMODE + MODE_P];
 
 	if (normal) *normal = n;
 	if (promo) *promo = p;
@@ -327,8 +329,8 @@ static int getMonthSales(REVENUE r, int month, int *normal, int *promo) {
 		return 0;
 
 	for(branch = 0; branch < BRANCHES(r); branch++) {
-		n += r->billed[(month * BRANCHES(r) + branch) * SALEMODE + MODE_N];
-		p += r->billed[(month * BRANCHES(r) + branch) * SALEMODE + MODE_P];
+		n += r->sales[(month * BRANCHES(r) + branch) * SALEMODE + MODE_N];
+		p += r->sales[(month * BRANCHES(r) + branch) * SALEMODE + MODE_P];
 	}
 
 	if (promo)  *promo  = p;
@@ -344,11 +346,11 @@ static int getBranchSales(REVENUE r, int branch, int *normal, int *promo) {
 		return 0;
 
 	for(month = 0; month < MONTHS; month++) {
-		n += r->billed[(month * BRANCHES(r) + branch) * SALEMODE + MODE_N];
-		p += r->billed[(month * BRANCHES(r) + branch) * SALEMODE + MODE_P];
+		n += r->sales[(month * BRANCHES(r) + branch) * SALEMODE + MODE_N];
+		p += r->sales[(month * BRANCHES(r) + branch) * SALEMODE + MODE_P];
 	}
 
-	if (promo)  *promo  = p;
+	if (promo) *promo  = p;
 	if (normal) *normal = n;
 
 	return n+p;
@@ -374,7 +376,7 @@ int getProductFatSales(PRODUCTFAT pf, int branch, int* normal, int* promo) {
 	p = pf->sales[branch*SALEMODE + MODE_P];
 
 	if (normal) *normal = n;
-	if (promo)  *promo  = p;
+	if (promo) *promo  = p;
 
 	return n+p;
 }

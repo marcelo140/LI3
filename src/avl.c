@@ -109,7 +109,10 @@ void *getAVLcontent(AVL tree, char *hash, ELEMENT elem) {
 }
 
 ELEMENT newElement() {
-	return malloc(sizeof(struct element));
+	ELEMENT new = malloc(sizeof(*new));
+
+	new->address = NULL;
+	return new;
 }
 
 void updateElement(ELEMENT elem, void* content) {
@@ -406,11 +409,12 @@ static void freeNode(NODE node, void (*freeContent)(void*)) {
 
 
 static SET filterNode(NODE n, SET s, clone_t clone, condition_t condition, void* arg) {
-	void* contCopy = NULL;
+	void* contCopy;
 
 	if (n) {
 		s = filterNode(n->left, s, clone, condition, arg);
 		
+		contCopy = NULL;
 		if (condition(n->content, arg)){
 			if (clone && n->content)
 				contCopy = clone(n->content);
@@ -441,11 +445,12 @@ static SET dumpNode(NODE n, SET set, void* (*dumper)(void*)) {
 }
 
 static SET addNodeToSet(SET s, NODE node, clone_t clone) {
-	void *contCopy = NULL;
+	void *contCopy;
 
 	if (node) {
 		s = addNodeToSet(s, node->left, clone);
-
+		
+		contCopy = NULL;
 		if (clone && node->content)
 			contCopy = clone(node->content);
 
