@@ -185,9 +185,9 @@ SET intersectSet(SET s1, SET s2) {
 	new = initSet(size, s1->free);
 
 	while(pos1 < SIZE(s1) && pos2 < SIZE(s2)) {
-		if (HASH(s1,pos1) < HASH(s2,pos2)) 
+		if (strcmp(HASH(s1,pos1), HASH(s2,pos2)) < 0)
 			pos1++;	
-		else if (HASH(s1,pos1) > HASH(s2,pos2)) 
+		else if (strcmp(HASH(s1,pos1), HASH(s2,pos2)) > 0)
 			 pos2++;
 		else {
 			new = insertElement(new, HASH(s1,pos1), CONTENT(s1,pos1));
