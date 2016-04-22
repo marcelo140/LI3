@@ -47,7 +47,7 @@ void query2(PRODUCTCAT pcat) {
 		printf("Letra: ");
 		fgets(aux, MAX_SIZE, stdin);
 		if (aux[0] == 'q') return;
-	} while(aux[0] < 'A' && aux[0] > 'Z');
+	} while(aux[0] < 'A' || aux[0] > 'Z');
 
 	s = fillProductSet(pcat, aux[0]);
 
@@ -342,7 +342,6 @@ void query10(BRANCHSALES* bs) {
 
 	size = n / LINE_NUMS + ((n % LINE_NUMS != 0) ? 1 : 0);
 	
-	strcpy(buff, "\n");
 	i = 1;	
 	while(i != -1) {
 		page = createPage(header, LINE_NUMS, i, size);
@@ -663,8 +662,8 @@ static int askMonthRange(int* begin, int* end) {
 		printf("Mês deve estar entre %d e 12.\n", b);
 	}
 
-	*begin = b;
-	*end   = e;
+	*begin = b-1;
+	*end   = e-1;
 
 	return r;
 }
