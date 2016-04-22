@@ -34,6 +34,8 @@ void sortProductListByQuant(SET productList, int month);
 
 void sortProductListByBilled(SET productList);
 
+void freeProductData(PRODUCTDATA pd);
+
 void freeBranchSales(BRANCHSALES bs);
 
 #endif
