@@ -2,7 +2,6 @@
 #include <string.h>
 
 #include "avl.h"
-#include "set.h"
 
 typedef enum balance { LH, EH, RH } Balance;
 

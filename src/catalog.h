@@ -4,7 +4,7 @@
 #include "generic.h"
 #include "set.h"
 
-typedef struct catalog      *CATALOG;
+typedef struct catalog *CATALOG;
 
 /**
  * Inicia um catálogo com o tamanho e funções auxiliares dadas.
@@ -101,7 +101,7 @@ void freeCatalog (CATALOG cat);
  * Adiciona a um conjunto de dados todos os elementos existentes num dado índice do
  * catálogo.
  * @param cat Catálogo com os elementos pretendidos
- * @param cs Conjunto de dados onde serão inseridos os elementos pretendidos
+ * @param set Conjunto de dados onde serão inseridos os elementos pretendidos
  * @param index Índice do catálogo cujos elementos serão inseridos
  * @return Conjunto de dados com os novos elementos adicionados
  */
@@ -110,7 +110,7 @@ SET fillSet (CATALOG cat, SET set, int index);
 /**
  * Adiciona a um conjunto de dados todos os elementos existentes num catálogo.
  * @param cat Catálogo com os elementos pretendidos
- * @param cs Conjunto de dados onde serão inseridos os elementos pretendidos
+ * @param set Conjunto de dados onde serão inseridos os elementos pretendidos
  * @return Conjunto de dados com os novos elementos adicionados
  */
 SET fillAllSet (CATALOG cat, SET set);
@@ -122,7 +122,8 @@ SET fillAllSet (CATALOG cat, SET set);
  * O primeiro argumento da condição será sempre o conteúdo do elemento, sendo possível
  * passar-lhe um argumento adicional.
  *
- * @param cat Catálogo a ser filtrado.
+ * @param cat Catálogo a ser filtrado
+ * @param set Conjunto de dados onde serão adicionados os novos elementos
  * @param condition Condição aplicada ao conteúdo de cada elemento
  * @param arg Argumento adiciona para a condição
  * @return Conjunto de dados com os elementos filtrados
@@ -130,8 +131,8 @@ SET fillAllSet (CATALOG cat, SET set);
 SET filterCat(CATALOG cat, SET set, condition_t condition, void* arg);
 
 /**
- * Extrai o conteúdo de cada elemento, usando a função dumper dada. O conteúdo extraido será
- * guardado na estrutura data fornecida.
+ * Transforma o conteúdo de cada elemento, usando a função dumper dada. O resultado do
+ * dumper é então adicionado, juntamente com a hash do elemento, ao set dado.
  * 
  * @param cat Catálogo com a informação a ser extraida
  * @param data Local onde a informação será guardada
