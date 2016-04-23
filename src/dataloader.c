@@ -63,10 +63,10 @@ int loadSales(FILE *file, FATGLOBAL fat, BRANCHSALES* bs, PRODUCTCAT products,
 
 	prod = newProduct();
 	client = newClient();
-	s = initSale();
 	success = total = 0;
 
 	while(fgets(buffer, SALE_BUFFER, file)) {
+		s = initSale();
 		line = strtok (buffer, "\n\r");
 		s = readSale(s, prod, client, line);
 		total++;
@@ -76,9 +76,9 @@ int loadSales(FILE *file, FATGLOBAL fat, BRANCHSALES* bs, PRODUCTCAT products,
 			addSaleToBranch(bs[getBranch(s)], s);
 		 	success++;
 		}
+		freeSale(s);
 	}
 
-	freeSale(s);
 	freeProduct(prod);
 	freeClient(client);
 

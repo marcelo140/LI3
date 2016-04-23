@@ -148,27 +148,25 @@ void getClientsByProduct(BRANCHSALES bs, PRODUCT prod, SET *normal, SET *promo) 
 	for(i = 0; i < size; i++){
 		client = getSetHash(clients, i);
 		cu = getSetData(clients, i);
-		cu1 = cloneClientUnit(cu);
-		cu2 = cloneClientUnit(cu);
 
 		switch(cu->saletype) {
-			case SALE_N: /* datacpy(normalClients, clients, i); */
+			case SALE_N: cu1 = cloneClientUnit(cu);
 						 insertElement(normalClients, client, cu1);
                          break;
-            case SALE_P: /* datacpy(promoClients, clients, i); */
+            case SALE_P: cu1 = cloneClientUnit(cu);
 						 insertElement(promoClients, client, cu1);
                          break;
-            case SALE_NP:/*  
-						 datacpy(normalClients, clients, i);
-                         datacpy(promoClients, clients, i); */
-						 insertElement(normalClients, client, cu1);
-						 insertElement(promoClients, client, cu2);
-                         break;
+            case SALE_NP: cu1 = cloneClientUnit(cu);
+						  cu2 = cloneClientUnit(cu);
+						  insertElement(normalClients, client, cu1);
+						  insertElement(promoClients, client, cu2);
+                          break;
 		}
 	}
 
 	free(product);
 	freeSet(clients);
+	freeClientUnit(cu);
 
 	*normal = normalClients;
 	*promo = promoClients;

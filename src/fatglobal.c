@@ -146,6 +146,7 @@ double getBilledByMonthRange(FATGLOBAL fat, int initialMonth, int finalMonth) {
 			res += getMonthBilled(rev, month, NULL, NULL);
 	}
 
+	freeSet(set);
 	return res;
 }
 
@@ -165,7 +166,8 @@ int getSalesByMonthRange(FATGLOBAL fat, int initialMonth, int finalMonth) {
 		for(month = initialMonth; month <= finalMonth; month++)
 			res += getMonthSales(rev, month, NULL, NULL);
 	}
-
+	
+	freeSet(set);
 	return res;
 }
 
@@ -192,9 +194,8 @@ SET* getProductsNotSoldByBranch(FATGLOBAL fat) {
 		res[branch] = initSet(size, (free_t) freeRevenue);
 
 	for(i = 0; i < size; i++) {
-		rev = getSetData(set, i);
-
 		for(branch = 0; branch < BRANCHES(fat); branch++){
+			rev = getSetData(set, i);
 			if (!getBranchSales(rev, branch, NULL, NULL))
 				datacpy(res[branch], set, i);
 		}
@@ -213,11 +214,12 @@ void freeFat(FATGLOBAL fat) {
 /************************** REVENUE *****************************/
 
 static REVENUE initRevenue(int branches) {
-	REVENUE new = malloc(sizeof(*new));
+	REVENUE new;
+   	new = malloc(sizeof(*new));
 
 	new->branches = branches;
-	new->billed = calloc(MONTHS*branches*SALEMODE, sizeof(double));
-	new->sales = calloc(MONTHS*branches*SALEMODE, sizeof(int));
+	new->billed   = calloc(MONTHS*branches*SALEMODE, sizeof(double));
+	new->sales    = calloc(MONTHS*branches*SALEMODE, sizeof(int));
 
 	return new;
 }
@@ -357,7 +359,11 @@ static int getBranchSales(REVENUE r, int branch, int *normal, int *promo) {
 }
 
 static void freeRevenue(REVENUE r) {
-	free(r);
+	if (r) {
+		free(r->sales);
+		free(r->billed);
+		free(r);	
+	}
 }
 
 static PRODUCTFAT newProductFat(int branch) {
@@ -404,5 +410,9 @@ static void addProductFatSales(PRODUCTFAT pf, int branch, int normal, int promo)
 }
 
 void freeProductFat(PRODUCTFAT pf) {
-	free(pf);
+	if (pf) {
+		free(pf->sales);
+		free(pf->billed);
+		free(pf);
+	}
 }

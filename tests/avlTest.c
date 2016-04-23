@@ -55,14 +55,14 @@ int test_AVL() {
 }
 
 static int test_countNodes() {
-	AVL tree = initAVL(NULL, NULL, NULL, NULL, NULL);
+	AVL tree = initAVL(NULL, NULL, NULL);
 	int passed_tests= 0;
 
 	if (countNodes(tree) == 0)
 		passed_tests++;
 
-	tree = insertAVL(tree, "escolhido", NULL);
-	tree = insertAVL(tree, "cientista", NULL);
+	tree = insertAVL(tree, "Maria", NULL);
+	tree = insertAVL(tree, "Amelia", NULL);
 
 	if (countNodes(tree) == 2)
 		passed_tests++;
@@ -72,13 +72,13 @@ static int test_countNodes() {
 }
 
 static int test_isEmpty() {
-	AVL tree = initAVL(NULL, NULL, NULL, NULL, NULL);
+	AVL tree = initAVL(NULL, NULL, NULL);
 	int passed_tests = 0;
 
 	if (isEmptyAVL(tree))
 		passed_tests++;
 
-	tree = insertAVL(tree, "escolhido", NULL);
+	tree = insertAVL(tree, "Maria", NULL);
 
 	if (!isEmptyAVL(tree))
 		passed_tests++;
@@ -91,17 +91,17 @@ static int test_lookUp() {
 	AVL tree = initAVL(NULL, NULL, NULL, NULL, NULL);
 	int passed_tests = 0;
 
-	tree = insertAVL(tree, "escolhido", NULL);
-	tree = insertAVL(tree, "cientista", NULL);
+	tree = insertAVL(tree, "Maria", NULL);
+	tree = insertAVL(tree, "Amelia", NULL);
 
-	if (lookUpAVL(tree, "candace") == false)
+	if (lookUpAVL(tree, "Joana") == false)
 		passed_tests++;
 
 	tree = insertAVL(tree, "122", NULL);
 	tree = insertAVL(tree, "140", NULL);
 	tree = insertAVL(tree, "9", NULL);
 
-	if (lookUpAVL(tree, "escolhido") == true)
+	if (lookUpAVL(tree, "Maria") == true)
 		passed_tests++;
 
 	if (lookUpAVL(tree, "9") == true)
@@ -115,8 +115,8 @@ static int test_equals() {
 	AVL tree1, tree2;
 	int passed_tests = 0;
 
-	tree1 = initAVL(NULL, NULL, NULL, NULL, NULL);
-	tree2 = initAVL(NULL, NULL, NULL, NULL, NULL);
+	tree1 = initAVL(NULL, NULL, NULL);
+	tree2 = initAVL( NULL, NULL, NULL);
 
 	if (equalsAVL(tree1, tree2))
 		passed_tests++;
@@ -153,11 +153,11 @@ static int test_equals() {
 }
 
 static int test_replace() {
-	AVL tree = initAVL(NULL, NULL, NULL, NULL, NULL);
+	AVL tree = initAVL(NULL, NULL, NULL);
 	int passed_tests = 0;
 	char *res;
 
-	char str1[] = "escolhido";
+	char str1[] = "Maria";
 	char str2[] = "televisao";
 	char str3[] = "terminal";
 	char str4[] = "Jacinta";
@@ -192,7 +192,7 @@ static int test_replace() {
 
 static int test_addDataSet(){
 	AVL tree1, tree2, tree3;
-	DATASET set;
+	SET set;
 	int i, passed_tests = 0;
 
 	tree1 = initAVL(NULL, NULL, NULL, NULL, NULL);
