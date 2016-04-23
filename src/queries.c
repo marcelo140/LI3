@@ -297,6 +297,48 @@ void query8(BRANCHSALES* bs, PRODUCTCAT pcat) {
 	freeSet(p);
 }
 
+void query9(BRANCHSALES* bs, CLIENTCAT ccat) {
+	PAGE page;
+	SET setB[BRANCHES], setT, auxSet;
+	CLIENT client;
+	int i, month, newPage, size;
+	char ocmd[MAX_SIZE];
+
+
+	client = askClient(ccat);
+	if (!client) return;
+	month  = askMonth();
+	if (month == -1) return;
+	
+	setB[0] = getProductsByClient(bs[0], client);
+	setB[1] = getProductsByClient(bs[1], client);
+	setB[2] = getProductsByClient(bs[2], client);
+	
+	auxSet = intersectSet(setB[0], setB[1]);
+	setT   = intersectSet(auxSet, setB[2]);
+
+	sortProductListByQuant(setT, month);
+
+	size = getSetSize(setT);
+	size = size / LINE_NUMS + ((size % LINE_NUMS != 0) ? 1 : 0);
+
+
+	strcpy(ocmd, "\n");
+	newPage = 1;
+	while (newPage != -1) {
+		page = createPage("", LINE_NUMS, newPage, size);
+		page = getPage(page, setT);
+		newPage = presentList(page, ocmd);
+		freePage(page);
+	}
+
+	for(i = 0; i < BRANCHES; i++)
+		freeSet(setB[i]);
+	freeSet(setT);
+	freeSet(auxSet);
+	freeClient(client);
+}
+
 void query10(BRANCHSALES* bs) {
 	PAGE page;
 	PRODUCTDATA pdata;

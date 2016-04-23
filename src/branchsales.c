@@ -170,10 +170,12 @@ SET getProductsByClient(BRANCHSALES bs, CLIENT c) {
 	client = fromClient(c);	
 	cs = getCatContent(bs->products, INDEX(client), client);
 
-	size = getHashTsize(cs->products);
-	products = initSet(size, (free_t) freeProductUnit);
-	products = dumpHashT(cs->products, products);
-
+	if (cs) {
+		size = getHashTsize(cs->products);
+		products = initSet(size, (free_t) freeProductUnit);
+		products = dumpHashT(cs->products, products);
+	} else products = initSet(0, (free_t) freeProductUnit);
+	
 	free(client);
 	return products;
 }

@@ -63,7 +63,7 @@ int interpreter(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat)
 				 break;
 		case 8 : query8(bs, pcat);
 		 		 break;
-		case 9 :
+		case 9 : query9(bs, ccat); 
 		 		 break;
 		case 10 : query10(bs);
 		 		  break;
