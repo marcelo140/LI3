@@ -14,29 +14,18 @@ obj/%.o: src/%.c
 	$(CC) $(CFLAGS) -o $@ -c $<
 
 
-obj/main.o: src/dataloader.h src/branchsale.h src/fatglobal.h src/clients.h src/products.h src/interpreter.h
-
+obj/main.o: src/dataloader.h src/branchsales.h src/fatglobal.h src/clients.h src/products.h src/interpreter.h
 obj/dataloader.o: src/dataloader.h src/fatglobal.h src/clients.h src/products.h src/generic.h src/sales.h src/branchsales.h
-
 obj/catalog.o: src/catalog.h src/avl.h src/generic.h src/set.h
-
 obj/avl.o: src/avl.h src/generic.h src/avl.h
-
 obj/clients.o: src/clients.h src/catalog.h src/generic.h src/set.h
-	
 obj/products.o: src/products.h src/catalog.h src/generic.h src/set.h
-
 obj/sales.o: src/sales.h src/clients.h src/products.h src/generic.h
-
-obj/interpreter.o: src/interpreter.h src/clients.h src/products.h src/fatglobal.h src/branchsales.h src/dataloader.h src/queriesh
-
+obj/interpreter.o: src/interpreter.h src/clients.h src/products.h src/fatglobal.h src/branchsales.h src/dataloader.h src/queries.h
 obj/fatglobal.o: src/sales.h src/generic.h src/fatglobal.h src/products.h src/catalog.h src/set.h
-
 obj/branchsales.o: src/sales.h src/generic.h src/products.h src/clients.h src/catalog.h src/hashT.h src/branchsales.h
-
 obj/set.o: src/generic.h src/set.h
-
-obj/queris.o: src/set.h src/interpreter.h src/fatglobal.h src/branchsale.h
+obj/queries.o: src/set.h src/interpreter.h src/fatglobal.h src/branchsales.h
 
 clearAll: clear
 	-@rm -rf doc

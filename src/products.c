@@ -42,7 +42,7 @@ int countProducts(PRODUCTCAT productCat, char index) {
 }
 
 bool isEmptyProductCat (PRODUCTCAT prodCatalog) {
-	return isEmptyCatalog(prodCatalog);
+	return isEmptyCatalog(prodCatalog->cat);
 }
 
 CATALOG getProductCat (PRODUCTCAT productCat) {
