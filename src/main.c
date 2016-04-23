@@ -1,10 +1,13 @@
 #include <stdio.h>
-#include <time.h>
 
 #include "interpreter.h"
 #include "dataloader.h"
+#include "branchsales.h"
+#include "fatglobal.h"
 #include "clients.h"
 #include "products.h"
+
+#define BRANCHES 3
 
 int main() {
 	FATGLOBAL fat;
@@ -16,7 +19,7 @@ int main() {
 	while(running != KILL) {
 
 		if (running != CONT) {
-			fat = initFat();
+			fat = initFat(BRANCHES);
 			clientCat = initClientCat();
 			productCat = initProductCat();
 			for(i=0; i < 3; i++)

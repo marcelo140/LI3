@@ -16,10 +16,13 @@ struct avl {
 	NODE head;
 	int size;
 
-	init_t init;
 	condition_t equals;
 	clone_t clone;
 	free_t free;
+};
+
+struct element {
+	void** address;
 };
 
 static NODE newNode      (char* hash, void* content, NODE left, NODE right);
@@ -41,13 +44,12 @@ static SET filterNode   (NODE n, SET s, clone_t clone, condition_t predicate, vo
 static SET dumpNode (NODE n, SET set, void*(*dumper)(void*));
 
 
-AVL initAVL(init_t init, condition_t equals, clone_t clone, free_t free){
+AVL initAVL(condition_t equals, clone_t clone, free_t free){
 	AVL tree = malloc (sizeof (*tree));
 
 	tree->head = NULL;
 	tree->size = 0;
 
-	tree->init = init;
 	tree->equals = equals;
 	tree->clone = clone;
 	tree->free = free;
@@ -55,8 +57,7 @@ AVL initAVL(init_t init, condition_t equals, clone_t clone, free_t free){
 	return tree;
 }
 
-AVL changeOps (AVL tree, init_t init, condition_t equals, clone_t clone, free_t free){
-	tree->init = init;
+AVL changeOps (AVL tree, condition_t equals, clone_t clone, free_t free){
 	tree->equals = equals;
 	tree->clone = clone;
 	tree->free = free;
@@ -77,7 +78,7 @@ AVL insertAVL(AVL tree, char *hash, void *content) {
 }
 
 AVL cloneAVL(AVL tree) {
-	AVL new = initAVL(tree->init, tree->equals, tree->clone, tree->free);
+	AVL new = initAVL(tree->equals, tree->clone, tree->free);
 
 	new->size = tree->size;
 	new->head = cloneNode(tree->head, tree->clone);
@@ -85,30 +86,7 @@ AVL cloneAVL(AVL tree) {
 	return new;
 }
 
-void* replaceAVL(AVL tree, char* hash, void* content) {
-	void* oldContent = NULL;
-	NODE p = tree->head;
-	int res;
-	bool stop = false;
-
-	while(p && !stop) {
-		res = strcmp(hash, p->hash);
-
-		if (res > 0)
-			p = p->right;
-		else if (res < 0)
-			p = p->left;
-		else {
-			oldContent = p->content;
-			p->content = content;
-			stop = true;
-		}
-	}
-
-	return oldContent;
-}
-
-void *getAVLcontent(AVL tree, char *hash) {
+void *getAVLcontent(AVL tree, char *hash, ELEMENT elem) {
 	NODE p = tree->head;
 	int res;
 	
@@ -120,8 +98,9 @@ void *getAVLcontent(AVL tree, char *hash) {
 		else if (res < 0)
 			p = p->left;
 		else{
-			if (tree->init && !p->content)
-				p->content = tree->init();
+			if (elem)
+				elem->address = &p->content;
+
 			return p->content;
 		}
 	}
@@ -129,19 +108,19 @@ void *getAVLcontent(AVL tree, char *hash) {
 	return NULL;
 }
 
-void* addAVL(AVL tree, char* hash) {
-	NODE last;
-	int update = 0;
+ELEMENT newElement() {
+	ELEMENT new = malloc(sizeof(*new));
 
-	tree->head = insertNode(tree->head, hash, NULL, &update, &last);
+	new->address = NULL;
+	return new;
+}
 
-	if (update != -1)
-		tree->size++;
+void updateElement(ELEMENT elem, void* content) {
+	*elem->address = content;
+}
 
-	if (!last->content)
-		last->content = tree->init();
-
-	return last->content;
+void freeElement(ELEMENT elem) {
+	free(elem);
 }
 
 bool lookUpAVL(AVL tree, char *hash) {
@@ -430,11 +409,12 @@ static void freeNode(NODE node, void (*freeContent)(void*)) {
 
 
 static SET filterNode(NODE n, SET s, clone_t clone, condition_t condition, void* arg) {
-	void* contCopy = NULL;
+	void* contCopy;
 
 	if (n) {
 		s = filterNode(n->left, s, clone, condition, arg);
 		
+		contCopy = NULL;
 		if (condition(n->content, arg)){
 			if (clone && n->content)
 				contCopy = clone(n->content);
@@ -465,11 +445,12 @@ static SET dumpNode(NODE n, SET set, void* (*dumper)(void*)) {
 }
 
 static SET addNodeToSet(SET s, NODE node, clone_t clone) {
-	void *contCopy = NULL;
+	void *contCopy;
 
 	if (node) {
 		s = addNodeToSet(s, node->left, clone);
-
+		
+		contCopy = NULL;
 		if (clone && node->content)
 			contCopy = clone(node->content);
 

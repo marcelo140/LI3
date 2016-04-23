@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+
 #include "catalog.h"
 #include "avl.h"
 
@@ -8,7 +9,11 @@ struct catalog{
 	int size;
 };
 
-CATALOG initCatalog(int n, init_t init, clone_t clone, free_t free) {
+struct member {
+	ELEMENT element;
+};
+
+CATALOG initCatalog(int n, clone_t clone, free_t free) {
 	CATALOG c;
 	int i;
 
@@ -17,16 +22,16 @@ CATALOG initCatalog(int n, init_t init, clone_t clone, free_t free) {
 	c->size = n;
 
 	for (i=0; i < n; i++)
-		c->root[i] = initAVL(init, NULL, clone, free);
+		c->root[i] = initAVL(NULL, clone, free);
 
 	return c;
 }
 
-CATALOG changeCatalogOps (CATALOG cat, init_t init, clone_t clone, free_t free){
+CATALOG changeCatalogOps (CATALOG cat, clone_t clone, free_t free){
 	int i, size = cat->size;
 	
 	for(i = 0; i < size; i++)
-		changeOps(cat->root[i], init, NULL, clone, free);
+		changeOps(cat->root[i], NULL, clone, free);
 
 	return cat;
 }
@@ -35,10 +40,6 @@ CATALOG insertCatalog(CATALOG cat, int i, char *hash, void *content) {
 	cat->root[i] = insertAVL(cat->root[i], hash, content);
 
 	return cat;
-}
-
-void *replaceCatalog(CATALOG cat, int i, char *hash, void *content) {
-	return replaceAVL(cat->root[i], hash, content);
 }
 
 bool isEmptyCatalog (CATALOG cat) {
@@ -65,12 +66,31 @@ CATALOG cloneCatalog(CATALOG cat){
 	return c;
 }
 
-void* getCatContent(CATALOG c, int index, char *hash) {
-	return getAVLcontent(c->root[index], hash);
+MEMBER newMember() {
+	MEMBER member = malloc(sizeof(*member));
+	member->element = newElement();
+	
+	return member;
 }
 
-void* addCatalog(CATALOG c, int index, char *hash) {
-	return addAVL(c->root[index], hash);
+void* getCatContent(CATALOG c, int index, char *hash, MEMBER member) {
+	ELEMENT elem = NULL;
+
+	if (member)
+		elem = member->element;
+	
+	return getAVLcontent(c->root[index], hash, elem);
+}
+
+void updateMember(MEMBER member, void* content) {
+	updateElement(member->element, content);
+}
+
+void freeMember(MEMBER member) {
+	if (member) {
+		freeElement(member->element);
+		free(member);
+	}	
 }
 
 bool lookUpCatalog(CATALOG cat, int index, char *hash) {

@@ -4,33 +4,33 @@
 #include "catalog.h"
 #include "fatglobal.h"
 
-#define CATALOG_SIZE 26
-#define BUFFER_SIZE 10
-
 #define INDEX(p) (p[0] - 'A')
+#define BRANCHES(p) p->branches
 
 /* Dados de cada produto */
 struct revenue{
-	double billed[MONTHS][BRANCHES][SALEMODE];
-	int sales[MONTHS][BRANCHES][SALEMODE];
+	double *billed;
+	int *sales;
+	int branches;
 };
 
 /** Dados de um produto num dado mês */
 struct product_fat {
-	double billed[BRANCHES][SALEMODE];
-	int sales[BRANCHES][SALEMODE];
+	double *billed;
+	int *sales;
 };
 
 struct faturacao {
 	CATALOG cat;
+	int branches;
 };
 
-static PRODUCTFAT newProductFat();
+static PRODUCTFAT newProductFat(int branches);
 static void addProductFatBilled(PRODUCTFAT pf, int branch, double normal, double promo);
 static void addProductFatSales(PRODUCTFAT pf, int branch, int normal, int promo);
 
 /* Set de funções que auxiliam a gestão do módulo */
-static REVENUE initRevenue  ();
+static REVENUE initRevenue  (int branches);
 static REVENUE addSaleToRev (REVENUE r, SALE s);
 static REVENUE cloneRevenue (REVENUE r);
 static void    freeRevenue  (REVENUE r);
@@ -48,54 +48,75 @@ static int getBranchSales (REVENUE r, int branch, int *normal, int *promo);
 static int getMonthSales  (REVENUE r, int month,  int *normal, int *promo);
 
 
-FATGLOBAL initFat(){
+FATGLOBAL initFat(int branches){
 	FATGLOBAL new = malloc(sizeof(*new));
 
 	new->cat = NULL;
+	new->branches = branches;
 
 	return new;
 }
 
 FATGLOBAL fillFat (FATGLOBAL fat, PRODUCTCAT p) {
 	fat->cat = getProductCat(p);
-	fat->cat = changeCatalogOps(fat->cat, (init_t) initRevenue, (clone_t) cloneRevenue,
-                                          (free_t) freeRevenue);
+	fat->cat = changeCatalogOps(fat->cat, (clone_t) cloneRevenue, (free_t) freeRevenue);
 
 	return fat;
 }
 
 FATGLOBAL addFat(FATGLOBAL fat, SALE s) {
-	REVENUE r;
+	REVENUE rev;
+	MEMBER member = newMember();
 	char *prod = getProduct(s);
 
-	r = getCatContent(fat->cat, INDEX(prod), prod);
-	addSaleToRev(r, s);
+	rev = getCatContent(fat->cat, INDEX(prod), prod, member);
 
+	if (!rev)
+		rev = initRevenue(BRANCHES(fat));
+
+	addSaleToRev(rev, s);
+	updateMember(member, rev);	
+
+	freeMember(member);
 	free(prod);
+
 	return fat;
 }
 
 FATGLOBAL addSaleToFat(FATGLOBAL fat, SALE s) {
 	REVENUE rev;
+	MEMBER member = newMember();
 	char *product = getProduct(s);
 
-	rev = getCatContent(fat->cat, INDEX(product), product);
-	addSaleToRev(rev, s);
+	rev = getCatContent(fat->cat, INDEX(product), product, member);
 
+	if (!rev)
+		rev = initRevenue(BRANCHES(fat));
+
+	addSaleToRev(rev, s);
+	updateMember(member, rev);
+
+	freeMember(member);
 	free(product);
+	
 	return fat;
 }
 
 PRODUCTFAT getProductDataByMonth(FATGLOBAL fat, PRODUCT p, int month) {
 	REVENUE rev;
-	PRODUCTFAT pf = newProductFat();
+	PRODUCTFAT pf = newProductFat(BRANCHES(fat));
 	char *product = fromProduct(p);
 	double billedN = 0, billedP = 0;
 	int branch, salesN = 0, salesP = 0;
 
-	rev = getCatContent(fat->cat, INDEX(product), product);
+	rev = getCatContent(fat->cat, INDEX(product), product, NULL);
 
-	for(branch = 0; branch < BRANCHES; branch++) {
+	if (!rev){
+		free(product);
+		return pf;
+	}
+
+	for(branch = 0; branch < BRANCHES(fat); branch++) {
 		getBilledRev(rev, branch, month, &billedN, &billedP);
 		getSalesRev(rev, branch, month, &salesN, &salesP);
 
@@ -134,6 +155,7 @@ int getSalesByMonthRange(FATGLOBAL fat, int initialMonth, int finalMonth) {
 	int i, month, size, res = 0;
 	
 	set = initSet(countAllElems(fat->cat), (free_t) freeRevenue);
+
 	set = filterCat(fat->cat, set, (condition_t) isNotEmptyRev, NULL);
 	size = getSetSize(set);
 
@@ -160,19 +182,19 @@ SET* getProductsNotSoldByBranch(FATGLOBAL fat) {
 	REVENUE rev;
 	int i, branch, size;
 
-	res = malloc(sizeof(SET) * BRANCHES);
+	res = malloc(sizeof(SET) * BRANCHES(fat));
 
 	set = initSet(countAllElems(fat->cat), (free_t) freeRevenue);
 	set = fillAllSet(fat->cat, set);
 	size = getSetSize(set);
 
-	for(branch = 0; branch < BRANCHES; branch++)
+	for(branch = 0; branch < BRANCHES(fat); branch++)
 		res[branch] = initSet(size, (free_t) freeRevenue);
 
 	for(i = 0; i < size; i++) {
 		rev = getSetData(set, i);
 
-		for(branch = 0; branch < BRANCHES; branch++){
+		for(branch = 0; branch < BRANCHES(fat); branch++){
 			if (!getBranchSales(rev, branch, NULL, NULL))
 				datacpy(res[branch], set, i);
 		}
@@ -190,8 +212,14 @@ void freeFat(FATGLOBAL fat) {
 
 /************************** REVENUE *****************************/
 
-static REVENUE initRevenue() {
-	return calloc (1, sizeof(struct revenue));
+static REVENUE initRevenue(int branches) {
+	REVENUE new = malloc(sizeof(*new));
+
+	new->branches = branches;
+	new->billed = calloc(MONTHS*branches*SALEMODE, sizeof(double));
+	new->sales = calloc(MONTHS*branches*SALEMODE, sizeof(int));
+
+	return new;
 }
 
 static REVENUE addSaleToRev(REVENUE r, SALE s) {
@@ -201,8 +229,8 @@ static REVENUE addSaleToRev(REVENUE r, SALE s) {
 	int mode   = getMode(s);
 	double billed = quant*getPrice(s);
 
-	r->billed[month][branch][mode] += billed;
-	r->sales[month][branch][mode]++;
+	r->billed[(month * BRANCHES(r) + branch) * SALEMODE + mode] += billed;
+	r->sales[(month * BRANCHES(r) + branch) * SALEMODE + mode]++;
 
 	return r;
 }
@@ -210,9 +238,13 @@ static REVENUE addSaleToRev(REVENUE r, SALE s) {
 static REVENUE cloneRevenue(REVENUE r) {
 	REVENUE new = malloc(sizeof(*new));
 
-	memcpy(new->sales, r->sales,   MONTHS*BRANCHES*SALEMODE*sizeof(int));
-	memcpy(new->billed, r->billed, MONTHS*BRANCHES*SALEMODE*sizeof(double));
+	new->sales = malloc(MONTHS*BRANCHES(r)*SALEMODE*sizeof(int));
+	new->billed = malloc(MONTHS*BRANCHES(r)*SALEMODE*sizeof(double));
 
+	memcpy(new->sales, r->sales, MONTHS*BRANCHES(r)*SALEMODE*sizeof(int));
+	memcpy(new->billed, r->billed, MONTHS*BRANCHES(r)*SALEMODE*sizeof(double));
+	new->branches = r->branches;
+	
 	return new;
 }
 
@@ -231,12 +263,12 @@ static double getMonthBilled(REVENUE r, int month, double *normal, double *promo
 	if (!r)
 		return 0;
 
-	for(branch = 0; branch < BRANCHES; branch++) {
-		n += r->billed[month][branch][MODE_N];
-		p += r->billed[month][branch][MODE_P];
+	for(branch = 0; branch < BRANCHES(r); branch++) {
+		n += r->billed[(month * BRANCHES(r) + branch) * SALEMODE + MODE_N];
+		p += r->billed[(month * BRANCHES(r) + branch) * SALEMODE + MODE_P];
 	}
 
-	if (promo)  *promo  = p;
+	if (promo) *promo  = p;
 	if (normal) *normal = n;
 
 	return n+p;
@@ -250,8 +282,8 @@ static double getBranchBilled(REVENUE r, int branch, double *normal, double *pro
 		return 0;
 
 	for(month = 0; month < MONTHS; month++){
-		n += r->billed[month][branch][MODE_N];
-		p += r->billed[month][branch][MODE_P];
+		n += r->billed[(month * BRANCHES(r) + branch) * SALEMODE + MODE_N];
+		p += r->billed[(month * BRANCHES(r) + branch) * SALEMODE + MODE_P];
 	}
 
 	if (promo)  *promo  = p;
@@ -266,8 +298,8 @@ static int getSalesRev(REVENUE r, int branch, int month, int* normal, int* promo
 	if (!r)
 		return 0;
 
-	n = r->sales[month][branch][MODE_N];
-	p = r->sales[month][branch][MODE_P];
+	n = r->sales[(month * BRANCHES(r) + branch) * SALEMODE + MODE_N];
+	p = r->sales[(month * BRANCHES(r) + branch) * SALEMODE + MODE_P];
 
 	if (normal) *normal = n;
 	if (promo) *promo = p;
@@ -281,8 +313,8 @@ static double getBilledRev(REVENUE r, int b, int m, double* normal, double* prom
 	if (!r)
 		return 0;
 
-	n = r->billed[m][b][MODE_N];
-	p = r->billed[m][b][MODE_P];
+	n = r->billed[(m * BRANCHES(r) + b) * SALEMODE + MODE_N];
+	p = r->billed[(m * BRANCHES(r) + b) * SALEMODE + MODE_P];
 
 	if (normal) *normal = n;
 	if (promo) *promo = p;
@@ -296,9 +328,9 @@ static int getMonthSales(REVENUE r, int month, int *normal, int *promo) {
 	if (!r)
 		return 0;
 
-	for(branch = 0; branch < BRANCHES; branch++) {
-		n += r->sales[month][branch][MODE_N];
-		p += r->sales[month][branch][MODE_P];
+	for(branch = 0; branch < BRANCHES(r); branch++) {
+		n += r->sales[(month * BRANCHES(r) + branch) * SALEMODE + MODE_N];
+		p += r->sales[(month * BRANCHES(r) + branch) * SALEMODE + MODE_P];
 	}
 
 	if (promo)  *promo  = p;
@@ -314,11 +346,11 @@ static int getBranchSales(REVENUE r, int branch, int *normal, int *promo) {
 		return 0;
 
 	for(month = 0; month < MONTHS; month++) {
-		n += r->sales[month][branch][MODE_N];
-		p += r->sales[month][branch][MODE_P];
+		n += r->sales[(month * BRANCHES(r) + branch) * SALEMODE + MODE_N];
+		p += r->sales[(month * BRANCHES(r) + branch) * SALEMODE + MODE_P];
 	}
 
-	if (promo)  *promo  = p;
+	if (promo) *promo  = p;
 	if (normal) *normal = n;
 
 	return n+p;
@@ -328,18 +360,23 @@ static void freeRevenue(REVENUE r) {
 	free(r);
 }
 
-static PRODUCTFAT newProductFat() {
-	return calloc(1, sizeof(struct product_fat));
+static PRODUCTFAT newProductFat(int branch) {
+	PRODUCTFAT new = malloc(sizeof(*new));
+	
+	new->sales = calloc(SALEMODE*branch, sizeof(int));
+	new->billed = calloc(SALEMODE*branch, sizeof(double));
+
+	return new;
 }
 
 int getProductFatSales(PRODUCTFAT pf, int branch, int* normal, int* promo) {
 	int n, p;
 
-	n = pf->sales[branch][MODE_N];
-	p = pf->sales[branch][MODE_P];
+	n = pf->sales[branch*SALEMODE + MODE_N];
+	p = pf->sales[branch*SALEMODE + MODE_P];
 
 	if (normal) *normal = n;
-	if (promo)  *promo  = p;
+	if (promo) *promo  = p;
 
 	return n+p;
 }
@@ -347,8 +384,8 @@ int getProductFatSales(PRODUCTFAT pf, int branch, int* normal, int* promo) {
 double getProductFatBilled(PRODUCTFAT pf, int branch, double* normal, double* promo) {
 	double n, p;
 
-	n = pf->billed[branch][MODE_N];
-	p = pf->billed[branch][MODE_P];
+	n = pf->billed[branch*SALEMODE + MODE_N];
+	p = pf->billed[branch*SALEMODE + MODE_P];
 
 	if (normal) *normal = n;
 	if (promo) *promo = p;
@@ -357,13 +394,13 @@ double getProductFatBilled(PRODUCTFAT pf, int branch, double* normal, double* pr
 }
 
 static void addProductFatBilled(PRODUCTFAT pf, int branch, double normal, double promo) {
-	pf->billed[branch][MODE_N] += normal;
-	pf->billed[branch][MODE_P] += promo;
+	pf->billed[branch*SALEMODE + MODE_N] += normal;
+	pf->billed[branch*SALEMODE + MODE_P] += promo;
 }
 
 static void addProductFatSales(PRODUCTFAT pf, int branch, int normal, int promo) {
-	pf->sales[branch][MODE_N] += normal;
-	pf->sales[branch][MODE_P] += promo;
+	pf->sales[branch*SALEMODE + MODE_N] += normal;
+	pf->sales[branch*SALEMODE + MODE_P] += promo;
 }
 
 void freeProductFat(PRODUCTFAT pf) {

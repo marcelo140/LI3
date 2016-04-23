@@ -3,7 +3,9 @@
 #include <string.h>
 #include "queries.h"
 #include <time.h>
+
 #include "set.h"
+
 #define UPPER(a) (('a' <= (a) && (a) <= 'z') ? ((a - 'a') + 'A') : (a))
 #define MAX_SIZE 128
 #define BRANCHES 3

@@ -23,7 +23,7 @@ struct client_set {
 CLIENTCAT initClientCat() {
 	CLIENTCAT clientCat = malloc(sizeof (*clientCat));
 
-	clientCat->cat = initCatalog(CATALOG_SIZE, NULL, NULL, NULL);
+	clientCat->cat = initCatalog(CATALOG_SIZE, NULL, NULL);
 
     return clientCat;
 }
