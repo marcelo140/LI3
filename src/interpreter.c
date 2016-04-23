@@ -2,10 +2,9 @@
 #include <stdio.h>
 #include <time.h> /* <<---------- TIME.H */
 #include <string.h>
+
 #include "dataloader.h"
 #include "interpreter.h"
-#include "clients.h"
-#include "products.h"
 #include "queries.h"
 
 #define UPPER(a) (('a' <= a && a <= 'z') ? (a - 'a' + 'A') : a)
