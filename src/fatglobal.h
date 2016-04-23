@@ -79,7 +79,7 @@ SET* getProductsNotSoldByBranch(FATGLOBAL);
 void freeFat(FATGLOBAL fat);
 
 /**
- * Liberta memória associado ao conjuto de informações de um produto.
+ * Liberta memória associado à cópia do conjuto de informações de um produto.
  */
 void freeProductFat(PRODUCTFAT pf);
 
