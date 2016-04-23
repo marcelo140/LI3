@@ -9,11 +9,13 @@ typedef struct hasht *HASHT;
 typedef void* (*add_t)  (void*, void*);
 
 /**
- * Inicializa uma nova tabela de Hash 
- * @return Nova tabela de Hash
+ * Inicializa uma nova tabela de Hash com o tamanho inicial dado.
  */
 HASHT initHashT(int size, init_t init, add_t add, clone_t clone, free_t free);
 
+/**
+ * Determina o número de elementos que existem na tabela.
+ */
 int getHashTsize(HASHT ht);
 
 /**
