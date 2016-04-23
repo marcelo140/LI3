@@ -8,7 +8,7 @@
 #define INDEX(s) s[0]-'A'
 
 #define PRODUCTS_BY_CLIENT 512
-#define CLIENTS_BY_PRODUCT 32
+#define CLIENTS_BY_PRODUCT 64 
 #define BRANCHES 3
 #define MONTHS 12
 
@@ -124,8 +124,8 @@ SET getClientsWhoHaveNotBought(BRANCHSALES bs) {
 void getClientsByProduct(BRANCHSALES bs, PRODUCT prod, SET *normal, SET *promo) {
 	PRODUCTSALE ps;
 	SET clients, normalClients, promoClients;
-	CLIENTUNIT cu;
-	char* product;
+	CLIENTUNIT cu, cu1, cu2;
+	char* product, *client;
 	int i, size;
 	
 	product = fromProduct(prod);
@@ -146,15 +146,23 @@ void getClientsByProduct(BRANCHSALES bs, PRODUCT prod, SET *normal, SET *promo) 
 	clients = dumpHashT(ps->clients, clients);
 
 	for(i = 0; i < size; i++){
-		cu = getSetData(clients, 0);
-	
+		client = getSetHash(clients, i);
+		cu = getSetData(clients, i);
+		cu1 = cloneClientUnit(cu);
+		cu2 = cloneClientUnit(cu);
+
 		switch(cu->saletype) {
-			case SALE_N: datacpy(normalClients, clients, i);
+			case SALE_N: /* datacpy(normalClients, clients, i); */
+						 insertElement(normalClients, client, cu1);
                          break;
-            case SALE_P: datacpy(promoClients, clients, i);
+            case SALE_P: /* datacpy(promoClients, clients, i); */
+						 insertElement(promoClients, client, cu1);
                          break;
-            case SALE_NP: datacpy(normalClients, clients, i);
-                          datacpy(promoClients, clients, i);
+            case SALE_NP:/*  
+						 datacpy(normalClients, clients, i);
+                         datacpy(promoClients, clients, i); */
+						 insertElement(normalClients, client, cu1);
+						 insertElement(promoClients, client, cu2);
                          break;
 		}
 	}
@@ -407,7 +415,7 @@ static int compareProductUnitByBilled(PRODUCTUNIT pu1, PRODUCTUNIT pu2) {
 		billed2 += pu2->billed[i];
 	}
 
-	return (billed2 - billed1);
+	return (billed1 - billed2);
 }
 
 static double getTotalBilled(PRODUCTUNIT pu) {

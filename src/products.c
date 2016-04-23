@@ -34,6 +34,7 @@ void freeProductCat(PRODUCTCAT productCat) {
 }
 
 bool lookUpProduct(PRODUCTCAT productCat, PRODUCT product) {
+	if (INDEX(product) < 0 || INDEX(product) > 26) return false;
 	return lookUpCatalog(productCat->cat, INDEX(product), product->str);
 }
 

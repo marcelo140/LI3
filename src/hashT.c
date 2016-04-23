@@ -10,7 +10,7 @@
 #define BUSY    1
 #define REMOVED 2
 
-#define HASH_CRAWLER(i) ht->table[i].status != EMPTY && (ht->table[i].status == REMOVED || strcmp(ht->table[i].key, key)) != 0
+#define HASH_CRAWLER(i) ht->table[i].status != EMPTY && (ht->table[i].status == REMOVED || strcmp(ht->table[i].key, key) != 0)
 #define CAPACITY        ht->capacity
 #define KEY(i)     		ht->table[i].key
 #define CONTENT(i) 		ht->table[i].content
