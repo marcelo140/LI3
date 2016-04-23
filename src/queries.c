@@ -163,7 +163,7 @@ void query4(FATGLOBAL fat) {
 	strcpy(oldCmd, "\n");
 	newPage=1;
 	while(newPage != -1) {
-		page = createPage("", LINE_NUMS, newPage, size / LINE_NUMS);
+		page = createPage("", LINE_NUMS, newPage, size);
 		page = getPage(page, pgroup);
 		if (page) newPage = presentList(page, oldCmd);
 		else newPage = -1;
@@ -499,13 +499,7 @@ static void printHelp() {
 static int askBranch() {
 	char buff[MAX_SIZE];
 	int r=0;
-/*
-	printf("\n  ::::::::::::::::::::::::::::::\n");
-	printf("\t   1• Filial 1\n");
-	printf("\t   2• Filial 2\n");
-	printf("\t   3• Filial 3\n");
-	printf("  ::::::::::::::::::::::::::::::\n");
-*/
+	
 	while(1) {
 		printf("  Filial(1-3): ");
 		fgets(buff, MAX_SIZE, stdin);
