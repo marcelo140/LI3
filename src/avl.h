@@ -39,16 +39,32 @@ AVL insertAVL (AVL tree, char *hash, void *content);
  */
 AVL cloneAVL (AVL tree);
 
+/**
+ * Cria um novo elemento vazio. Um elemento pode ser associado um nodo para atualizar
+ * rapidamente o seu conteúdo.
+ */
+ELEMENT newElement();
+
 /** 
- * Devolve o conteúdo do nodo com a hash dada. Se o nodo não tiver conteúdo mas existir
- * uma função init, o conteúdo é inicializado antes de ser devolvido.
+ * Devolve o conteúdo do nodo com a hash dada.
+ * @param tree Árvore
+ * @param hash Identificador do elemento pretendido
+ * @param elem Elemento (opcional) que será associado a um nodo para que o seu conteúdo
+ * ser rapidamente atualizado. 
+ * @return Conteúdo do nodo
  */
 void* getAVLcontent (AVL tree, char *hash, ELEMENT elem);
 
-ELEMENT newElement();
-
+/**
+ * Atualiza o conteúdo do nodo associado ao elemento dado.
+ * @param elem Elemento associado ao nodo a ser atualizado
+ * @param content Conteúdo que será inserido no nodo.
+ */
 void updateElement(ELEMENT elem, void* content);
 
+/**
+ * Liberta a memória associada a um elemento.
+ */
 void freeElement(ELEMENT element);
 
 /**

@@ -36,10 +36,20 @@ CATALOG changeCatalogOps (CATALOG cat, clone_t clone, free_t free);
  */
 CATALOG insertCatalog (CATALOG cat, int index, char* hash, void* content);
 
+/**
+ * Cria um novo membro vazio. Um membro pode ser associado a um item do catálogo para
+ * rapidamente atualizar o seu conteúdo.
+ */
 MEMBER newMember();
 
+/**
+ * Atualiza o conteúdo de um item do catálogo.
+ */
 void updateMember(MEMBER member, void* content);
 
+/**
+ * Liberta a memória associada a um membro.
+ */
 void freeMember(MEMBER member);
 
 /**
