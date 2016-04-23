@@ -81,19 +81,15 @@ BRANCHSALES fillBranchSales(BRANCHSALES bs, CLIENTCAT cc, PRODUCTCAT pc) {
 	bs->clients = getClientCat(cc);
 	bs->products = getProductCat(pc);
 
-	bs->clients = changeCatalogOps(bs->clients, NULL,
-                                                (free_t) freeClientSale);
-
-
-	bs->products = changeCatalogOps(bs->products, NULL,
-                                                  (free_t) freeProductSale);
+	bs->clients = changeCatalogOps(bs->clients, NULL, (free_t) freeClientSale);
+	bs->products = changeCatalogOps(bs->products, NULL, (free_t) freeProductSale);
 
 	return bs;
 }
 
 int* getClientQuantByMonth(BRANCHSALES bs, CLIENT c) {
-	char* client;
 	CLIENTSALE cs;
+	char* client;
 	int *months;
 
 	client = fromClient(c);
@@ -158,7 +154,7 @@ void getClientsByProduct(BRANCHSALES bs, PRODUCT prod, SET *normal, SET *promo) 
                          break;
             case SALE_NP: datacpy(normalClients, clients, i);
                           datacpy(promoClients, clients, i);
-     	                     break;
+                         break;
 		}
 	}
 
@@ -244,6 +240,7 @@ BRANCHSALES addSaleToBranch(BRANCHSALES bs, SALE s) {
 	cs = addSaleToClientSale(cs, s);
 	updateMember(member, cs);
 
+	freeMember(member);
 	free(product);
 	free(client);
 
