@@ -26,7 +26,7 @@ static PAGE createPage(char* header, int linesNum,int page, int totalPage);
 static PAGE addLineToPage(PAGE p, char* line);
 static PAGE getPage(PAGE p, SET lines); 
 static PAGE resetReadPage(PAGE page); 
-static int presentList(PAGE page, char* onav);
+static int presentList(char* title, PAGE page, char* onav);
 static void printHelp();
 static void freePage(PAGE p);
 
@@ -42,7 +42,7 @@ static int askMonthRange(int* begin, int* end);
 void query2(PRODUCTCAT pcat) {
 	PAGE page;
 	SET s;
-	char aux[MAX_SIZE];
+	char aux[MAX_SIZE], title[MAX_SIZE];
 	int size, newPage;
 
 	do {
@@ -56,12 +56,13 @@ void query2(PRODUCTCAT pcat) {
 	size = getSetSize(s);
 	size = size / LINE_NUMS + ((size % LINE_NUMS != 0) ? 1 : 0);
 
+	sprintf(title, "Query 2  ➤  Produtos com a letra %c.", aux[0]);
 	strcpy(aux, "\n");
 	newPage = 1;
 	while(newPage != -1) {
 		page = createPage("",LINE_NUMS, newPage, size);
 		page = getPage(page, s);
-		if (page) newPage = presentList(page, aux);
+		if (page) newPage = presentList(title, page, aux);
 		freePage(page);
 	}
 
@@ -72,9 +73,9 @@ void query3(FATGLOBAL fat, PRODUCTCAT pcat) {
 	PAGE page;
 	PRODUCT product;
 	PRODUCTFAT pfat;
-	char answ[MAX_SIZE], oldCmd[MAX_SIZE];
-	int i, month, mode, newPage=1, quantT, qtt[BRANCHES][NP];
-	double billedT, billed[BRANCHES][NP];
+	char answ[MAX_SIZE], oldCmd[MAX_SIZE], *pstr;
+	int i, month, mode, newPage=1, quantAux[NP], quantT[NP], qtt[BRANCHES][NP];
+	double billedAux[NP], billedT[NP], billed[BRANCHES][NP];
 
 	product = askProduct(pcat);
 	if (!product) return;
@@ -86,17 +87,24 @@ void query3(FATGLOBAL fat, PRODUCTCAT pcat) {
 	pfat = getProductDataByMonth(fat, product, month);
 
 	if (mode == 1) {
-		quantT  = 0;
-		billedT = 0;
-		page = createPage("", 2, 1,1);
+		quantT[0] = 0;
+		quantT[1] = 0;
+		billedT[0] = 0;
+		billedT[1] = 0;
+
+		page = createPage("\t\t\tNORMAL\t\tPROMOÇÃO", 2, 1,1);
 
 		for (i=0; i < BRANCHES; i++) {
-			quantT  += getProductFatSales(pfat, i, NULL, NULL);
-	   		billedT += getProductFatBilled(pfat, i, NULL, NULL);
+			getProductFatSales(pfat, i, &quantAux[0], &quantAux[1]);
+	   		getProductFatBilled(pfat, i, &billedAux[0], &billedAux[1]);
+			quantT[0] += quantAux[0];
+			quantT[1] += quantAux[1];
+			billedT[0] += billedAux[0];
+			billedT[1] += billedAux[1];
 		}
-		sprintf(answ, "Quantidade Total: \t%d", quantT);
+		sprintf(answ, "Total de Vendas:\t%3d\t\t%3d", quantT[0], quantT[1]);
 		page = addLineToPage(page, answ);
-		sprintf(answ, "Faturação Total: \t%.2f", billedT);
+		sprintf(answ, "Faturação Total:\t%6.2f\t%6.2f", billedT[0], billedT[1]);
 		page = addLineToPage(page, answ);
 
 	} else {
@@ -125,18 +133,21 @@ void query3(FATGLOBAL fat, PRODUCTCAT pcat) {
 			   					billed[0][1], billed[1][1], billed[2][1]);
 		page = addLineToPage(page, answ);
 	}
-
-	freeProductFat(pfat);
-
+	
+	pstr = fromProduct(product);	
+	sprintf(answ, "Query 3  ➤  Receita de %s no mês %d", pstr, month);
 	strcpy(oldCmd, "\n");
 	while (newPage != -1)
-		newPage = presentList(page, oldCmd);
+		newPage = presentList(answ, page, oldCmd);
+
+	free(pstr);
+	freeProductFat(pfat);
 }
 
 void query4(FATGLOBAL fat) {
 	PAGE page;
 	SET *pgroupB, pgroup;
-	char oldCmd[MAX_SIZE];
+	char oldCmd[MAX_SIZE], title[MAX_SIZE];
 	int mode, size, sizes[BRANCHES], newPage;
 
 	mode = askMode();
@@ -162,12 +173,13 @@ void query4(FATGLOBAL fat) {
 
 	size = size / LINE_NUMS + ((size % LINE_NUMS != 0) ? 1 : 0);
 
+	sprintf(title, "Query 4  ➤  Produtos não comprados.");
 	strcpy(oldCmd, "\n");
 	newPage=1;
 	while(newPage != -1) {
 		page = createPage("", LINE_NUMS, newPage, size);
 		page = getPage(page, pgroup);
-		if (page) newPage = presentList(page, oldCmd);
+		if (page) newPage = presentList(title, page, oldCmd);
 		else newPage = -1;
 		freePage(page);
 	}
@@ -176,8 +188,11 @@ void query4(FATGLOBAL fat) {
 void query5(BRANCHSALES* bs, CLIENTCAT ccat) {
 	CLIENT client;
 	PAGE page;
-	char str[MAX_SIZE];
+	char str[MAX_SIZE], title[MAX_SIZE], *cstr;
 	int branch, *quantity, i, newPage;
+
+	client = askClient(ccat);
+	if (!client) return;
 
 	branch = askBranch();
 	if (branch == -1) return;
@@ -191,22 +206,25 @@ void query5(BRANCHSALES* bs, CLIENTCAT ccat) {
 		page = addLineToPage(page, str);
 	}
 
+	cstr = fromClient(client);
+	sprintf(title, "Query 5  ➤  Gastos de %s na filial %d", cstr, branch);
 	strcpy(str, "\n");
 	newPage = 1;
 	while(newPage != -1) {
-		newPage = presentList(page, str);
+		newPage = presentList(title, page, str);
 	}
 
 	freePage(page);
 	freeClient(client);
 	free(quantity); 
+	free(cstr);
 }
 
 void query6(FATGLOBAL fat) {
 	PAGE page;
 	double billed;
 	int sales, init, final, newPage;
-	char buff[MAX_SIZE];
+	char buff[MAX_SIZE], title[MAX_SIZE];
 
 	newPage = askMonthRange(&init, &final);
 	if (newPage == -1) return;
@@ -220,10 +238,11 @@ void query6(FATGLOBAL fat) {
 	sprintf(buff, "Faturado:\t%.2f", billed);
 	page = addLineToPage(page, buff);
 	
+	sprintf(title, "Query 6  ➤  Vendas entre %d e %d", init, final);
 	strcpy(buff, "\n");
 	newPage = 1;
 	while(newPage != -1) {
-		newPage = presentList(page, buff);
+		newPage = presentList(title, page, buff);
 	}
 
 	freePage(page);
@@ -232,7 +251,7 @@ void query6(FATGLOBAL fat) {
 void query7(BRANCHSALES* bs) {
 	PAGE page;
 	SET setB[BRANCHES], tSet, auxSet;
-	char ocmd[MAX_SIZE];
+	char ocmd[MAX_SIZE], title[MAX_SIZE];
 	int i, size;
 
 
@@ -248,12 +267,13 @@ void query7(BRANCHSALES* bs) {
 	size = getSetSize(tSet);
 	size = size / LINE_NUMS + ((size % LINE_NUMS != 0) ? 1 : 0);
 
+	sprintf(title, "Query 7  ➤  Clientes que compram em todas as filiais.");
 	strcpy(ocmd, "\n");
 	i = 1;
 	while(i != -1) {
 		page = createPage("", LINE_NUMS, i, size);
 		page = getPage(page, tSet);
-		i    = presentList(page, ocmd);
+		i    = presentList(title, page, ocmd);
 		freePage(page);
 	}
 
@@ -267,7 +287,7 @@ void query8(BRANCHSALES* bs, PRODUCTCAT pcat) {
 	PAGE page;
 	SET n, p, toPrint;
 	PRODUCT product;
-	char buff[MAX_SIZE];
+	char buff[MAX_SIZE], title[MAX_SIZE], *pstr;
 	int branch, mode, newPage, size;
 	
 	product = askProduct(pcat);
@@ -284,15 +304,18 @@ void query8(BRANCHSALES* bs, PRODUCTCAT pcat) {
 	size = getSetSize(toPrint);
 	size = size / LINE_NUMS + ((size % LINE_NUMS != 0) ? 1 : 0);
 
+	pstr = fromProduct(product);
+	sprintf(title, "Query 8  ➤  Clientes que compraram %s na filial %d", pstr, branch);
 	newPage = 1;
 	while (newPage != -1) {
 		page = createPage("", LINE_NUMS, newPage, size); 
 		page = getPage(page, toPrint);	
-		if (page) newPage = presentList(page, buff);
+		if (page) newPage = presentList(title, page, buff);
 		else newPage = -1;
 		freePage(page);
 	}
 
+	free(pstr);
 	freeSet(n);
 	freeSet(p);
 }
@@ -302,7 +325,7 @@ void query9(BRANCHSALES* bs, CLIENTCAT ccat) {
 	SET setB[BRANCHES], setT, auxSet, toPrint;
 	CLIENT client;
 	int i, month, newPage, size;
-	char ocmd[MAX_SIZE], *line;
+	char ocmd[MAX_SIZE], title[MAX_SIZE], *line, *cstr;
 
 
 	client = askClient(ccat);
@@ -330,16 +353,19 @@ void query9(BRANCHSALES* bs, CLIENTCAT ccat) {
 
 	size = getSetSize(toPrint);
 	size = size / LINE_NUMS + ((size % LINE_NUMS != 0) ? 1 : 0);
-	
+
+	cstr = fromClient(client);
+	sprintf(title, "Query 9  ➤  Produto mais comprado por %s no mês %d", cstr, month);	
 	strcpy(ocmd, "\n");
 	newPage = 1;
 	while (newPage != -1) {
 		page = createPage("", LINE_NUMS, newPage, size);
 		page = getPage(page, toPrint);
-		newPage = presentList(page, ocmd);
+		newPage = presentList(title, page, ocmd);
 		freePage(page);
 	}
 
+	free(cstr);
 	for(i = 0; i < BRANCHES; i++)
 		freeSet(setB[i]);
 	freeClient(client);
@@ -350,7 +376,7 @@ void query10(BRANCHSALES* bs) {
 	PAGE page;
 	PRODUCTDATA pdata;
 	SET s[BRANCHES], l;
-	char buff[MAX_SIZE], *product;
+	char buff[MAX_SIZE], title[MAX_SIZE], *product;
 	char header[]="\tFILIAL 1\t\tFILIAL 2\t\tFILIAL 3\n PRODUTO\t C   Q\t|  PRODUTO\t C   Q\t|  PRODUTO\t C   Q";
 	int i, j, n=0, size, nClients, nQuant;
 
@@ -391,12 +417,13 @@ void query10(BRANCHSALES* bs) {
 	}
 
 	size = n / LINE_NUMS + ((n % LINE_NUMS != 0) ? 1 : 0);
-	
+
+	sprintf(title, "Query 10  ➤  %d produtos mais vendidos em todo o ano.", n);	
 	i = 1;	
 	while(i != -1) {
 		page = createPage(header, LINE_NUMS, i, size);
 		page = getPage(page, l);		
-		i = presentList(page, buff);	/*TODO fazer isto aos outros */
+		i = presentList(title, page, buff);	
 		freePage(page);
 	}
 }
@@ -406,7 +433,7 @@ void query11 (BRANCHSALES* bs, CLIENTCAT ccat) {
 	SET setB[3], setT, auxSet;
 	CLIENT client;
 	int i;
-	char line[MAX_SIZE], *product;
+	char line[MAX_SIZE], title[MAX_SIZE], *product, *cstr;
 	double costs;
 
 
@@ -431,9 +458,11 @@ void query11 (BRANCHSALES* bs, CLIENTCAT ccat) {
 		free(product);
 	}
 
+	cstr = fromClient(client);
+	sprintf(title, "Query 11  ➤  3 produtos em que %s mais gastou dinheiro.", cstr);
 	strcpy(line, "\n");
 	i = 1;
-	while(i != -1) 	i = presentList(page, line);
+	while(i != -1) 	i = presentList(title, page, line);
 
 
 	freePage(page);
@@ -444,7 +473,7 @@ void query11 (BRANCHSALES* bs, CLIENTCAT ccat) {
 void query12 (BRANCHSALES* bs, FATGLOBAL fat) {
 	PAGE page;
 	SET clients[3], products, auxSet, clientTSet;
-	char line[MAX_SIZE];
+	char line[MAX_SIZE], title[MAX_SIZE] ;
 	int i;
 
 
@@ -462,10 +491,11 @@ void query12 (BRANCHSALES* bs, FATGLOBAL fat) {
 	sprintf(line,"Nº de produtos não vendidos: %6d", getSetSize(products) );
 	page = addLineToPage(page, line);
 
+	sprintf(title, "Query 12  ➤  Clientes sem compras e Produtos não vendidos.");
 	strcpy(line, "\n");
 	i = 1;
 	while(i != -1)
-		i = presentList(page, line);
+		i = presentList(title, page, line);
 
 	
 	freePage(page);
@@ -556,14 +586,15 @@ static void freePage(PAGE p) {
 	}
 }
 
-static int presentList(PAGE p, char *ocmd) {
+static int presentList(char* title, PAGE p, char *ocmd) {
 	char *buff, option[MAX_SIZE];
 	int i, cpage = p->page, totalPages = p->totalPages, jmp=1;
 
 	option[0] = '\n';
 
 	system("clear");
-	putchar('\n');
+
+	printf("\t\t%s\n", title);
 
 	printf("::::::::::::::::::::: PÁGINA %d de %d :::::::::::::::::::::\n\n", cpage, totalPages);
 
