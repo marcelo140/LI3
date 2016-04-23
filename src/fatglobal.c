@@ -41,7 +41,6 @@ static bool isNotEmptyRev (REVENUE r);
 
 /* Getters para os dados de cada produto */
 static double getMonthBilled  (REVENUE r, int month,  double *normal, double *promo);
-static double getBranchBilled (REVENUE r, int branch, double *normal, double *promo);
 static double getBilledRev    (REVENUE r, int b, int m, double* normal, double* promo);
 static int getSalesRev    (REVENUE r, int branch, int month, int* normal, int* promo);
 static int getBranchSales (REVENUE r, int branch, int *normal, int *promo);
@@ -271,24 +270,6 @@ static double getMonthBilled(REVENUE r, int month, double *normal, double *promo
 	}
 
 	if (promo) *promo  = p;
-	if (normal) *normal = n;
-
-	return n+p;
-}
-
-static double getBranchBilled(REVENUE r, int branch, double *normal, double *promo) {
-	double n = 0, p = 0;
-	int  month;
-
-	if (!r)
-		return 0;
-
-	for(month = 0; month < MONTHS; month++){
-		n += r->billed[(month * BRANCHES(r) + branch) * SALEMODE + MODE_N];
-		p += r->billed[(month * BRANCHES(r) + branch) * SALEMODE + MODE_P];
-	}
-
-	if (promo)  *promo  = p;
 	if (normal) *normal = n;
 
 	return n+p;

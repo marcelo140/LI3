@@ -1,0 +1,804 @@
+/* 
+    Document   : tabelas
+    Created on : 18/Jan/2011, 9:42:50
+    Author     : jose
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+/* 
+   TODO customize this sample style
+   Syntax recommendation http://www.w3.org/TR/REC-CSS2/
+*/
+
+root { 
+    display: block;
+}
+
+body {
+    font-family: Arial, Courier,Helvetica, Arial, sans-serif;
+    background-color: #FAFAFA;
+}
+
+
+.logotipo {
+    background: #ffffff url('/imagens/logo_omnidoc.gif');
+    opacity: 0.35;
+    filter:alpha(opacity=40); /* For IE8 and earlier */
+}
+
+body,p,blockquote,li,th,td {
+    font-size: 10pt;
+}
+
+/* antes
+
+h1 { font-size: 1.4em; }
+h2 { font-size: 1.2em; margin-top: 0.5em; margin-bottom: 0.5em; }
+h3 { font-size: 1.0em; font-weight: bold; margin-top: 0.5em; margin-bottom: 0.5em; }
+*/
+h1 {
+    font-weight: bold;
+    font-family: Arial, Courier,Helvetica, Arial, sans-serif;
+    font-size: 1.6em;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+h2 {
+    font-weight: normal;
+    font-family: Arial, Courier,Helvetica, Arial, sans-serif;
+    font-size: 1.4em;
+    margin-top: 0em;
+    margin-bottom: 0em;
+}
+h3 {
+    font-weight: normal;
+    font-family: Arial, Courier,Helvetica, Arial, sans-serif;
+    font-size: 1.4em;
+    margin-top: 0em;
+    margin-bottom: 0em;
+}
+h4 {
+    font-weight: normal;
+    font-family: Arial, Courier,Helvetica, Arial, sans-serif;
+    font-size: 1.2em;
+    margin-top: 0em;
+    margin-bottom: 0em;
+}
+
+code {
+    font-size: 1.1em;
+}
+
+#centrar {
+    position:absolute;
+    left:50%;
+    top:50%;
+}
+
+p.atencao {
+    font-family: Arial, Courier,Helvetica, Arial, sans-serif;
+    font-size: 1.2em;
+}
+
+p,blockquote,pre,ul,ol,dl,table {
+    margin-top: 0px;
+    margin-bottom: 1em;
+}
+
+h1.novidade {
+    font-family: Arial, Courier,Helvetica, Arial, sans-serif;
+    font-size: 1.6em;
+    font-weight: bold;
+    text-decoration: underline;
+    color: #656565;
+}
+h3.novidade {
+    font-family: Arial, Courier,Helvetica, Arial, sans-serif;
+    font-size: 1.2em;
+    color: #656565;
+}
+
+p.novidade {
+    font-family: Arial, Courier,Helvetica, Arial, sans-serif;
+    font-size: 1.2em;
+    color: #656565;  
+    line-height: 140%;
+}
+
+
+
+.visibleDiv, #topLeft, #topRight, #bottomLeft, #bottomRight
+{
+    position: fixed;
+    /* width: 150px;*/
+    border: solid 1px #e1e1e1;
+    vertical-align: middle;
+    /* background: #ece6dc;*/
+    /* background: #28fccd;*/
+    background: #F0F0F0;
+    text-align: left;
+}
+
+
+#loading1 {
+	width: 200px;
+	height: 100px;
+	background-color: #c0c0c0;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	margin-top: -50px;
+	margin-left: -100px;
+	text-align: center;
+}
+
+#load1{
+    position:absolute;
+    z-index:1;
+    border:3px double #999;
+    background:#f7f7f7;
+    width:300px;
+    height:300px;
+    margin-top:-150px;
+    margin-left:-150px;
+    top:50%;
+    left:50%;
+    text-align:center;
+    line-height:300px;
+    font-family:"Trebuchet MS", verdana, arial,tahoma;
+    font-size:18pt;
+}
+
+div.loading-invisible{
+    /*make invisible*/
+    display:none;
+}
+
+/*this is what we want the div to look like when it IS showing*/
+div.loading-visible{
+    /*make visible*/
+    display:block;
+    /*position it 200px down the screen*/
+    position:absolute;
+    top:30%;
+    left:30%;
+    width:400px;
+    height:120px;
+    text-align:center;
+    font-size:12pt;
+    vertical-align: middle;
+    /*in supporting browsers, make it a little transparent*/
+    background:#fff;
+    filter: alpha(opacity=75); /* internet explorer */
+    -khtml-opacity: 0.75;      /* khtml, old safari */
+    -moz-opacity: 0.75;       /* mozilla, netscape */
+    opacity: 0.75;           /* fx, safari, opera */
+    border-top:1px solid #ddd;
+    border-right:1px solid #ddd;
+    border-left:1px solid #ddd;
+    border-bottom:1px solid #ddd;
+}
+
+
+#topLeft
+{
+    top: 1px;
+    left: 1px;
+}
+
+#topRight
+{
+    top: 10px;
+    right: 10px;
+}
+
+#bottomLeft
+{
+    bottom: 10px;
+    left: 10px;
+}
+
+#bottomRight
+{
+    bottom: 10px;
+    right: 10px;
+}
+
+/* estilo1 */
+table.estilo1 {
+    background-color: #ffffff;
+    border-spacing: 3px;
+    /* border-collapse: collapse;*/
+    border-top: 1px solid #c9c9c9;
+    border-left: 1px solid #c9c9c9;
+    border-right: 1px solid #c9c9c9;
+    border-bottom: 1px solid #c9c9c9;
+    color: #000000;
+    font-family: Arial, Verdana,'Trebuchet MS', Courier,Helvetica, Arial, sans-serif;
+    font-size: 1.0em;
+}
+table.estilo1 th {
+    text-align: left;
+    font-weight: normal;
+    font-size: 1.2em;
+    background-color: #a9a9a9;
+    padding: 0.3em 0.3em 0.3em 0.3em;
+    color: white;
+    border-spacing: 1px;
+}
+table.estilo1 th.centro {
+    text-align: center;
+}
+table.estilo1 th.direita {
+    text-align: right;
+}
+table.estilo1 th.titulo {
+    text-align: center;
+    font-weight: normal;
+    background-color: #a9a9a9;
+}
+table.estilo1 thead th {
+    text-align: left;
+    font-weight: normal;
+    background-color: #a9a9a9;
+}
+table.estilo1 th.Corner {
+    text-align: left;
+    border-left: 0px;
+}
+table.estilo1 tr.par {
+    /* background-color: #F7F7F7;*/
+    background-color: #f3f4ee;
+    /* backgroud-color: #F1F4EA;*/
+}
+table.estilo1 tr.separador {
+    background-color: #BABABA;
+    height: 15px;
+}
+table.estilo1 tr.rodape {
+    background: #E8E4C0;    
+}
+table.estilo1 td {
+    text-align: left;
+    border: 0px;
+    font-size: 0.9em;
+    /* versao 1 border-top: 1px solid #CCE29C; */
+    border-top: 1px solid #808080;
+}
+table.estilo1 td.direita {
+    text-align: right;
+    border: 0px;
+    font-size: 0.9em;
+    /* versao 1 border-top: 1px solid #CCE29C; */
+    border-top: 1px solid #808080;
+}
+table.estilo1 td.centro {
+    text-align: center;
+    border: 0px;
+    font-size: 0.9em;
+    /* versao 1 border-top: 1px solid #CCE29C; */
+    border-top: 1px solid #808080;
+}
+table.estilo1 td.separador {
+    text-align: left;
+    border-top: 1px dotted #CCE29C;
+    background: #f1f1f1;
+    width: 10px;
+}
+table.estilo1 td.alerta {
+    text-align: left;
+    border-top: 1px dotted #CCE29C;
+    color: #800000;
+}
+table.estilo1 td.feriado {
+    text-align: left;
+    border-top: 1px dotted #CCE29C;
+    color: #FFFFFF;
+    background: #CC3333;
+}
+table.estilo1 td.diasanto {
+    text-align: left;
+    border-top: 1px dotted #CCE29C;
+    color: #FFFFFF;
+    background: #0033FF;
+}
+table.estilo1 td.tolerancia {
+    text-align: left;
+    border-top: 1px dotted #CCE29C;
+    padding: 0.1em 0.5em;
+    color: #FFFFFF;
+    background-color: #61F200;
+}
+table.estilo1 td.util {
+    text-align: left;
+    border-top: 1px dotted #CCE29C;
+    color: #000000;
+    background-color: #FFFFCC;
+}
+table.estilo1 td.fimdesemana {
+    text-align: left;
+    border-top: 1px dotted #CCE29C;
+    color: #000000;
+    background-color: #C9DECB;
+}
+table.estilo1 td.rodape {
+    border-spacing: 0px;
+    border-top: 2px solid #ffdab9;
+    border-bottom: 2px solid #ffdab9;
+}
+table.estilo1 td.rodape_direita {
+    text-align: right;
+    border-spacing: 0px;
+    border-top: 2px solid #ffdab9;
+    border-bottom: 2px solid #ffdab9;
+}
+table.estilo1 td.historico {
+    text-align: center;
+    background: #f1f1f1;
+    font-weight: bold;
+}
+
+table.estilo1 td.ocupado {
+    text-align: center;
+    background: #C9DECB;
+    font-weight: normal;
+    padding: 0.3em 0.3em 0.3em 0.3em;
+}
+table.estilo1 td.com_aula {
+    text-align: center;
+    background: #AEAEAE;
+    font-weight: normal;
+    padding: 0.3em 0.3em 0.3em 0.3em;
+}
+table.estilo1 td.livre {
+    text-align: center;
+    background: #FFFFFF;
+    font-weight: normal;
+    padding: 0.3em 0.3em 0.3em 0.3em;
+}
+
+
+/* estilo2 */
+table.estilo2 {
+    border-spacing: 0px;
+    border-collapse: collapse;
+    border-top: 1px solid #ffdab9;
+    border-left: 1px solid #ffdab9;
+    border-right: 1px solid #ffdab9;
+    border-bottom: 1px solid #ffdab9;
+    font-family: Arial, 'Trebuchet MS', Courier,Helvetica, Arial, sans-serif;    
+}
+table.estilo2 th {
+    text-align: center;
+    font-weight: normal;
+    padding: 0.2em 0.5em;
+    border-top: 1px dotted #ffdab9;
+    /* versao 1 background-color: #ffdab9;    */
+    background-color: #fafafa;
+    font-family: Arial,'Trebuchet MS', Courier,Helvetica, Arial, sans-serif;    
+}
+table.estilo2 th.titulo {
+    text-align: left;
+    font-weight: normal;
+    font-size: 1.0em;
+    padding: 0.1em 0.5em;
+    border: 0px;
+    border-top: 1px solid #ffdab9;
+    border-bottom: 2px solid #ffdab9;
+    /* versao 1 background-color: #ffdab9;    */
+    background-color: #fafafa;
+    font-family: Arial, 'Trebuchet MS', Courier,Helvetica, Arial, sans-serif;    
+}
+table.estilo2 th.direita {
+    text-align: right;
+    font-weight: normal;
+    padding: 0.2em 0.5em;
+    border-top: 1px dotted #ffdab9;
+    /* versao 1 background-color: #ffdab9;    */
+    background-color: #fafafa;
+    font-family: Arial, 'Trebuchet MS', Courier,Helvetica, Arial, sans-serif;    
+}
+table.estilo2 th.esquerda {
+    text-align: left;
+    font-weight: normal;
+    padding: 0.2em 0.5em;
+    border-top: 1px dotted #ffdab9;
+    /* versao 1 background-color: #ffdab9;    */
+    background-color: #fafafa;
+    font-family: Arial, 'Trebuchet MS', Courier,Helvetica, Arial, sans-serif;    
+}
+table.estilo2 thead th {
+    text-align: center;
+    border-bottom: 1px solid #ffdab9;
+}
+table.estilo2 thead th.titulo {
+    text-align: left;
+    font-weight: normal;
+    font-size: 1.0em;
+    padding: 0.1em 0.5em;
+    border: 0px;
+    border-top: 1px solid #ffdab9;
+    border-bottom: 1px solid #ffdab9;
+}
+table.estilo2 tr.par {
+    background-color: #FFFFCC;
+}
+table.estilo2 td {
+    text-align: left;
+    border-top: 1px dotted #ffdab9;
+    padding: 0.2em 0.5em;
+    font-family: Arial, Verdana,'Trebuchet MS', Courier,Helvetica, Arial, sans-serif;    
+    font-size: 0.9em;
+}
+table.estilo2 td.direita {
+    text-align: right;
+    border-top: 1px dotted #ffdab9;
+    padding: 0.2em 0.5em;
+}
+table.estilo2 td.separador {
+    text-align: left;
+    border-top: 1px dotted #ffdab9;
+    padding: 0.2em 0.5em;
+    background: #f1f1f1;
+    width: 10px;
+}
+table.estilo2 td.alerta {
+    text-align: left;
+    border-top: 1px dotted #ffdab9;
+    padding: 0.2em 0.5em;
+    color: #800000;
+}
+table.estilo2 td.feriado {
+    text-align: left;
+    border-top: 1px dotted #ffdab9;
+    padding: 0.2em 0.5em;
+    color: #FFFFFF;
+    background: #ffffff;
+}
+table.estilo2 td.tolerancia {
+    text-align: left;
+    border-top: 1px dotted #ffdab9;
+    padding: 0.2em 0.5em;
+    color: #FFFFFF;
+    background-color: #61F200;
+}
+table.estilo2 td.util {
+    text-align: left;
+    border-top: 1px dotted #ffdab9;
+    padding: 0.2em 0.5em;
+    color: #000000;
+    background-color: #FFFFCC;
+}
+table.estilo2 td.fimdesemana {
+    text-align: left;
+    border-top: 1px dotted #ffdab9;
+    padding: 0.2em 0.5em;
+    color: #000000;
+    background-color: #C9DECB;
+}
+table.estilo2 td.centro {
+    text-align:center;
+    border-top: 1px dotted #ffdab9;
+    padding: 0.2em 0.5em;
+}
+table.estilo2 td.rodape {
+    text-align: left;
+    border-spacing: 0px;
+    border-top: 2px solid #ffdab9;
+    border-bottom: 2px solid #ffdab9;
+}
+
+/* estilo3 */
+table.estilo3 {
+    border-spacing: 3px;
+    /* border-collapse: collapse;*/
+    border-top: 1px solid #BBEE77;
+    border-left: 1px solid #BBEE77;
+    border-right: 1px solid #BBEE77;
+    border-bottom: 1px solid #BBEE77;
+    font-family: Verdana, Arial, 'Trebuchet MS', Courier,Helvetica, Arial, sans-serif;    
+    background-color: #FAFAFA;
+    font-size: 0.8em;
+}
+table.estilo3 th {
+    text-align: center;
+    font-weight: normal;
+    padding: 0.2em 0.5em;
+    border-top: 1px dotted #BBEE77;
+    background-color: #F8FFF0;
+    color: #234600;
+    font-size: 1.2em;
+}
+table.estilo3 th.titulo {
+    text-align: left;
+    font-weight: normal;
+    padding: 0.1em 0.5em;
+    border: 0px;
+    border-top: 1px solid #BBEE77;
+    border-bottom: 1px solid #BBEE77;
+    background-color: #F8FFF0;
+}
+table.estilo3 th.direita {
+    text-align: right;
+    font-weight: normal;
+    padding: 0.2em 0.5em;
+    border-top: 1px dotted #000000;
+    /* versao 1 background-color: #000000;    */
+}
+table.estilo3 th.esquerda {
+    text-align: left;
+    font-weight: normal;
+    padding: 0.2em 0.5em;
+    border-top: 1px dotted #000000;
+    /* versao 1 background-color: #000000;    */
+}
+table.estilo3 thead th {
+    text-align: center;
+    border-bottom: 1px solid #000000;
+}
+table.estilo3 thead th.titulo {
+    text-align: left;
+    font-weight: normal;
+    padding: 0.1em 0.5em;
+    border: 0px;
+    border-top: 1px solid #000000;
+    border-bottom: 1px solid #000000;
+}
+table.estilo3 tr.par {
+    background-color: #FFFFCC;
+}
+table.estilo3 td {
+    text-align: left;
+    padding: 0.2em 0.5em;
+    font-size: 0.9em;
+    border-left: 1px dotted #BBEE77;
+    border-top: 1px dotted #BBEE77;
+}
+table.estilo3 td.direita {
+    text-align: right;
+    padding: 0.2em 0.5em;
+}
+table.estilo3 td.separador {
+    text-align: left;
+    border-top: 1px dotted #ffdab9;
+    padding: 0.2em 0.5em;
+    background: #f1f1f1;
+    width: 10px;
+}
+table.estilo3 td.alerta {
+    text-align: left;
+    border-top: 1px dotted #ffdab9;
+    padding: 0.2em 0.5em;
+    color: #800000;
+}
+table.estilo3 td.feriado {
+    text-align: left;
+    border-top: 1px dotted #ffdab9;
+    padding: 0.2em 0.5em;
+    color: #FFFFFF;
+    background: #ffffff;
+}
+table.estilo3 td.tolerancia {
+    text-align: left;
+    border-top: 1px dotted #ffdab9;
+    padding: 0.2em 0.5em;
+    color: #FFFFFF;
+    background-color: #61F200;
+}
+table.estilo3 td.util {
+    text-align: left;
+    border-top: 1px dotted #ffdab9;
+    padding: 0.2em 0.5em;
+    color: #000000;
+    background-color: #FFFFCC;
+}
+table.estilo3 td.fimdesemana {
+    text-align: left;
+    border-top: 1px dotted #ffdab9;
+    padding: 0.2em 0.5em;
+    color: #000000;
+    background-color: #C9DECB;
+}
+table.estilo3 td.centro {
+    text-align:center;
+    border-top: 1px dotted #ffdab9;
+    padding: 0.2em 0.5em;
+}
+table.estilo3 td.rodape {
+    text-align: center;
+    border-top: 1px solid #BBEE77;
+}
+
+
+
+
+/* estilo4 */
+table.estilo4 {
+    border-spacing: 2px;
+    background-color: #EAE8E6;
+    border-top: 1px solid #A9A9A9;
+    border-left: 1px solid #A9A9A9;
+    border-right: 1px solid #A9A9A9;
+    border-bottom: 1px solid #A9A9A9;
+    color: #000000;
+    font-family: Courier, Arial, Verdana,'Trebuchet MS', Courier,Helvetica, Arial, sans-serif;
+    padding: 0.6em 0.6em 0.6em 0.6em;   
+}
+table.estilo4 th {
+    text-align: center;
+    font-weight: normal;
+    font-family: Courier, Arial, 'Trebuchet MS', Courier,Helvetica, Arial, sans-serif;    
+    font-size: 1.0em;
+    padding: 0.6em 0.6em 0.6em 0.6em;
+    border-spacing: 1px;
+    border-bottom: 1px solid #c9c9c9;
+}
+table.estilo4 th.centro {
+    text-align: center;
+}
+table.estilo4 th.direita {
+    text-align: right;
+}
+table.estilo4 th.titulo {
+    text-align: center;
+    font-weight: normal;
+    font-family: Courier, Arial, 'Trebuchet MS', Courier,Helvetica, Arial, sans-serif;    
+    font-size: 1.0em;
+}
+table.estilo4 thead th {
+    text-align: center;
+    font-weight: normal;
+    font-family: Courier, Arial, 'Trebuchet MS', Courier,Helvetica, Arial, sans-serif;    
+    font-size: 1.0em;
+}
+table.estilo4 tr.rodape {
+    background: #E8E4C0;    
+}
+table.estilo4 td {
+    text-align: left;
+    border: 0px;
+    font-size: 0.9em;
+    font-family: Arial, 'Trebuchet MS', Courier,Helvetica, Arial, sans-serif;    
+}
+table.estilo4 td.direita {
+    text-align: right;
+}
+table.estilo4 td.centro {
+    text-align: center;
+}
+table.estilo4 td.rodape {
+    border-spacing: 0px;
+    text-align: center;
+    border-top: 1px solid #c9c9c9;
+    padding: 0.6em 0.6em 0.6em 0.6em;
+}
+
+
+/* estilo5 */
+table.estilo5 {
+    border-spacing: 2px;
+    color: #000000;
+    font-family: Arial, Courier, Verdana,'Trebuchet MS', Courier,Helvetica, Arial, sans-serif;
+    padding: 0.6em 0.6em 0.6em 0.6em;   
+    border-bottom: 1px solid #A0A0A0;
+    background-color: #FAFAFA;
+}
+table.estilo5 th {
+    background-color: #F8fff0;
+    text-align: center;
+    font-weight: normal;
+    font-family: Courier, Arial, 'Trebuchet MS', Courier,Helvetica, Arial, sans-serif;    
+    font-size: 1.0em;
+    padding: 0.6em 0.6em 0.6em 0.6em;
+    border-spacing: 1px;
+    border-top: 1px solid #A0A0A0;
+    border-bottom: 1px solid #A0A0A0;
+}
+table.estilo5 th.centro {
+    text-align: center;
+}
+table.estilo5 th.direita {
+    text-align: right;
+}
+table.estilo5 th.titulo {
+    border-top: 1px solid #A0A0A0;
+    border-bottom: 1px solid #A0A0A0;
+}
+table.estilo5 thead th {
+    border-top: 1px solid #A0A0A0;
+    border-bottom: 1px solid #A0A0A0;
+}
+table.estilo5 tr.rodape {
+    border-top: 1px solid #A0A0A0;
+    border-bottom: 1px solid #A0A0A0;
+}
+table.estilo5 td {
+    text-align: left;
+    border: 0px;
+    font-size: 0.9em;
+    font-family: Arial, 'Trebuchet MS', Courier,Helvetica, Arial, sans-serif;    
+}
+table.estilo5 td.direita {
+    text-align: right;
+}
+table.estilo5 td.centro {
+    text-align: center;
+}
+table.estilo5 td.rodape {
+    border-top: 1px solid #A0A0A0;
+    padding: 0.6em 0.6em 0.6em 0.6em;
+    text-align: center;
+    padding: 0.6em 0.6em 0.6em 0.6em;
+}
+
+
+/* estilo6 */
+table.estilo6 {
+    color: #000000;
+    font-family: Courier, Verdana,'Trebuchet MS', Courier,Helvetica, Arial, sans-serif;
+    background-color: #FAFAFA;
+}
+table.estilo6 th {
+    background-color: #F8FFF0;
+    color: #234600;
+    text-align: center;
+    font-weight: normal;
+    font-family: Courier, Arial, 'Trebuchet MS', Courier,Helvetica, Arial, sans-serif;    
+    font-size: 1.0em;
+    padding: 0.6em 0.6em 0.6em 0.6em;
+    border-top: 1px solid #BBEE77;
+    border-bottom: 2px solid #BBEE77;
+    border-left: 1px solid #BBEE77;
+    border-right: 1px solid #BBEE77;   
+}
+table.estilo6 th.centro {
+    text-align: center;
+}
+table.estilo6 th.direita {
+    text-align: right;
+}
+table.estilo6 th.titulo {
+    border-top: 1px solid #BBEE77;
+    border-bottom: 2px solid #BBEE77;
+    border-left: 1px solid #BBEE77;
+    border-right: 1px solid #BBEE77;    
+}
+table.estilo6 thead th {
+    border-top: 1px solid #BBEE77;
+    border-bottom: 2px solid #BBEE77;
+    border-left: 1px solid #BBEE77;
+    border-right: 1px solid #BBEE77;    
+}
+table.estilo6 tr.rodape {
+    border-top: 1px solid #BBEE77;
+    border-bottom: 1px solid #BBEE77;
+    border-left: 1px solid #BBEE77;
+    border-right: 1px solid #BBEE77;    
+}
+table.estilo6 td {
+    text-align: left;
+    font-size: 1.1em;
+    font-family: Arial, 'Trebuchet MS', Courier,Helvetica, Arial, sans-serif;    
+    border-top: thin solid #f0f0f0;
+    border-bottom: thin solid #F0F0F0;
+    border-left: thin solid #F0F0F0;
+    border-right: thin solid #F0F0F0;
+
+}
+table.estilo6 td.direita {
+    text-align: right;
+}
+table.estilo6 td.centro {
+    text-align: center;
+}
+table.estilo6 td.rodape {
+    border-top: 1px solid #BBEE77;
+    border-bottom: 1px solid #BBEE77;
+    border-left: 1px solid #BBEE77;
+    border-right: 1px solid #BBEE77;    
+    padding: 0.6em 0.6em 0.6em 0.6em;
+    text-align: center;
+    padding: 0.6em 0.6em 0.6em 0.6em;
+    background-color: #F8FFF0;
+}

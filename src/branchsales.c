@@ -162,11 +162,11 @@ void getClientsByProduct(BRANCHSALES bs, PRODUCT prod, SET *normal, SET *promo) 
 						  insertElement(promoClients, client, cu2);
                           break;
 		}
+		freeClientUnit(cu);
 	}
 
 	free(product);
 	freeSet(clients);
-	freeClientUnit(cu);
 
 	*normal = normalClients;
 	*promo = promoClients;

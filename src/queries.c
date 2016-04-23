@@ -556,10 +556,6 @@ static PAGE addLineToPage(PAGE p, char* line) {
 	return p;
 }
 
-static int getPageSize(PAGE p) {
-	return p->linesNum;
-}
-
 static char* getNextLine(PAGE p) {
 	char *line = NULL, *original;
 
