@@ -31,13 +31,16 @@ int interpreter(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat)
 
 	fgets(answ, BUFF_SIZE, stdin);
 
-	if (answ[0] == 'q') return KILL;
+	if (answ[0] == 'q') {
+		system("clear");
+		return KILL;
+	}	
 
 	printLogo();
 
 	qnum = atoi(answ);
 
-	presentQueryName(qnum); /* TODO */
+	presentQueryName(qnum); 
 
 	if (qnum > 1 && qnum <= 12 && isEmptyProductCat(pcat) && isEmptyClientCat(ccat)) {
 		printf("Sem dados para processar. Por favor carregue os ficheiros.\n");
@@ -66,9 +69,9 @@ int interpreter(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat)
 		 		 break;
 		case 10 : query10(bs);
 		 		  break;
-		case 11 :
+		case 11 : query11 (bs, ccat);
 		 		  break;
-		case 12 :
+		case 12 : query12 (bs, fat);
 				  break;
 	}
 
@@ -83,7 +86,7 @@ void loader(BRANCHSALES* bs, FATGLOBAL fat, PRODUCTCAT pcat, CLIENTCAT ccat ) {
 
 	time_t inicio, fim;
 
-	putchar('\n');
+	printf("<enter> para escolher opção default.\n");
 
 	while(1) {
 		printf("Ficheiro de clientes: ");

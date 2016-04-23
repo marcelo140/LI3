@@ -58,6 +58,7 @@ static PRODUCTSALE initProductSale();
 static PRODUCTUNIT initProductUnit();
 static PRODUCTUNIT addToProductUnit(PRODUCTUNIT product, SALE s);
 static PRODUCTUNIT cloneProductUnit(PRODUCTUNIT product);
+static double getTotalBilled(PRODUCTUNIT pu); 
 static void freeProductUnit(PRODUCTUNIT product);
 static CLIENTUNIT initClientUnit();
 static CLIENTUNIT addToClientUnit(CLIENTUNIT client, SALE s);
@@ -172,19 +173,13 @@ SET getProductsByClient(BRANCHSALES bs, CLIENT c) {
 	int size;
 	
 	client = fromClient(c);	
-	cs = getCatContent(bs->products, INDEX(client), client, NULL);
-
-	if (!cs) {
-		products = initSet(0, NULL);
-		free(client);
-		return products;
-	}
+	cs = getCatContent(bs->clients, INDEX(client), client, NULL);
 
 	if (cs) {
 		size = getHashTsize(cs->products);
 		products = initSet(size, (free_t) freeProductUnit);
 		products = dumpHashT(cs->products, products);
-	} else products = initSet(0, (free_t) freeProductUnit);
+	} else products = initSet(0, NULL);
 	
 	free(client);
 	return products;
@@ -205,6 +200,30 @@ SET listProductsByQuant(BRANCHSALES bs) {
 	sortSet(s, (compare_t) compareProductDataByQuant, NULL);
 
 	return s;
+}
+
+double getClientCosts(SET client, int pos){
+	PRODUCTUNIT pu;
+	double r;
+
+	pu = getSetData(client, pos);
+	r = getTotalBilled(pu);
+
+	freeProductUnit(pu);
+	return r;
+}
+
+int getClientSetQuantByMonth(SET client, int pos, int month) {
+	PRODUCTUNIT pu;
+	int r = 0;
+
+	pu = getSetData(client, pos);
+	if (pu) {
+		r  = pu->quant[month];
+		freeProductUnit(pu);
+	}
+
+	return r;
 }
 
 void freeBranchSales(BRANCHSALES bs) {
@@ -389,6 +408,16 @@ static int compareProductUnitByBilled(PRODUCTUNIT pu1, PRODUCTUNIT pu2) {
 	}
 
 	return (billed2 - billed1);
+}
+
+static double getTotalBilled(PRODUCTUNIT pu) {
+	int i, r = 0;
+
+	for(i = 0; i < MONTHS; i++)
+		r += pu->billed[i];
+
+	return r;
+
 }
 
 static void freeProductUnit(PRODUCTUNIT product){

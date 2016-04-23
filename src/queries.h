@@ -16,5 +16,7 @@ void query7(BRANCHSALES* bs);
 void query8(BRANCHSALES* bs, PRODUCTCAT pcat);
 void query9(BRANCHSALES* bs, CLIENTCAT ccat); 
 void query10(BRANCHSALES* bs);
+void query11 (BRANCHSALES* bs, CLIENTCAT ccat); 
+void query12 (BRANCHSALES* bs, FATGLOBAL fat);
 
 #endif

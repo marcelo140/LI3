@@ -75,6 +75,16 @@ SET getProductsByClient(BRANCHSALES bs, CLIENT c);
 SET listProductsByQuant(BRANCHSALES bs);
 
 /**
+ * Devolve os gastos do cliente numa dada posição.
+ */
+double getClientCosts(SET client, int pos);
+
+/**
+ * Calcula as quantidades compradas pelo cliente numa posição do set num mes
+ */
+int getClientSetQuantByMonth(SET client, int pos, int month);
+
+/**
  * Calcula o número de clientes que compraram um produto.
  */
 int getClientsFromData(PRODUCTDATA pd);

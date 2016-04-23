@@ -181,8 +181,6 @@ void query5(BRANCHSALES* bs, CLIENTCAT ccat) {
 
 	branch = askBranch();
 	if (branch == -1) return;
-	client = askClient(ccat);
-	if (!client) return;
 
 	quantity = getClientQuantByMonth(bs[branch], client);
 
@@ -301,10 +299,10 @@ void query8(BRANCHSALES* bs, PRODUCTCAT pcat) {
 
 void query9(BRANCHSALES* bs, CLIENTCAT ccat) {
 	PAGE page;
-	SET setB[BRANCHES], setT, auxSet;
+	SET setB[BRANCHES], setT, auxSet, toPrint;
 	CLIENT client;
 	int i, month, newPage, size;
-	char ocmd[MAX_SIZE];
+	char ocmd[MAX_SIZE], *line;
 
 
 	client = askClient(ccat);
@@ -316,29 +314,36 @@ void query9(BRANCHSALES* bs, CLIENTCAT ccat) {
 	setB[1] = getProductsByClient(bs[1], client);
 	setB[2] = getProductsByClient(bs[2], client);
 	
-	auxSet = intersectSet(setB[0], setB[1]);
-	setT   = intersectSet(auxSet, setB[2]);
+	auxSet = unionSets(setB[0], setB[1]);
+	setT   = unionSets(auxSet, setB[2]);
 
 	sortProductListByQuant(setT, month);
 
 	size = getSetSize(setT);
+
+	toPrint = initSet(size, NULL);
+	for(i = 0; getClientSetQuantByMonth(setT, i, month) != 0; i++) {
+		line    = getSetHash(setT, i);
+		toPrint = insertElement(toPrint, line, NULL);
+		free(line);
+	}
+
+	size = getSetSize(toPrint);
 	size = size / LINE_NUMS + ((size % LINE_NUMS != 0) ? 1 : 0);
-
-
+	
 	strcpy(ocmd, "\n");
 	newPage = 1;
 	while (newPage != -1) {
 		page = createPage("", LINE_NUMS, newPage, size);
-		page = getPage(page, setT);
+		page = getPage(page, toPrint);
 		newPage = presentList(page, ocmd);
 		freePage(page);
 	}
 
 	for(i = 0; i < BRANCHES; i++)
 		freeSet(setB[i]);
-	freeSet(setT);
-	freeSet(auxSet);
 	freeClient(client);
+	freeSet(toPrint);
 }
 
 void query10(BRANCHSALES* bs) {
@@ -396,6 +401,81 @@ void query10(BRANCHSALES* bs) {
 	}
 }
 
+void query11 (BRANCHSALES* bs, CLIENTCAT ccat) {
+	PAGE page;
+	SET setB[3], setT, auxSet;
+	CLIENT client;
+	int i;
+	char line[MAX_SIZE], *product;
+	double costs;
+
+
+	client = askClient(ccat);
+	if (!client) return;
+
+	setB[0] = getProductsByClient(bs[0], client);
+	setB[1] = getProductsByClient(bs[1], client);
+	setB[2] = getProductsByClient(bs[2], client);
+
+	auxSet = unionSets(setB[0], setB[1]);
+	setT   = unionSets(auxSet, setB[2]);
+	
+	sortProductListByBilled(setT);
+	
+	page = createPage("\tPRODUTO\t\tGASTOS\n", 3, 1, 1);
+	for(i = 0; i < 3; i++) {
+		product = getSetHash(setT, i);
+		costs = getClientCosts(setT, i);
+		sprintf(line, "\t%s\t\t%6.2f", product, costs );
+		page = addLineToPage(page, line);
+		free(product);
+	}
+
+	strcpy(line, "\n");
+	i = 1;
+	while(i != -1) 	i = presentList(page, line);
+
+
+	freePage(page);
+	for(i = 0; i < BRANCHES; i++)
+		freeSet(setB[i]);
+}
+
+void query12 (BRANCHSALES* bs, FATGLOBAL fat) {
+	PAGE page;
+	SET clients[3], products, auxSet, clientTSet;
+	char line[MAX_SIZE];
+	int i;
+
+
+	clients[0] = getClientsWhoHaveNotBought(bs[0]);
+	clients[1] = getClientsWhoHaveNotBought(bs[1]);
+	clients[2] = getClientsWhoHaveNotBought(bs[2]);
+	products   = getProductsNotSold(fat);
+
+	auxSet     = intersectSet(clients[0], clients[1]);
+	clientTSet = intersectSet(auxSet, clients[2]);
+
+	page = createPage("", 2, 1, 1);
+	sprintf(line,"Nº de clientes sem compras:  %6d", getSetSize(clientTSet) );
+	page = addLineToPage(page, line);
+	sprintf(line,"Nº de produtos não vendidos: %6d", getSetSize(products) );
+	page = addLineToPage(page, line);
+
+	strcpy(line, "\n");
+	i = 1;
+	while(i != -1)
+		i = presentList(page, line);
+
+	
+	freePage(page);
+	for(i = 0; i < BRANCHES; i++)
+		freeSet(clients[i]);
+	freeSet(products);
+	freeSet(auxSet);
+	freeSet(clientTSet);
+}
+
 	/*====================== FUNÇÕES DO PRINTSET ===================*/
 
 static PAGE createPage(char* header, int linesNum, int page, int totalPage) {
@@ -416,13 +496,14 @@ static PAGE createPage(char* header, int linesNum, int page, int totalPage) {
 
 static PAGE getPage(PAGE p, SET lines) {
 	int i, index;
-	char *line = NULL;
+	char str[MAX_SIZE], *line = NULL;
 
 	index = (p->page-1) * p->linesNum;
 
 	for(i=0; i < p->linesNum; i++) {
 		line = getSetHash(lines, i + index);
-		if (line) addLineToPage(p, line);
+		sprintf(str, "\t\t\t%s", line);
+		if (line) addLineToPage(p,str);
 	   	free(line);
 	}
 
@@ -606,6 +687,7 @@ static CLIENT askClient(CLIENTCAT ccat) {
 	while(!stop) {
 		printf("  Cliente: ");
 		fgets(buff, MAX_SIZE, stdin);
+		if (buff[0] == '\n') continue;
 		strtok(buff, "\n\r");
 		client = toClient(buff);
 

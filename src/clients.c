@@ -40,6 +40,7 @@ void freeClientCat(CLIENTCAT clientCat) {
 }
 
 bool lookUpClient(CLIENTCAT clientCat, CLIENT client) {
+	if (INDEX(client) < 0 || INDEX(client) > 26) return false;
 	return lookUpCatalog(clientCat->cat, INDEX(client), client->str);
 }
 
